@@ -1,0 +1,15 @@
+__pycache__/
+.env
+dev.db
+venv/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+pip-log.txt
+pip-delete-this-directory.txt
+.coverage
+.pytest_cache/
+.mypy_cache/
+.DS_Store
