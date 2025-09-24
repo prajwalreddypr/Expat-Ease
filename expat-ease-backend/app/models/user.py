@@ -2,9 +2,12 @@
 User model and schemas for the application.
 """
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
+
+if TYPE_CHECKING:
+    from app.models.settlement_step import SettlementStep
 
 
 class User(SQLModel, table=True):
@@ -23,6 +26,9 @@ class User(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     country: Optional[str] = Field(default=None, max_length=100)
     country_selected: bool = Field(default=False)
+    
+    # Relationships
+    settlement_steps: list["SettlementStep"] = Relationship(back_populates="user")
 
 
 class UserCreate(SQLModel):
