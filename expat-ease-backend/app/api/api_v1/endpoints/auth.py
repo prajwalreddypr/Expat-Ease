@@ -15,8 +15,8 @@ from app.models.user import User, UserRead
 
 router = APIRouter()
 
-# Token expiration time (30 minutes)
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# Token expiration time (24 hours)
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 
 @router.post("/login", response_model=Token)
