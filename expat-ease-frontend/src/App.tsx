@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CountrySelection from './components/CountrySelection';
+import ChecklistPage from './pages/ChecklistPage';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -10,6 +12,8 @@ const AppContent: React.FC = () => {
   const { user, isLoading, selectedCountry, selectCountry } = useAuth();
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Handle browser back button
   useEffect(() => {
@@ -22,6 +26,13 @@ const AppContent: React.FC = () => {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  // Redirect logged-out users from protected routes to homepage
+  useEffect(() => {
+    if (!isLoading && !user && location.pathname !== '/') {
+      navigate('/', { replace: true });
+    }
+  }, [user, isLoading, location.pathname, navigate]);
 
   // Add history entry when opening modals
   const openLoginForm = () => {
@@ -61,6 +72,15 @@ const AppContent: React.FC = () => {
       return (
         <Layout>
           <CountrySelection onCountrySelect={selectCountry} />
+        </Layout>
+      );
+    }
+
+    // Handle routing for logged-in users
+    if (location.pathname === '/checklist') {
+      return (
+        <Layout>
+          <ChecklistPage />
         </Layout>
       );
     }
@@ -161,9 +181,11 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
   );
 }
 
