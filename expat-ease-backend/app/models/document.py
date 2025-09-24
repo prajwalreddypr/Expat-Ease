@@ -3,7 +3,7 @@ from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 
 if TYPE_CHECKING:
-    from app.models.task import Task
+    from app.models.settlement_step import SettlementStep
 
 
 class Document(SQLModel, table=True):
@@ -13,12 +13,12 @@ class Document(SQLModel, table=True):
     file_path: str = Field(max_length=500)
     file_size: int
     content_type: str = Field(max_length=100)
-    task_id: int = Field(foreign_key="task.id")
+    settlement_step_id: Optional[int] = Field(default=None, foreign_key="settlementstep.id")
     user_id: int = Field(foreign_key="users.id")
     created_at: datetime = Field(default_factory=datetime.utcnow)
     
     # Relationships
-    task: Optional["Task"] = Relationship(back_populates="documents")
+    settlement_step: Optional["SettlementStep"] = Relationship(back_populates="documents")
 
 
 class DocumentCreate(SQLModel):
@@ -27,7 +27,7 @@ class DocumentCreate(SQLModel):
     file_path: str = Field(max_length=500)
     file_size: int
     content_type: str = Field(max_length=100)
-    task_id: int
+    settlement_step_id: Optional[int] = None
 
 
 class DocumentResponse(SQLModel):
@@ -37,7 +37,7 @@ class DocumentResponse(SQLModel):
     file_path: str
     file_size: int
     content_type: str
-    task_id: int
+    settlement_step_id: Optional[int]
     user_id: int
     created_at: datetime
     download_url: str

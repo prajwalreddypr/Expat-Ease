@@ -56,7 +56,7 @@ const JoinCommunity: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl font-bold text-gradient mb-6">
+                    <h1 className="text-5xl font-bold text-gradient mb-6 leading-tight py-2">
                         Join the Community
                     </h1>
                     <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
@@ -142,7 +142,7 @@ const JoinCommunity: React.FC = () => {
 
                 {/* Additional Resources Section */}
                 <div className="mt-20 card">
-                    <h2 className="text-3xl font-bold text-gradient mb-10 text-center">
+                    <h2 className="text-3xl font-bold text-gradient mb-10 text-center leading-tight py-2">
                         Need More Resources?
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

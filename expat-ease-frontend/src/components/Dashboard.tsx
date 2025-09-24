@@ -1,32 +1,19 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import JoinCommunity from './JoinCommunity';
 import ChecklistPage from '../pages/ChecklistPage';
+import DocumentsSection from './DocumentsSection';
 
 // Placeholder components for other sections
-const DocumentsSection: React.FC = () => (
-    <div className="min-h-screen py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-                <div className="card bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-12 rounded-3xl border border-emerald-100">
-                    <div className="text-8xl mb-8">📄</div>
-                    <h1 className="text-4xl font-bold text-gradient mb-6">Document Management</h1>
-                    <p className="text-xl text-slate-600 leading-relaxed">Manage your required documents and deadlines</p>
-                </div>
-            </div>
-        </div>
-    </div>
-);
 
 const ServicesSection: React.FC = () => (
-    <div className="min-h-screen py-12">
+    <div className="min-h-screen py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-                <div className="card bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-12 rounded-3xl border border-violet-100">
-                    <div className="text-8xl mb-8">🏛️</div>
-                    <h1 className="text-4xl font-bold text-gradient mb-6">Local Services</h1>
-                    <p className="text-xl text-slate-600 leading-relaxed">Find local services and government offices</p>
+                <div className="card bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-8 rounded-3xl border border-violet-100">
+                    <div className="text-6xl mb-6">🏛️</div>
+                    <h1 className="text-3xl font-bold text-gradient mb-4 leading-tight py-2">Local Services</h1>
+                    <p className="text-lg text-slate-600 leading-relaxed">Find local services and government offices</p>
                 </div>
             </div>
         </div>
@@ -50,7 +37,6 @@ const BackToDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => (
 
 const Dashboard: React.FC = () => {
     const { user } = useAuth();
-    const navigate = useNavigate();
     const [showChecklist, setShowChecklist] = React.useState(false);
     const [showCommunity, setShowCommunity] = React.useState(false);
     const [showDocuments, setShowDocuments] = React.useState(false);
@@ -120,83 +106,95 @@ const Dashboard: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen py-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-8">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Welcome Section */}
-                <div className="mb-16 text-center">
-                    <h1 className="text-5xl font-bold text-gradient mb-4">
+                <div className="mb-10 text-center">
+                    <h1 className="text-4xl font-bold text-gradient mb-3 leading-tight py-2">
                         Welcome back, {user?.full_name || user?.email}!
                     </h1>
-                    <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                         Here's your personalized dashboard to help you settle in {user?.country}.
                     </p>
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="space-y-12">
+                <div className="space-y-8">
                     {/* Feature Cards */}
                     <div className="card">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Quick Access</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            <div className="card-hover bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-2xl border border-blue-100">
-                                <div className="flex items-center mb-6">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                                        <span className="text-white text-2xl">📋</span>
+                        <h2 className="text-xl font-bold text-slate-800 mb-6 text-center">Quick Access</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {/* Settlement Checklist */}
+                            <div className="card-hover bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 rounded-2xl border border-blue-100 flex flex-col h-full">
+                                <div className="text-center mb-4">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-xl">📋</span>
                                     </div>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800 mb-3">Settlement Checklist</h3>
-                                <p className="text-slate-600 mb-6 leading-relaxed">Track your progress with our step-by-step guide</p>
+                                <div className="text-center mb-4 flex-grow">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Settlement Checklist</h3>
+                                    <p className="text-sm text-slate-600 leading-relaxed">Track your progress with our step-by-step guide</p>
+                                </div>
                                 <button
                                     onClick={() => setShowChecklist(true)}
-                                    className="btn btn-primary w-full"
+                                    className="btn btn-primary w-full text-sm py-2"
                                 >
                                     View Checklist
                                 </button>
                             </div>
 
-                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-8 rounded-2xl border border-emerald-100">
-                                <div className="flex items-center mb-6">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
-                                        <span className="text-white text-2xl">📄</span>
+                            {/* Documents */}
+                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
+                                <div className="text-center mb-4">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-xl">📄</span>
                                     </div>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800 mb-3">Documents</h3>
-                                <p className="text-slate-600 mb-6 leading-relaxed">Manage required documents and deadlines</p>
+                                <div className="text-center mb-4 flex-grow">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Documents</h3>
+                                    <p className="text-sm text-slate-600 leading-relaxed">Manage required documents and deadlines</p>
+                                </div>
                                 <button
                                     onClick={() => setShowDocuments(true)}
-                                    className="btn w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl"
+                                    className="btn w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
                                 >
                                     Manage Documents
                                 </button>
                             </div>
 
-                            <div className="card-hover bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-8 rounded-2xl border border-violet-100">
-                                <div className="flex items-center mb-6">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                                        <span className="text-white text-2xl">🏛️</span>
+                            {/* Services */}
+                            <div className="card-hover bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-6 rounded-2xl border border-violet-100 flex flex-col h-full">
+                                <div className="text-center mb-4">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-xl">🏛️</span>
                                     </div>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800 mb-3">Services</h3>
-                                <p className="text-slate-600 mb-6 leading-relaxed">Find local services and government offices</p>
+                                <div className="text-center mb-4 flex-grow">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Services</h3>
+                                    <p className="text-sm text-slate-600 leading-relaxed">Find local services and government offices</p>
+                                </div>
                                 <button
                                     onClick={() => setShowServices(true)}
-                                    className="btn w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg hover:shadow-xl"
+                                    className="btn w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
                                 >
                                     Explore Services
                                 </button>
                             </div>
 
-                            <div className="card-hover bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-8 rounded-2xl border border-rose-100">
-                                <div className="flex items-center mb-6">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
-                                        <span className="text-white text-2xl">💬</span>
+                            {/* Community */}
+                            <div className="card-hover bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-6 rounded-2xl border border-rose-100 flex flex-col h-full">
+                                <div className="text-center mb-4">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-xl">💬</span>
                                     </div>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-800 mb-3">Community</h3>
-                                <p className="text-slate-600 mb-6 leading-relaxed">Connect with other expats in {user?.country}</p>
+                                <div className="text-center mb-4 flex-grow">
+                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Community</h3>
+                                    <p className="text-sm text-slate-600 leading-relaxed">Connect with other expats in {user?.country}</p>
+                                </div>
                                 <button
                                     onClick={() => setShowCommunity(true)}
-                                    className="btn w-full bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg hover:shadow-xl"
+                                    className="btn w-full bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
                                 >
                                     Join Community
                                 </button>
@@ -204,42 +202,18 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Profile Information */}
-                    <div className="card">
-                        <h3 className="text-2xl font-bold text-slate-800 mb-8 text-center">Your Profile</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
-                                <label className="block text-sm font-semibold text-blue-600 uppercase tracking-wide mb-3">Email</label>
-                                <p className="text-slate-800 font-semibold">{user?.email}</p>
-                            </div>
-                            <div className="text-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100">
-                                <label className="block text-sm font-semibold text-emerald-600 uppercase tracking-wide mb-3">Full Name</label>
-                                <p className="text-slate-800 font-semibold">{user?.full_name || 'Not provided'}</p>
-                            </div>
-                            <div className="text-center p-6 bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100">
-                                <label className="block text-sm font-semibold text-violet-600 uppercase tracking-wide mb-3">Country</label>
-                                <p className="text-slate-800 font-semibold">{user?.country || 'Not specified'}</p>
-                            </div>
-                            <div className="text-center p-6 bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl border border-rose-100">
-                                <label className="block text-sm font-semibold text-rose-600 uppercase tracking-wide mb-3">Member Since</label>
-                                <p className="text-slate-800 font-semibold">
-                                    {user?.created_at ? new Date(user.created_at).toLocaleDateString('en-GB') : 'Unknown'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
                     {/* Quick Actions */}
                     <div className="card">
-                        <h3 className="text-2xl font-bold text-slate-800 mb-8 text-center">Quick Actions</h3>
-                        <div className="flex flex-wrap justify-center gap-6">
-                            <button className="btn btn-primary">
+                        <h3 className="text-xl font-bold text-slate-800 mb-6 text-center">Quick Actions</h3>
+                        <div className="flex flex-wrap justify-center gap-4">
+                            <button className="btn btn-primary text-sm py-2 px-4">
                                 Update Profile
                             </button>
-                            <button className="btn btn-secondary">
+                            <button className="btn btn-secondary text-sm py-2 px-4">
                                 Export Data
                             </button>
-                            <button className="btn btn-outline">
+                            <button className="btn btn-outline text-sm py-2 px-4">
                                 Settings
                             </button>
                         </div>
