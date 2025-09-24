@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field
 from typing import Optional, List, Any
 from datetime import datetime
 from enum import Enum
@@ -30,9 +30,6 @@ class Task(SQLModel, table=True):
     estimated_days: Optional[int] = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    
-    # Relationships
-    documents: List["Document"] = Relationship(back_populates="task")
 
 
 class TaskCreate(SQLModel):
