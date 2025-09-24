@@ -6,24 +6,28 @@ import ChecklistPage from '../pages/ChecklistPage';
 
 // Placeholder components for other sections
 const DocumentsSection: React.FC = () => (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-                <div className="text-6xl mb-6">📄</div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">Document Management</h1>
-                <p className="text-xl text-gray-600">Manage your required documents and deadlines</p>
+                <div className="card bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-12 rounded-3xl border border-emerald-100">
+                    <div className="text-8xl mb-8">📄</div>
+                    <h1 className="text-4xl font-bold text-gradient mb-6">Document Management</h1>
+                    <p className="text-xl text-slate-600 leading-relaxed">Manage your required documents and deadlines</p>
+                </div>
             </div>
         </div>
     </div>
 );
 
 const ServicesSection: React.FC = () => (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-                <div className="text-6xl mb-6">🏛️</div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">Local Services</h1>
-                <p className="text-xl text-gray-600">Find local services and government offices</p>
+                <div className="card bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-12 rounded-3xl border border-violet-100">
+                    <div className="text-8xl mb-8">🏛️</div>
+                    <h1 className="text-4xl font-bold text-gradient mb-6">Local Services</h1>
+                    <p className="text-xl text-slate-600 leading-relaxed">Find local services and government offices</p>
+                </div>
             </div>
         </div>
     </div>
@@ -31,10 +35,10 @@ const ServicesSection: React.FC = () => (
 
 // Reusable Back to Dashboard component
 const BackToDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-    <div className="bg-white border-b border-gray-200 px-4 py-3">
+    <div className="glass border-b border-white/20 backdrop-blur-md px-4 py-4">
         <button
             onClick={onBack}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
+            className="flex items-center text-slate-600 hover:text-slate-900 transition-all duration-200 hover:scale-105 font-semibold"
         >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -59,6 +63,25 @@ const Dashboard: React.FC = () => {
         setShowDocuments(false);
         setShowServices(false);
     };
+
+    // Listen for logo click events to reset dashboard states
+    React.useEffect(() => {
+        const handleLogoClick = () => {
+            resetAllStates();
+        };
+
+        // Listen for custom event from Layout component
+        window.addEventListener('dashboard-reset', handleLogoClick);
+
+        return () => {
+            window.removeEventListener('dashboard-reset', handleLogoClick);
+        };
+    }, []);
+
+    // Ensure dashboard starts from top when component mounts
+    React.useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
 
     if (showChecklist) {
         return (
@@ -97,83 +120,83 @@ const Dashboard: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Welcome Section */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <div className="mb-16 text-center">
+                    <h1 className="text-5xl font-bold text-gradient mb-4">
                         Welcome back, {user?.full_name || user?.email}!
                     </h1>
-                    <p className="text-gray-600">
+                    <p className="text-xl text-slate-600 max-w-2xl mx-auto">
                         Here's your personalized dashboard to help you settle in {user?.country}.
                     </p>
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="space-y-8">
+                <div className="space-y-12">
                     {/* Feature Cards */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                        <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Access</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200 hover:shadow-md transition-shadow duration-200">
-                                <div className="flex items-center mb-4">
-                                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                                        <span className="text-white text-lg">📋</span>
+                    <div className="card">
+                        <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">Quick Access</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            <div className="card-hover bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-2xl border border-blue-100">
+                                <div className="flex items-center mb-6">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                        <span className="text-white text-2xl">📋</span>
                                     </div>
                                 </div>
-                                <h3 className="font-semibold text-blue-900 mb-2">Settlement Checklist</h3>
-                                <p className="text-blue-700 text-sm mb-4">Track your progress with our step-by-step guide</p>
+                                <h3 className="text-xl font-bold text-slate-800 mb-3">Settlement Checklist</h3>
+                                <p className="text-slate-600 mb-6 leading-relaxed">Track your progress with our step-by-step guide</p>
                                 <button
                                     onClick={() => setShowChecklist(true)}
-                                    className="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors duration-200"
+                                    className="btn btn-primary w-full"
                                 >
                                     View Checklist
                                 </button>
                             </div>
 
-                            <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200 hover:shadow-md transition-shadow duration-200">
-                                <div className="flex items-center mb-4">
-                                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                                        <span className="text-white text-lg">📄</span>
+                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-8 rounded-2xl border border-emerald-100">
+                                <div className="flex items-center mb-6">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                        <span className="text-white text-2xl">📄</span>
                                     </div>
                                 </div>
-                                <h3 className="font-semibold text-green-900 mb-2">Documents</h3>
-                                <p className="text-green-700 text-sm mb-4">Manage required documents and deadlines</p>
+                                <h3 className="text-xl font-bold text-slate-800 mb-3">Documents</h3>
+                                <p className="text-slate-600 mb-6 leading-relaxed">Manage required documents and deadlines</p>
                                 <button
                                     onClick={() => setShowDocuments(true)}
-                                    className="w-full px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors duration-200"
+                                    className="btn w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl"
                                 >
                                     Manage Documents
                                 </button>
                             </div>
 
-                            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200 hover:shadow-md transition-shadow duration-200">
-                                <div className="flex items-center mb-4">
-                                    <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                                        <span className="text-white text-lg">🏛️</span>
+                            <div className="card-hover bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-8 rounded-2xl border border-violet-100">
+                                <div className="flex items-center mb-6">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                        <span className="text-white text-2xl">🏛️</span>
                                     </div>
                                 </div>
-                                <h3 className="font-semibold text-purple-900 mb-2">Services</h3>
-                                <p className="text-purple-700 text-sm mb-4">Find local services and government offices</p>
+                                <h3 className="text-xl font-bold text-slate-800 mb-3">Services</h3>
+                                <p className="text-slate-600 mb-6 leading-relaxed">Find local services and government offices</p>
                                 <button
                                     onClick={() => setShowServices(true)}
-                                    className="w-full px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-md hover:bg-purple-700 transition-colors duration-200"
+                                    className="btn w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg hover:shadow-xl"
                                 >
                                     Explore Services
                                 </button>
                             </div>
 
-                            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg border border-orange-200 hover:shadow-md transition-shadow duration-200">
-                                <div className="flex items-center mb-4">
-                                    <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-                                        <span className="text-white text-lg">💬</span>
+                            <div className="card-hover bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-8 rounded-2xl border border-rose-100">
+                                <div className="flex items-center mb-6">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                        <span className="text-white text-2xl">💬</span>
                                     </div>
                                 </div>
-                                <h3 className="font-semibold text-orange-900 mb-2">Community</h3>
-                                <p className="text-orange-700 text-sm mb-4">Connect with other expats in {user?.country}</p>
+                                <h3 className="text-xl font-bold text-slate-800 mb-3">Community</h3>
+                                <p className="text-slate-600 mb-6 leading-relaxed">Connect with other expats in {user?.country}</p>
                                 <button
                                     onClick={() => setShowCommunity(true)}
-                                    className="w-full px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-md hover:bg-orange-700 transition-colors duration-200"
+                                    className="btn w-full bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg hover:shadow-xl"
                                 >
                                     Join Community
                                 </button>
@@ -182,24 +205,24 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     {/* Profile Information */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-6">Your Profile</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-500 uppercase tracking-wide">Email</label>
-                                <p className="text-gray-900 font-medium">{user?.email}</p>
+                    <div className="card">
+                        <h3 className="text-2xl font-bold text-slate-800 mb-8 text-center">Your Profile</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+                                <label className="block text-sm font-semibold text-blue-600 uppercase tracking-wide mb-3">Email</label>
+                                <p className="text-slate-800 font-semibold">{user?.email}</p>
                             </div>
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-500 uppercase tracking-wide">Full Name</label>
-                                <p className="text-gray-900 font-medium">{user?.full_name || 'Not provided'}</p>
+                            <div className="text-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100">
+                                <label className="block text-sm font-semibold text-emerald-600 uppercase tracking-wide mb-3">Full Name</label>
+                                <p className="text-slate-800 font-semibold">{user?.full_name || 'Not provided'}</p>
                             </div>
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-500 uppercase tracking-wide">Country</label>
-                                <p className="text-gray-900 font-medium">{user?.country || 'Not specified'}</p>
+                            <div className="text-center p-6 bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100">
+                                <label className="block text-sm font-semibold text-violet-600 uppercase tracking-wide mb-3">Country</label>
+                                <p className="text-slate-800 font-semibold">{user?.country || 'Not specified'}</p>
                             </div>
-                            <div className="space-y-2">
-                                <label className="block text-sm font-medium text-gray-500 uppercase tracking-wide">Member Since</label>
-                                <p className="text-gray-900 font-medium">
+                            <div className="text-center p-6 bg-gradient-to-br from-rose-50 to-pink-50 rounded-2xl border border-rose-100">
+                                <label className="block text-sm font-semibold text-rose-600 uppercase tracking-wide mb-3">Member Since</label>
+                                <p className="text-slate-800 font-semibold">
                                     {user?.created_at ? new Date(user.created_at).toLocaleDateString('en-GB') : 'Unknown'}
                                 </p>
                             </div>
@@ -207,16 +230,16 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h3>
-                        <div className="flex flex-wrap gap-4">
-                            <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm">
+                    <div className="card">
+                        <h3 className="text-2xl font-bold text-slate-800 mb-8 text-center">Quick Actions</h3>
+                        <div className="flex flex-wrap justify-center gap-6">
+                            <button className="btn btn-primary">
                                 Update Profile
                             </button>
-                            <button className="px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 border border-gray-300">
+                            <button className="btn btn-secondary">
                                 Export Data
                             </button>
-                            <button className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                            <button className="btn btn-outline">
                                 Settings
                             </button>
                         </div>
