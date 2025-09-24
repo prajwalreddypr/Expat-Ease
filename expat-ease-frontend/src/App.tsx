@@ -95,61 +95,130 @@ const AppContent: React.FC = () => {
 
   return (
     <Layout>
-      {/* Instagram-style landing page */}
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-sm">
-          {/* Main content card */}
-          <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-10">
-            {/* Header */}
-            <div className="text-center mb-10">
-              <h1 className="text-4xl font-bold text-primary-600 mb-3">Expat Ease</h1>
-              <p className="text-gray-600">Your guide to settling in a new city</p>
+      {/* Modern Landing Page */}
+      <div className="min-h-screen flex items-center justify-center px-4 py-6">
+        <div className="w-full max-w-6xl">
+          {/* Hero Section */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl font-bold text-gradient mb-4">
+              Welcome to Expat Ease
+            </h1>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Your comprehensive guide to settling in a new city. From documents to community,
+              we've got everything you need for a smooth transition.
+            </p>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
+
+            {/* Left Side - Images and Visual Elements */}
+            <div className="space-y-6">
+              {/* Airplane Image */}
+              <div className="relative">
+                <div className="card-hover bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 rounded-2xl border border-blue-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=240&fit=crop&crop=center"
+                    alt="Airplane landing"
+                    className="w-full h-48 object-cover rounded-xl shadow-lg"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                      <span className="text-blue-600 font-semibold text-sm">✈️ New Journey</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Passport Image */}
+              <div className="relative">
+                <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100">
+                  <img
+                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&h=240&fit=crop&crop=center"
+                    alt="Person holding passport"
+                    className="w-full h-48 object-cover rounded-xl shadow-lg"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                      <span className="text-emerald-600 font-semibold text-sm">📄 Documents Ready</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Feature highlights */}
-            <div className="space-y-5 mb-10">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-primary-600 text-lg">📄</span>
+            {/* Right Side - Features and CTA */}
+            <div className="space-y-6">
+              {/* Feature Cards */}
+              <div className="space-y-4">
+                <div className="card-hover bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-4 rounded-xl border border-violet-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white text-lg">📋</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-800 mb-1">Settlement Checklist</h3>
+                      <p className="text-slate-600 text-sm">Track your progress with our step-by-step guide</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-gray-600">Track required documents</p>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-primary-600 text-lg">📋</span>
-                </div>
-                <p className="text-gray-600">Complete settlement tasks</p>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-primary-600 text-lg">🏛️</span>
-                </div>
-                <p className="text-gray-600">Find local services</p>
-              </div>
-            </div>
 
-            {/* Call to action */}
-            <div className="space-y-4">
-              <button
-                onClick={openLoginForm}
-                className="w-full py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors duration-200 text-base"
-              >
-                Log in
-              </button>
-              <button
-                onClick={openRegisterForm}
-                className="w-full py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 transition-colors duration-200 text-base"
-              >
-                Sign up
-              </button>
+                <div className="card-hover bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-4 rounded-xl border border-rose-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white text-lg">🤝</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-800 mb-1">Community Support</h3>
+                      <p className="text-slate-600 text-sm">Connect with local organizations and fellow expats</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 rounded-xl border border-emerald-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white text-lg">🏛️</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-800 mb-1">Local Services</h3>
+                      <p className="text-slate-600 text-sm">Find government offices and essential services</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Call to Action */}
+              <div className="card bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-white/20">
+                <h2 className="text-xl font-bold text-slate-800 mb-4 text-center">Get Started Today</h2>
+                <div className="space-y-3">
+                  <button
+                    onClick={openLoginForm}
+                    className="btn btn-primary w-full py-3"
+                  >
+                    Log in
+                  </button>
+                  <button
+                    onClick={openRegisterForm}
+                    className="btn btn-secondary w-full py-3"
+                  >
+                    Create Account
+                  </button>
+                </div>
+                <p className="text-center text-slate-500 mt-3 text-sm">
+                  Join thousands of expats who've made their transition easier
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Footer info */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-gray-500">
-              Bulit by Prajwal with ❤️
-            </p>
+          {/* Footer */}
+          <div className="text-center mt-8">
+            <div className="card-hover bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 inline-block">
+              <p className="text-slate-600 font-medium text-sm">
+                Built by <span className="text-gradient font-bold">Prajwal</span> with ❤️ for the expat community
+              </p>
+            </div>
           </div>
         </div>
       </div>

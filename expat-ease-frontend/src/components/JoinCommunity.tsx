@@ -52,25 +52,25 @@ const JoinCommunity: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                <div className="text-center mb-16">
+                    <h1 className="text-5xl font-bold text-gradient mb-6">
                         Join the Community
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                    <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
                         Connect with local organizations and initiatives that support expats in France.
                         Discover resources for food, housing, energy, and community support.
                     </p>
                 </div>
 
                 {/* Community Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {communities.map((community, index) => (
                         <div
                             key={index}
-                            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-primary-300 transition-all duration-300 transform hover:-translate-y-1"
+                            className="card-hover bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden"
                         >
                             {/* Community Image */}
                             <div className="h-48 relative overflow-hidden">
@@ -107,22 +107,22 @@ const JoinCommunity: React.FC = () => {
                             </div>
 
                             {/* Card Content */}
-                            <div className="p-6">
-                                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                            <div className="p-8">
+                                <h3 className="text-2xl font-bold text-slate-800 mb-4">
                                     {community.name}
                                 </h3>
-                                <p className="text-gray-600 mb-6 leading-relaxed">
+                                <p className="text-slate-600 mb-8 leading-relaxed">
                                     {community.description}
                                 </p>
 
                                 {/* Visit Website Button */}
                                 <button
                                     onClick={() => handleVisitWebsite(community.link)}
-                                    className="w-full bg-primary-600 text-white font-medium py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+                                    className="btn btn-primary w-full flex items-center justify-center space-x-2"
                                 >
                                     <span>Visit Website</span>
                                     <svg
-                                        className="w-4 h-4"
+                                        className="w-5 h-5"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -141,29 +141,29 @@ const JoinCommunity: React.FC = () => {
                 </div>
 
                 {/* Additional Resources Section */}
-                <div className="mt-16 bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+                <div className="mt-20 card">
+                    <h2 className="text-3xl font-bold text-gradient mb-10 text-center">
                         Need More Resources?
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div className="text-center p-6 bg-gray-50 rounded-lg">
-                            <div className="text-3xl mb-3">📞</div>
-                            <h3 className="font-semibold text-gray-900 mb-2">Emergency Numbers</h3>
-                            <p className="text-gray-600 text-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 card-hover">
+                            <div className="text-4xl mb-4">📞</div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-3">Emergency Numbers</h3>
+                            <p className="text-slate-600">
                                 Police: 17, Medical: 15, Fire: 18
                             </p>
                         </div>
-                        <div className="text-center p-6 bg-gray-50 rounded-lg">
-                            <div className="text-3xl mb-3">🏛️</div>
-                            <h3 className="font-semibold text-gray-900 mb-2">Government Services</h3>
-                            <p className="text-gray-600 text-sm">
+                        <div className="text-center p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 card-hover">
+                            <div className="text-4xl mb-4">🏛️</div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-3">Government Services</h3>
+                            <p className="text-slate-600">
                                 Visit service-public.fr for official information
                             </p>
                         </div>
-                        <div className="text-center p-6 bg-gray-50 rounded-lg">
-                            <div className="text-3xl mb-3">🌐</div>
-                            <h3 className="font-semibold text-gray-900 mb-2">Expats Communities</h3>
-                            <p className="text-gray-600 text-sm">
+                        <div className="text-center p-8 bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 card-hover">
+                            <div className="text-4xl mb-4">🌐</div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-3">Expats Communities</h3>
+                            <p className="text-slate-600">
                                 Find local expat groups and events
                             </p>
                         </div>

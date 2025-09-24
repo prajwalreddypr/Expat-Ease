@@ -59,9 +59,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             // Logged in but hasn't completed country selection - stay on country selection
             return;
         } else {
-            // Logged in with country selected - go to dashboard
-            // Since we're already in the dashboard state, no action needed
-            // The logo click should just close any modals and stay on dashboard
+            // Logged in with country selected - reset dashboard to main view
+            // Dispatch custom event to reset dashboard states
+            window.dispatchEvent(new CustomEvent('dashboard-reset'));
+            // Also scroll to top when returning to dashboard
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Close any open modals
@@ -71,16 +73,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Navigation */}
-            <nav className="bg-white shadow-sm border-b border-gray-200">
+        <div className="min-h-screen">
+            {/* Navigation Bar */}
+            <nav className="glass border-b border-white/20 backdrop-blur-md sticky top-0 z-50">
                 <Container>
-                    <div className="flex justify-between items-center h-14">
-                        {/* Logo */}
+                    {/* Main Navigation Row */}
+                    <div className="flex justify-between items-center h-14 px-2">
+
+                        {/* Left Section - Logo */}
                         <div className="flex items-center">
                             <button
                                 onClick={handleLogoClick}
-                                className="text-xl font-bold text-primary-600 hover:text-primary-700 transition-colors duration-200"
+                                className="text-xl font-bold text-gradient hover:scale-105 transition-transform duration-200"
                                 title={
                                     !user
                                         ? "Home"
@@ -93,45 +97,72 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             </button>
                         </div>
 
-                        {/* Desktop Navigation - Progress Bar */}
+                        {/* Center Section - Progress Bar (Desktop Only) */}
                         {user && progressData && (
-                            <div className="hidden md:flex items-center space-x-4 flex-1 mx-8">
-                                <div className="flex items-center space-x-3 w-full max-w-md">
-                                    <span className="text-sm text-gray-600 whitespace-nowrap">
-                                        Progress: {progressData.completed}/{progressData.total}
-                                    </span>
-                                    <div className="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div
-                                            className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-                                            style={{ width: `${progressData.percentage}%` }}
-                                        ></div>
+                            <div className="hidden lg:flex items-center flex-1 max-w-xl mx-6">
+                                <div className="w-full">
+                                    <div className="flex items-center justify-between mb-1">
+                                        <span className="text-xs font-medium text-slate-600">
+                                            Progress
+                                        </span>
+                                        <span className="text-xs font-medium text-slate-600">
+                                            {progressData.completed}/{progressData.total}
+                                        </span>
                                     </div>
-                                    <span className="text-sm text-gray-600 whitespace-nowrap">
-                                        {progressData.percentage}%
-                                    </span>
+                                    <div className="relative">
+                                        <div className="w-full bg-slate-200 rounded-full h-2 shadow-inner">
+                                            <div
+                                                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-300 shadow-sm"
+                                                style={{ width: `${progressData.percentage}%` }}
+                                            ></div>
+                                        </div>
+                                        <div className="absolute top-3 left-0 right-0 text-center">
+                                            <span className="text-xs font-semibold text-slate-700 bg-white px-1.5 py-0.5 rounded-full shadow-sm">
+                                                {progressData.percentage}%
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Right side - Auth */}
-                        <div className="flex items-center space-x-4">
+                        {/* Right Section - User Actions */}
+                        <div className="flex items-center space-x-3">
                             {user ? (
-                                <div className="flex items-center space-x-4">
-                                    <span className="text-sm text-gray-600">
-                                        Welcome, {user.full_name || user.email}
-                                    </span>
+                                <div className="flex items-center space-x-3">
+                                    {/* User Info */}
+                                    <div className="hidden sm:flex items-center space-x-2">
+                                        <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                            <span className="text-white text-xs font-semibold">
+                                                {(user.full_name || user.email).charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-medium text-slate-700 leading-tight">
+                                                {user.full_name || user.email.split('@')[0]}
+                                            </span>
+                                            <span className="text-xs text-slate-500 leading-tight">
+                                                {user.country || 'No country selected'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Logout Button - Smaller and more subtle */}
                                     <button
                                         onClick={handleLogout}
-                                        className="px-3 py-1 text-sm border border-primary-600 text-primary-600 rounded-md hover:bg-primary-600 hover:text-white transition-colors duration-200"
+                                        className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
                                     >
+                                        <svg className="w-3.5 h-3.5 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
                                         Logout
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex items-center">
+                                <div className="flex items-center space-x-2">
                                     <button
                                         onClick={() => setShowLoginForm(true)}
-                                        className="px-4 py-2 text-sm bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-200"
+                                        className="px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                                     >
                                         Log in
                                     </button>
@@ -140,11 +171,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                             {/* Mobile menu button */}
                             <button
-                                className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                                className="md:hidden p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 aria-label="Toggle mobile menu"
                             >
-                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             </button>
@@ -153,28 +184,46 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                     {/* Mobile Navigation Menu */}
                     {isMobileMenuOpen && (
-                        <div className="md:hidden border-t border-gray-200 py-4">
-                            <div className="space-y-2">
+                        <div className="md:hidden border-t border-white/20 py-4 bg-white/50 backdrop-blur-sm">
+                            <div className="space-y-4">
                                 {user ? (
-                                    <div className="px-4 py-2">
-                                        <p className="text-sm text-gray-600 mb-2">
-                                            Welcome, {user.full_name || user.email}
-                                        </p>
+                                    <div className="px-4 py-3">
+                                        {/* Mobile User Info */}
+                                        <div className="flex items-center space-x-3 mb-4">
+                                            <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                                <span className="text-white text-sm font-semibold">
+                                                    {(user.full_name || user.email).charAt(0).toUpperCase()}
+                                                </span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium text-slate-700 leading-tight">
+                                                    {user.full_name || user.email.split('@')[0]}
+                                                </span>
+                                                <span className="text-xs text-slate-500 leading-tight">
+                                                    {user.country || 'No country selected'}
+                                                </span>
+                                            </div>
+                                        </div>
 
                                         {/* Mobile Progress Bar */}
                                         {progressData && (
-                                            <div className="mb-4">
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-sm text-gray-600">
-                                                        Progress: {progressData.completed}/{progressData.total}
+                                            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <span className="text-sm font-semibold text-slate-700">
+                                                        Settlement Progress
                                                     </span>
-                                                    <span className="text-sm text-gray-600">
+                                                    <span className="text-sm font-semibold text-slate-700">
                                                         {progressData.percentage}%
                                                     </span>
                                                 </div>
-                                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-xs text-slate-600">
+                                                        {progressData.completed}/{progressData.total} tasks completed
+                                                    </span>
+                                                </div>
+                                                <div className="w-full bg-slate-200 rounded-full h-3 shadow-inner">
                                                     <div
-                                                        className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                                                        className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-300 shadow-sm"
                                                         style={{ width: `${progressData.percentage}%` }}
                                                     ></div>
                                                 </div>
@@ -183,19 +232,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full px-4 py-2 border border-primary-600 text-primary-600 rounded-md hover:bg-primary-600 hover:text-white transition-colors duration-200"
+                                            className="w-full px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
                                         >
+                                            <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
                                             Logout
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="px-4">
+                                    <div className="px-4 py-3">
                                         <button
                                             onClick={() => {
                                                 setShowLoginForm(true);
                                                 setIsMobileMenuOpen(false);
                                             }}
-                                            className="w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-200"
+                                            className="w-full btn btn-primary text-sm py-3"
                                         >
                                             Log in
                                         </button>
@@ -208,7 +260,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </nav>
 
             {/* Main Content */}
-            <main className="flex-grow">
+            <main className="flex-grow pt-6">
                 {children}
             </main>
 
