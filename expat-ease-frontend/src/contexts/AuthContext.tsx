@@ -125,6 +125,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setSelectedCountry(null);
         localStorage.removeItem('token');
         localStorage.removeItem('selectedCountry');
+
+        // Redirect to homepage when logging out
+        window.location.href = '/';
     };
 
     const selectCountry = async (country: string) => {
