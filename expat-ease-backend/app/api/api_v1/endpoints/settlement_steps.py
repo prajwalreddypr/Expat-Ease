@@ -199,7 +199,7 @@ def _get_steps_with_documents(steps: List[SettlementStep], session: Session) -> 
         has_document = len(documents) > 0
         document_url = None
         if has_document and documents[0]:
-            document_url = f"/uploads/{documents[0].filename}"
+            document_url = documents[0].file_path  # Now it's already a Cloudinary URL
         
         response = SettlementStepResponse(
             id=step.id,
@@ -231,7 +231,7 @@ def _get_step_with_documents(step: SettlementStep, session: Session) -> Settleme
     has_document = len(documents) > 0
     document_url = None
     if has_document and documents[0]:
-        document_url = f"/uploads/{documents[0].filename}"
+        document_url = documents[0].file_path  # Now it's already a Cloudinary URL
     
     return SettlementStepResponse(
         id=step.id,

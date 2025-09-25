@@ -184,7 +184,7 @@ const ChecklistPage: React.FC = () => {
             ? {
               ...step,
               has_document: true,
-              document_url: `http://localhost:8000${documentData.download_url}`
+              document_url: documentData.download_url
             }
             : step
         )

@@ -44,8 +44,7 @@ app.add_middleware(
 # Include API routes
 app.include_router(api_router, prefix="/api/v1")
 
-# Mount static files for uploads
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Static files are now served from Cloudinary - no local mounting needed
 
 
 @app.get("/health")

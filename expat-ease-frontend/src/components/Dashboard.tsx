@@ -125,7 +125,7 @@ const Dashboard: React.FC = () => {
                         Welcome back, {user?.full_name || user?.email}!
                     </h1>
                     <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                        Here's your personalized dashboard to help you settle in {user?.country}.
+                        Here's your personalized dashboard to help you settle in {user?.settlement_country}.
                     </p>
                 </div>
 
