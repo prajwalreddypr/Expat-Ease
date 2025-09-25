@@ -3,41 +3,79 @@ import uuid
 from typing import Tuple
 from fastapi import UploadFile
 import aiofiles
+import cloudinary
+import cloudinary.uploader
+from app.core.config import settings
+
+# Global flag to track if Cloudinary has been configured
+_cloudinary_configured = False
+
+def _ensure_cloudinary_configured():
+    """Configure Cloudinary only when needed (lazy initialization)."""
+    global _cloudinary_configured
+    if not _cloudinary_configured:
+        cloudinary.config(
+            cloud_name=settings.CLOUDINARY_CLOUD_NAME,
+            api_key=settings.CLOUDINARY_API_KEY,
+            api_secret=settings.CLOUDINARY_API_SECRET
+        )
+        _cloudinary_configured = True
 
 
 async def save_upload_file(user_id: int, upload_file: UploadFile) -> Tuple[str, str, int, str]:
     """
-    Save uploaded file to user's directory and return file info.
+    Save uploaded file to Cloudinary and return file info.
     
     Args:
         user_id: ID of the user uploading the file
         upload_file: FastAPI UploadFile object
         
     Returns:
-        Tuple of (relative_path, filename, size, content_type)
+        Tuple of (cloudinary_url, filename, size, content_type)
     """
-    # Create user directory if it doesn't exist
-    user_dir = f"uploads/{user_id}"
-    os.makedirs(user_dir, exist_ok=True)
+    # Configure Cloudinary only when upload is actually needed
+    _ensure_cloudinary_configured()
     
     # Generate unique filename
     file_extension = os.path.splitext(upload_file.filename)[1] if upload_file.filename else ""
     unique_filename = f"{uuid.uuid4()}{file_extension}"
     
-    # Full path for saving
-    file_path = os.path.join(user_dir, unique_filename)
-    
     # Read file content
     content = await upload_file.read()
     file_size = len(content)
     
-    # Save file
-    async with aiofiles.open(file_path, 'wb') as f:
-        await f.write(content)
-    
-    # Return relative path, filename, size, and content type
-    relative_path = f"uploads/{user_id}/{unique_filename}"
-    return relative_path, unique_filename, file_size, upload_file.content_type or "application/octet-stream"
+    # Upload to Cloudinary
+    try:
+        # Determine resource type based on file extension
+        file_extension = file_extension.lower()
+        if file_extension in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
+            resource_type = "image"
+        elif file_extension in ['.mp4', '.avi', '.mov', '.wmv', '.mp3', '.wav', '.ogg']:
+            resource_type = "video"
+        else:
+            # For PDFs, DOCs, and other documents, use 'raw' but ensure public access
+            resource_type = "raw"
+        
+        result = cloudinary.uploader.upload(
+            content,
+            public_id=f"expat-ease/user_{user_id}/{unique_filename}",
+            folder="expat-ease",
+            resource_type=resource_type,
+            use_filename=True,
+            unique_filename=True,
+            overwrite=True,
+            access_mode="public",
+            type="upload",
+            invalidate=True,  # Force cache refresh
+            tags=["expat-ease", "public"]  # Add tags for easier management
+        )
+        
+        # Return Cloudinary URL, filename, size, and content type
+        cloudinary_url = result['secure_url']
+        return cloudinary_url, unique_filename, file_size, upload_file.content_type or "application/octet-stream"
+        
+    except Exception as e:
+        raise Exception(f"Failed to upload file to Cloudinary: {str(e)}")
 
 
 def get_file_extension(content_type: str) -> str:

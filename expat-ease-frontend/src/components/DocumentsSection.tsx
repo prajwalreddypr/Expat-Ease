@@ -138,8 +138,8 @@ const DocumentsSection: React.FC = () => {
     };
 
     const handleViewDocument = (document: Document) => {
-        // Open document in new tab
-        window.open(`http://localhost:8000${document.download_url}`, '_blank');
+        // Open document in new tab - download_url is now a full Cloudinary URL
+        window.open(document.download_url, '_blank');
     };
 
     const formatFileSize = (bytes: number): string => {

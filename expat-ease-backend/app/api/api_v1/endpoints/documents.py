@@ -12,6 +12,7 @@ from app.core.deps import get_current_active_user
 from app.db.session import get_session
 from app.models.document import Document, DocumentCreate, DocumentResponse
 from app.models.user import User
+from app.core.storage import save_upload_file
 
 router = APIRouter()
 
@@ -67,18 +68,11 @@ async def upload_document(
         # Validate file
         validate_file(file)
         
-        # Generate unique filename
-        file_ext = os.path.splitext(file.filename)[1].lower()
-        unique_filename = f"{uuid.uuid4()}{file_ext}"
-        file_path = os.path.join(UPLOAD_DIR, unique_filename)
-        
-        # Save file to disk
-        async with aio_open(file_path, 'wb') as f:
-            content = await file.read()
-            await f.write(content)
-        
-        # Get file size
-        file_size = len(content)
+        # Upload file to Cloudinary
+        cloudinary_url, unique_filename, file_size, content_type = await save_upload_file(
+            user_id=current_user.id, 
+            upload_file=file
+        )
         
         # Use custom name if provided, otherwise use original filename
         display_name = custom_name.strip() if custom_name and custom_name.strip() else file.filename
@@ -87,9 +81,9 @@ async def upload_document(
         document = Document(
             filename=unique_filename,
             original_filename=display_name,  # Store custom name as original_filename
-            file_path=file_path,
+            file_path=cloudinary_url,  # Now stores Cloudinary URL
             file_size=file_size,
-            content_type=file.content_type or "application/octet-stream",
+            content_type=content_type,
             settlement_step_id=settlement_step_id,
             user_id=current_user.id
         )
@@ -98,8 +92,7 @@ async def upload_document(
         session.commit()
         session.refresh(document)
         
-        # Create response with download URL
-        download_url = f"/uploads/{unique_filename}"
+        # Create response with Cloudinary URL
         response = DocumentResponse(
             id=document.id,
             filename=document.filename,
@@ -110,7 +103,7 @@ async def upload_document(
             settlement_step_id=document.settlement_step_id,
             user_id=document.user_id,
             created_at=document.created_at,
-            download_url=download_url
+            download_url=document.file_path  # Now it's already a Cloudinary URL
         )
         
         return response
@@ -151,7 +144,7 @@ def get_user_documents(
     # Add download URLs
     response_documents = []
     for doc in documents:
-        download_url = f"/uploads/{doc.filename}"
+        download_url = doc.file_path  # Now it's already a Cloudinary URL
         response_doc = DocumentResponse(
             id=doc.id,
             filename=doc.filename,
@@ -200,7 +193,7 @@ def get_document(
             detail="Document not found"
         )
     
-    download_url = f"/uploads/{document.filename}"
+    download_url = document.file_path  # Now it's already a Cloudinary URL
     response = DocumentResponse(
         id=document.id,
         filename=document.filename,
