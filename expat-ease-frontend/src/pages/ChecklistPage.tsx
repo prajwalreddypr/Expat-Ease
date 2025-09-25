@@ -16,7 +16,7 @@ interface SettlementStep {
 }
 
 const ChecklistPage: React.FC = () => {
-  const { user, token } = useAuth();
+  const { user, token, selectedCountry } = useAuth();
   const [steps, setSteps] = useState<SettlementStep[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -549,7 +549,7 @@ const ChecklistPage: React.FC = () => {
             </button>
           </div>
           <p className="text-lg text-slate-600 mb-6">
-            Complete these steps in order to settle in {user?.country}. Each completed step unlocks the next one.
+            Complete these steps in order to settle in {user?.settlement_country || selectedCountry}. Each completed step unlocks the next one.
           </p>
         </div>
 
@@ -566,7 +566,7 @@ const ChecklistPage: React.FC = () => {
             <div className="text-6xl mb-4">🎉</div>
             <h2 className="text-2xl font-bold text-green-900 mb-3">Congratulations!</h2>
             <p className="text-green-700 text-lg">
-              You've completed all settlement steps! You're now well-prepared to settle in {user?.country}.
+              You've completed all settlement steps! You're now well-prepared to settle in {user?.settlement_country || selectedCountry}.
             </p>
             <div className="mt-6">
               <span className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-full font-medium">

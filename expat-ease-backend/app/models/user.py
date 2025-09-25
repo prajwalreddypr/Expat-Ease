@@ -24,7 +24,8 @@ class User(SQLModel, table=True):
     hashed_password: str = Field(max_length=255)
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    country: Optional[str] = Field(default=None, max_length=100)
+    country: Optional[str] = Field(default=None, max_length=100)  # Country of Origin (from registration)
+    settlement_country: Optional[str] = Field(default=None, max_length=100)  # Settlement Country (France/Germany)
     country_selected: bool = Field(default=False)
     
     # Relationships
@@ -54,7 +55,8 @@ class UserRead(SQLModel):
     full_name: Optional[str]
     is_active: bool
     created_at: datetime
-    country: Optional[str]
+    country: Optional[str]  # Country of Origin
+    settlement_country: Optional[str]  # Settlement Country
     country_selected: bool
 
 
@@ -68,5 +70,6 @@ class UserUpdate(SQLModel):
     full_name: Optional[str] = Field(default=None, max_length=255)
     password: Optional[str] = Field(default=None, min_length=8, max_length=100)
     is_active: Optional[bool] = None
-    country: Optional[str] = Field(default=None, max_length=100)
+    country: Optional[str] = Field(default=None, max_length=100)  # Country of Origin
+    settlement_country: Optional[str] = Field(default=None, max_length=100)  # Settlement Country
     country_selected: Optional[bool] = None

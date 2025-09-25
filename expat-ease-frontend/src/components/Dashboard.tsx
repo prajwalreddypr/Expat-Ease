@@ -22,16 +22,18 @@ const ServicesSection: React.FC = () => (
 
 // Reusable Back to Dashboard component
 const BackToDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => (
-    <div className="glass border-b border-white/20 backdrop-blur-md px-4 py-4">
-        <button
-            onClick={onBack}
-            className="flex items-center text-slate-600 hover:text-slate-900 transition-all duration-200 hover:scale-105 font-semibold"
-        >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Dashboard
-        </button>
+    <div className="glass border-b border-white/20 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <button
+                onClick={onBack}
+                className="flex items-center text-slate-600 hover:text-slate-900 transition-all duration-200 hover:scale-105 font-semibold"
+            >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Dashboard
+            </button>
+        </div>
     </div>
 );
 
@@ -69,6 +71,13 @@ const Dashboard: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
+    // Scroll to top when switching to community view
+    React.useEffect(() => {
+        if (showCommunity) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [showCommunity]);
+
     if (showChecklist) {
         return (
             <div>
@@ -82,7 +91,9 @@ const Dashboard: React.FC = () => {
         return (
             <div>
                 <BackToDashboard onBack={resetAllStates} />
-                <JoinCommunity />
+                <div className="pt-2">
+                    <JoinCommunity />
+                </div>
             </div>
         );
     }

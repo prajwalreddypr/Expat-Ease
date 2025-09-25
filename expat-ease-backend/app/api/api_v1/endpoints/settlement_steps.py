@@ -74,7 +74,8 @@ def initialize_settlement_steps(
     ).all()
     
     if existing_steps:
-        # Return existing steps with document info
+        # If user already has steps, return them (don't create duplicates)
+        print(f"User {current_user.id} already has {len(existing_steps)} settlement steps, returning existing ones")
         return _get_steps_with_documents(existing_steps, session)
     
     # Create default settlement steps
