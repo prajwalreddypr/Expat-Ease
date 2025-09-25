@@ -83,7 +83,7 @@ class UserUpdate(SQLModel):
     """
     # Note: email is intentionally excluded - cannot be updated after registration
     full_name: Optional[str] = Field(default=None, max_length=255)
-        password: Optional[str] = Field(default=None, min_length=8, max_length=72)
+    password: Optional[str] = Field(default=None, min_length=8, max_length=72)
     is_active: Optional[bool] = None
     country: Optional[str] = Field(default=None, max_length=100)  # Country of Origin
     settlement_country: Optional[str] = Field(default=None, max_length=100)  # Settlement Country
