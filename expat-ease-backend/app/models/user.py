@@ -28,6 +28,13 @@ class User(SQLModel, table=True):
     settlement_country: Optional[str] = Field(default=None, max_length=100)  # Settlement Country (France/Germany)
     country_selected: bool = Field(default=False)
     
+    # Profile fields
+    profile_photo: Optional[str] = Field(default=None, max_length=500)  # Cloudinary URL for profile photo
+    street_address: Optional[str] = Field(default=None, max_length=255)
+    city: Optional[str] = Field(default=None, max_length=100)
+    postal_code: Optional[str] = Field(default=None, max_length=20)
+    phone_number: Optional[str] = Field(default=None, max_length=20)
+    
     # Relationships
     settlement_steps: list["SettlementStep"] = Relationship(back_populates="user")
 
@@ -58,6 +65,13 @@ class UserRead(SQLModel):
     country: Optional[str]  # Country of Origin
     settlement_country: Optional[str]  # Settlement Country
     country_selected: bool
+    
+    # Profile fields
+    profile_photo: Optional[str]  # Cloudinary URL for profile photo
+    street_address: Optional[str]
+    city: Optional[str]
+    postal_code: Optional[str]
+    phone_number: Optional[str]
 
 
 class UserUpdate(SQLModel):
@@ -65,11 +79,19 @@ class UserUpdate(SQLModel):
     Schema for updating user data.
     
     All fields are optional for partial updates.
+    Email cannot be updated after registration.
     """
-    email: Optional[str] = Field(default=None, max_length=255)
+    # Note: email is intentionally excluded - cannot be updated after registration
     full_name: Optional[str] = Field(default=None, max_length=255)
     password: Optional[str] = Field(default=None, min_length=8, max_length=100)
     is_active: Optional[bool] = None
     country: Optional[str] = Field(default=None, max_length=100)  # Country of Origin
     settlement_country: Optional[str] = Field(default=None, max_length=100)  # Settlement Country
     country_selected: Optional[bool] = None
+    
+    # Profile fields
+    profile_photo: Optional[str] = Field(default=None, max_length=500)  # Cloudinary URL for profile photo
+    street_address: Optional[str] = Field(default=None, max_length=255)
+    city: Optional[str] = Field(default=None, max_length=100)
+    postal_code: Optional[str] = Field(default=None, max_length=20)
+    phone_number: Optional[str] = Field(default=None, max_length=20)
