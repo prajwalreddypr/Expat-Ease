@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { getApiUrl } from '../utils/api';
 
 interface User {
     id: number;
@@ -69,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const fetchUserProfile = async (authToken: string) => {
         try {
-            const response = await fetch('http://localhost:8000/api/v1/users/me', {
+            const response = await fetch(getApiUrl('/api/v1/users/me'), {
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
                 },
@@ -104,7 +105,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+            const response = await fetch(getApiUrl('/api/v1/auth/login'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,7 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Update user's country and mark country_selected as true in the database
         if (user && token) {
             try {
-                const response = await fetch('http://localhost:8000/api/v1/users/me', {
+                const response = await fetch(getApiUrl('/api/v1/users/me'), {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${token}`,

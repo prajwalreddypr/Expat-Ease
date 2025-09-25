@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { getApiUrl } from '../utils/api';
 
 interface SettlementStep {
   id: number;
@@ -70,7 +71,7 @@ const ChecklistPage: React.FC = () => {
       console.log('Fetching settlement steps with token:', token ? 'present' : 'missing');
 
       // First try to get existing steps
-      const response = await fetch('http://localhost:8000/api/v1/settlement-steps/', {
+      const response = await fetch(getApiUrl('/api/v1/settlement-steps/'), {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ const ChecklistPage: React.FC = () => {
       // If no steps exist (empty array), initialize them
       if (data.length === 0) {
         console.log('No steps found, initializing...');
-        const initResponse = await fetch('http://localhost:8000/api/v1/settlement-steps/initialize', {
+        const initResponse = await fetch(getApiUrl('/api/v1/settlement-steps/initialize'), {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -122,7 +123,7 @@ const ChecklistPage: React.FC = () => {
 
   const updateStepCompletion = async (stepId: number, isCompleted: boolean) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/settlement-steps/${stepId}`, {
+      const response = await fetch(getApiUrl(`/api/v1/settlement-steps/${stepId}`), {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -163,7 +164,7 @@ const ChecklistPage: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(`http://localhost:8000/api/v1/documents/upload?settlement_step_id=${stepId}`, {
+      const response = await fetch(getApiUrl(`/api/v1/documents/upload?settlement_step_id=${stepId}`), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -215,7 +216,7 @@ const ChecklistPage: React.FC = () => {
       setIsResetting(true);
       setError(null);
 
-      const response = await fetch('http://localhost:8000/api/v1/settlement-steps/reset', {
+      const response = await fetch(getApiUrl('/api/v1/settlement-steps/reset'), {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

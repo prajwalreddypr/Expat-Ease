@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { getApiUrl } from '../utils/api';
 
 const Profile: React.FC = () => {
     const { user, token, refreshUser } = useAuth();
@@ -89,7 +90,7 @@ const Profile: React.FC = () => {
         formData.append('file', profilePhoto);
 
         try {
-            const response = await fetch('http://localhost:8000/api/v1/users/me/profile-photo', {
+            const response = await fetch(getApiUrl('/api/v1/users/me/profile-photo'), {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -123,7 +124,7 @@ const Profile: React.FC = () => {
             }
 
             // Update user profile
-            const response = await fetch('http://localhost:8000/api/v1/users/me', {
+            const response = await fetch(getApiUrl('/api/v1/users/me'), {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
