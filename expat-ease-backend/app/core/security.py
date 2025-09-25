@@ -27,7 +27,9 @@ def hash_password(plain_password: str) -> str:
     Returns:
         str: The hashed password
     """
-    return pwd_context.hash(plain_password)
+    # Truncate password to 72 bytes to prevent bcrypt errors
+    truncated_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    return pwd_context.hash(truncated_password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -41,7 +43,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         bool: True if the password matches, False otherwise
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    # Truncate password to 72 bytes to match the hashing behavior
+    truncated_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    return pwd_context.verify(truncated_password, hashed_password)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
