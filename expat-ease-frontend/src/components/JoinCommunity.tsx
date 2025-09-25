@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Community {
     name: string;
@@ -8,45 +9,89 @@ interface Community {
     category: string;
 }
 
-const communities: Community[] = [
-    {
-        name: "Restos du Cœur",
-        description: "Free food distribution and support services for those in need.",
-        image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=center",
-        link: "https://www.restosducoeur.org/",
-        category: "Food Support"
-    },
-    {
-        name: "AMAP Ile-de-France",
-        description: "Local farmers' co-ops providing fresh, organic groceries.",
-        image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&h=300&fit=crop&crop=center",
-        link: "https://amap-idf.org/",
-        category: "Food Co-op"
-    },
-    {
-        name: "Secours Populaire",
-        description: "Social solidarity organization offering emergency aid and support.",
-        image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=300&fit=crop&crop=center",
-        link: "https://www.secourspopulaire.fr/",
-        category: "Social Support"
-    },
-    {
-        name: "Croix-Rouge Française",
-        description: "Reduced rates for hotel food and emergency assistance services.",
-        image: "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?w=400&h=300&fit=crop&crop=center",
-        link: "https://www.croix-rouge.fr/",
-        category: "Food Support"
-    },
-    {
-        name: "Cop1.fr",
-        description: "Groceries distribution and community support services.",
-        image: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400&h=300&fit=crop&crop=center",
-        link: "https://cop1.fr/",
-        category: "Food Support"
+const getCommunities = (settlementCountry: string): Community[] => {
+    if (settlementCountry === 'Germany') {
+        return [
+            {
+                name: "Tafel Deutschland",
+                description: "Food banks providing free food distribution and support services across Germany.",
+                image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=center",
+                link: "https://www.tafel.de/",
+                category: "Food Support"
+            },
+            {
+                name: "Foodsharing Deutschland",
+                description: "Community initiative to reduce food waste by sharing surplus food.",
+                image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&h=300&fit=crop&crop=center",
+                link: "https://foodsharing.de/",
+                category: "Food Co-op"
+            },
+            {
+                name: "Caritas Deutschland",
+                description: "Catholic social services offering emergency aid, counseling, and community support.",
+                image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=300&fit=crop&crop=center",
+                link: "https://www.caritas.de/",
+                category: "Social Support"
+            },
+            {
+                name: "Deutsches Rotes Kreuz",
+                description: "German Red Cross providing emergency assistance and social services.",
+                image: "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?w=400&h=300&fit=crop&crop=center",
+                link: "https://www.drk.de/",
+                category: "Food Support"
+            },
+            {
+                name: "AWO (Arbeiterwohlfahrt)",
+                description: "Social welfare organization offering integration support and community services.",
+                image: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400&h=300&fit=crop&crop=center",
+                link: "https://www.awo.org/",
+                category: "Social Support"
+            }
+        ];
+    } else {
+        // France (default)
+        return [
+            {
+                name: "Restos du Cœur",
+                description: "Free food distribution and support services for those in need.",
+                image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=center",
+                link: "https://www.restosducoeur.org/",
+                category: "Food Support"
+            },
+            {
+                name: "AMAP Ile-de-France",
+                description: "Local farmers' co-ops providing fresh, organic groceries.",
+                image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400&h=300&fit=crop&crop=center",
+                link: "https://amap-idf.org/",
+                category: "Food Co-op"
+            },
+            {
+                name: "Secours Populaire",
+                description: "Social solidarity organization offering emergency aid and support.",
+                image: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=300&fit=crop&crop=center",
+                link: "https://www.secourspopulaire.fr/",
+                category: "Social Support"
+            },
+            {
+                name: "Croix-Rouge Française",
+                description: "Reduced rates for hotel food and emergency assistance services.",
+                image: "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?w=400&h=300&fit=crop&crop=center",
+                link: "https://www.croix-rouge.fr/",
+                category: "Food Support"
+            },
+            {
+                name: "Cop1.fr",
+                description: "Groceries distribution and community support services.",
+                image: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=400&h=300&fit=crop&crop=center",
+                link: "https://cop1.fr/",
+                category: "Food Support"
+            }
+        ];
     }
-];
+};
 
 const JoinCommunity: React.FC = () => {
+    const { user } = useAuth();
     const [showScrollButton, setShowScrollButton] = useState(false);
 
     const handleVisitWebsite = (link: string) => {
@@ -81,14 +126,14 @@ const JoinCommunity: React.FC = () => {
                         Join the Community
                     </h1>
                     <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
-                        Connect with local organizations and initiatives that support expats in France.
+                        Connect with local organizations and initiatives that support expats in {user?.settlement_country || 'France'}.
                         Discover resources for food, housing, energy, and community support.
                     </p>
                 </div>
 
                 {/* Community Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {communities.map((community, index) => (
+                    {getCommunities(user?.settlement_country || 'France').map((community, index) => (
                         <div
                             key={index}
                             className="card-hover bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden"
@@ -171,14 +216,20 @@ const JoinCommunity: React.FC = () => {
                             <div className="text-4xl mb-4">📞</div>
                             <h3 className="text-xl font-bold text-slate-800 mb-3">Emergency Numbers</h3>
                             <p className="text-slate-600">
-                                Police: 17, Medical: 15, Fire: 18
+                                {user?.settlement_country === 'Germany' 
+                                    ? 'Police: 110, Medical: 112, Fire: 112'
+                                    : 'Police: 17, Medical: 15, Fire: 18'
+                                }
                             </p>
                         </div>
                         <div className="text-center p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 card-hover">
                             <div className="text-4xl mb-4">🏛️</div>
                             <h3 className="text-xl font-bold text-slate-800 mb-3">Government Services</h3>
                             <p className="text-slate-600">
-                                Visit service-public.fr for official information
+                                {user?.settlement_country === 'Germany'
+                                    ? 'Visit service-bw.de for official information'
+                                    : 'Visit service-public.fr for official information'
+                                }
                             </p>
                         </div>
                         <div className="text-center p-8 bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl border border-violet-100 card-hover">
