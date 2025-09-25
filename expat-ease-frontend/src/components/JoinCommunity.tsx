@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Community {
     name: string;
@@ -47,8 +47,29 @@ const communities: Community[] = [
 ];
 
 const JoinCommunity: React.FC = () => {
+    const [showScrollButton, setShowScrollButton] = useState(false);
+
     const handleVisitWebsite = (link: string) => {
         window.open(link, '_blank', 'noopener,noreferrer');
+    };
+
+    // Scroll detection for scroll-to-top button
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            setShowScrollButton(scrollTop > 300);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Scroll to top function
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     };
 
     return (
@@ -146,7 +167,7 @@ const JoinCommunity: React.FC = () => {
                         Need More Resources?
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 card-hover">
+                        <div className="text-center p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 card-hover">
                             <div className="text-4xl mb-4">📞</div>
                             <h3 className="text-xl font-bold text-slate-800 mb-3">Emergency Numbers</h3>
                             <p className="text-slate-600">
@@ -170,6 +191,24 @@ const JoinCommunity: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Scroll to Top Button */}
+            {showScrollButton && (
+                <button
+                    onClick={scrollToTop}
+                    className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
+                    aria-label="Scroll to top"
+                >
+                    <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                </button>
+            )}
         </div>
     );
 };

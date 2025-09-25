@@ -121,7 +121,7 @@ const AppContent: React.FC = () => {
               Welcome to Expat Ease
             </h1>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Your comprehensive guide to settling in a new city. From documents to community,
+              Your comprehensive guide to settling in a new city. <br />Documents to community,
               we've got everything you need for a smooth transition.
             </p>
           </div>
@@ -190,7 +190,7 @@ const AppContent: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
             <div className="space-y-6">
               <div className="relative">
-                <div className="card-hover bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 rounded-2xl border border-blue-100">
+                <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100">
                   <img
                     src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&h=300&fit=crop&crop=center"
                     alt="Airplane landing"
@@ -198,7 +198,7 @@ const AppContent: React.FC = () => {
                   />
                   <div className="absolute top-4 left-4">
                     <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full">
-                      <span className="text-blue-600 font-semibold">✈️ New Journey</span>
+                      <span className="text-emerald-600 font-semibold">✈️ New Journey</span>
                     </div>
                   </div>
                 </div>
@@ -225,7 +225,7 @@ const AppContent: React.FC = () => {
 
           {/* Footer */}
           <div className="text-center">
-            <div className="card-hover bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100 inline-block">
+            <div className="card-hover bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-xl border border-teal-100 inline-block">
               <p className="text-slate-600 font-medium">
                 Built by <span className="text-gradient font-bold">Prajwal</span> with ❤️ for the expat community
               </p>
@@ -237,7 +237,7 @@ const AppContent: React.FC = () => {
         {showScrollToTop && (
           <button
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center"
+            className="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center"
             aria-label="Scroll to top"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

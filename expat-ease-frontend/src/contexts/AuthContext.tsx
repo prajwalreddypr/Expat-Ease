@@ -9,6 +9,13 @@ interface User {
     country: string | null;  // Country of Origin
     settlement_country: string | null;  // Settlement Country
     country_selected: boolean;
+
+    // Profile fields
+    profile_photo: string | null;  // Cloudinary URL for profile photo
+    street_address: string | null;
+    city: string | null;
+    postal_code: string | null;
+    phone_number: string | null;
 }
 
 interface AuthContextType {
@@ -18,6 +25,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     logout: () => void;
     selectCountry: (country: string) => void;
+    refreshUser: () => Promise<void>;
     isLoading: boolean;
 }
 
@@ -166,6 +174,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    const refreshUser = async () => {
+        if (token) {
+            await fetchUserProfile(token);
+        }
+    };
+
     const value: AuthContextType = {
         user,
         token,
@@ -173,6 +187,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         login,
         logout,
         selectCountry,
+        refreshUser,
         isLoading,
     };
 

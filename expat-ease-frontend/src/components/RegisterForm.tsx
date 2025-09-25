@@ -10,7 +10,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose, onOpenLogin }) => 
         email: '',
         password: '',
         fullName: '',
-        country_of_origin: 'United States', // Changed to country_of_origin for clarity
+        country_of_origin: '', // No default value - field starts empty
     });
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);

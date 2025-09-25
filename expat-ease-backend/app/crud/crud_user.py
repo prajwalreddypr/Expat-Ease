@@ -83,7 +83,7 @@ def update_user(session: Session, user_id: int, user_in: UserUpdate) -> Optional
     Args:
         session: Database session
         user_id: ID of user to update
-        user_in: User update data
+        user_in: User update data (email cannot be updated)
         
     Returns:
         Optional[User]: Updated user if found, None otherwise
@@ -99,7 +99,7 @@ def update_user(session: Session, user_id: int, user_in: UserUpdate) -> Optional
     if "password" in update_data:
         update_data["hashed_password"] = hash_password(update_data.pop("password"))
     
-    # Update user fields
+    # Update user fields (email is not included in UserUpdate schema)
     for field, value in update_data.items():
         setattr(user, field, value)
     

@@ -54,7 +54,7 @@ const ChecklistStep: React.FC<ChecklistStepProps> = ({
             case 'completed':
                 return <span className="text-green-500">✅</span>;
             case 'in_progress':
-                return <span className="text-blue-500">🔄</span>;
+                return <span className="text-emerald-500">🔄</span>;
             default:
                 return <span className="text-gray-400">⭕</span>;
         }
@@ -250,7 +250,7 @@ const ChecklistStep: React.FC<ChecklistStepProps> = ({
                     <div className="flex items-center space-x-2">
                         <span className="text-sm text-gray-500">Status:</span>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${task.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            task.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                            task.status === 'in_progress' ? 'bg-emerald-100 text-emerald-800' :
                                 'bg-gray-100 text-gray-800'
                             }`}>
                             {task.status.replace('_', ' ').toUpperCase()}
@@ -262,7 +262,7 @@ const ChecklistStep: React.FC<ChecklistStepProps> = ({
                             <button
                                 onClick={() => handleStatusChange('in_progress')}
                                 disabled={task.status === 'in_progress'}
-                                className="px-3 py-1 text-sm border border-blue-300 text-blue-700 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-3 py-1 text-sm border border-emerald-300 text-emerald-700 rounded-md hover:bg-emerald-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Start
                             </button>

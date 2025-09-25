@@ -270,7 +270,7 @@ const ChecklistPage: React.FC = () => {
             <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${step.is_completed
               ? 'bg-green-500 text-white'
               : step.is_unlocked
-                ? 'bg-blue-500 text-white'
+                ? 'bg-emerald-500 text-white'
                 : 'bg-gray-300 text-gray-600'
               }`}>
               {step.step_number}
@@ -312,11 +312,11 @@ const ChecklistPage: React.FC = () => {
 
               {/* Document Upload Section */}
               {step.is_completed && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <div className="mt-4 p-4 bg-emerald-50 rounded-xl border border-emerald-100">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-blue-900 mb-1">Upload Document</h4>
-                      <p className="text-sm text-blue-700">
+                      <h4 className="font-medium text-emerald-900 mb-1">Upload Document</h4>
+                      <p className="text-sm text-emerald-700">
                         {step.has_document ? 'Document uploaded successfully' : 'Upload a related document (optional)'}
                       </p>
                     </div>
@@ -324,7 +324,7 @@ const ChecklistPage: React.FC = () => {
                     {!step.has_document && !showUpload && (
                       <button
                         onClick={() => setShowUpload(true)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm"
+                        className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors duration-200 text-sm"
                       >
                         Upload
                       </button>
@@ -349,7 +349,7 @@ const ChecklistPage: React.FC = () => {
                       <input
                         type="file"
                         onChange={handleFileChange}
-                        className="w-full px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-full px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
                         accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                         aria-label="Upload document file"
                       />
@@ -363,7 +363,7 @@ const ChecklistPage: React.FC = () => {
                             <button
                               onClick={handleUpload}
                               disabled={uploadingFile === step.id}
-                              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm disabled:opacity-50"
+                              className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors duration-200 text-sm disabled:opacity-50"
                             >
                               {uploadingFile === step.id ? 'Uploading...' : 'Upload'}
                             </button>
@@ -491,7 +491,7 @@ const ChecklistPage: React.FC = () => {
     return (
       <div className="min-h-screen py-8 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your settlement checklist...</p>
         </div>
       </div>
@@ -508,7 +508,7 @@ const ChecklistPage: React.FC = () => {
           <p className="text-gray-600 mb-4">{error}</p>
           <button
             onClick={initializeOrFetchSteps}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+            className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors duration-200"
           >
             Try Again
           </button>
@@ -593,7 +593,7 @@ const ChecklistPage: React.FC = () => {
               <h3 className="text-sm font-bold text-slate-800">Progress</h3>
             </div>
             <div className="text-right">
-              <span className="text-lg font-bold text-blue-600">{progressPercentage}%</span>
+              <span className="text-lg font-bold text-emerald-600">{progressPercentage}%</span>
               <p className="text-xs text-slate-500">{completedSteps}/{totalSteps}</p>
             </div>
           </div>
@@ -602,7 +602,7 @@ const ChecklistPage: React.FC = () => {
           <div className="relative mb-3">
             <div className="w-full bg-slate-200 rounded-full h-3 shadow-inner">
               <div
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-500 shadow-sm"
+                className="bg-gradient-to-r from-emerald-500 to-teal-600 h-3 rounded-full transition-all duration-500 shadow-sm"
                 style={{ width: `${progressPercentage}%` } as React.CSSProperties}
               ></div>
             </div>
@@ -613,7 +613,7 @@ const ChecklistPage: React.FC = () => {
             {steps.map((step) => (
               <div key={step.id} className="text-center flex-1">
                 <div className={`w-2 h-2 rounded-full mx-auto mb-1 ${step.is_completed ? 'bg-green-500' :
-                  step.is_unlocked ? 'bg-blue-500' : 'bg-gray-300'
+                  step.is_unlocked ? 'bg-emerald-500' : 'bg-gray-300'
                   }`}></div>
                 <span className="text-xs text-slate-400">{step.step_number}</span>
               </div>
@@ -628,7 +628,7 @@ const ChecklistPage: React.FC = () => {
               </span>
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${completedSteps === totalSteps
                 ? 'bg-green-100 text-green-700'
-                : 'bg-blue-100 text-blue-700'
+                : 'bg-emerald-100 text-emerald-700'
                 }`}>
                 {completedSteps === totalSteps ? '🎉 Done' : '📋 In Progress'}
               </span>
@@ -641,7 +641,7 @@ const ChecklistPage: React.FC = () => {
       {showScrollToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center"
+          className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center"
           aria-label="Scroll to top"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

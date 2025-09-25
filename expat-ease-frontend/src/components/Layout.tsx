@@ -73,10 +73,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 <div className="flex items-center space-x-6">
                                     {/* User Info */}
                                     <div className="hidden sm:flex items-center space-x-4">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
-                                            <span className="text-white text-sm font-semibold">
-                                                {(user.full_name || user.email).charAt(0).toUpperCase()}
-                                            </span>
+                                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                                            {user.profile_photo ? (
+                                                <img
+                                                    src={user.profile_photo}
+                                                    alt="Profile"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <span className="text-white text-sm font-semibold">
+                                                    {(user.full_name || user.email).charAt(0).toUpperCase()}
+                                                </span>
+                                            )}
                                         </div>
                                         <div className="flex flex-col justify-center">
                                             <span className="text-sm font-semibold text-slate-700 leading-tight">
@@ -87,6 +95,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                             </span>
                                         </div>
                                     </div>
+
+                                    {/* Profile Button */}
+                                    <button
+                                        onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-profile'))}
+                                        className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                                    >
+                                        <svg className="w-4 h-4 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        Profile
+                                    </button>
 
                                     {/* Logout Button - Industry standard spacing */}
                                     <button
@@ -103,7 +122,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 <div className="flex items-center space-x-3">
                                     <button
                                         onClick={() => setShowLoginForm(true)}
-                                        className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                                        className="px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200"
                                     >
                                         Log in
                                     </button>
@@ -131,10 +150,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                     <div className="px-4 py-3">
                                         {/* Mobile User Info */}
                                         <div className="flex items-center space-x-4 mb-6">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
-                                                <span className="text-white text-lg font-semibold">
-                                                    {(user.full_name || user.email).charAt(0).toUpperCase()}
-                                                </span>
+                                            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                                                {user.profile_photo ? (
+                                                    <img
+                                                        src={user.profile_photo}
+                                                        alt="Profile"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-white text-lg font-semibold">
+                                                        {(user.full_name || user.email).charAt(0).toUpperCase()}
+                                                    </span>
+                                                )}
                                             </div>
                                             <div className="flex flex-col justify-center">
                                                 <span className="text-base font-semibold text-slate-700 leading-tight">
@@ -146,6 +173,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                             </div>
                                         </div>
 
+                                        {/* Mobile Profile Button */}
+                                        <button
+                                            onClick={() => {
+                                                window.dispatchEvent(new CustomEvent('navigate-to-profile'));
+                                                setIsMobileMenuOpen(false);
+                                            }}
+                                            className="w-full px-6 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md mb-4"
+                                        >
+                                            <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                            Profile
+                                        </button>
 
                                         <button
                                             onClick={handleLogout}
@@ -164,7 +204,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                                 setShowLoginForm(true);
                                                 setIsMobileMenuOpen(false);
                                             }}
-                                            className="w-full px-4 py-3 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                                            className="w-full px-4 py-3 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200"
                                         >
                                             Log in
                                         </button>
