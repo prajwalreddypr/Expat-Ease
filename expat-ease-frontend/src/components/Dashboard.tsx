@@ -3,22 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import JoinCommunity from './JoinCommunity';
 import ChecklistPage from '../pages/ChecklistPage';
 import DocumentsSection from './DocumentsSection';
-
-// Placeholder components for other sections
-
-const ServicesSection: React.FC = () => (
-    <div className="min-h-screen py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-                <div className="card bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-8 rounded-3xl border border-violet-100">
-                    <div className="text-6xl mb-6">🏛️</div>
-                    <h1 className="text-3xl font-bold text-gradient mb-4 leading-tight py-2">Local Services</h1>
-                    <p className="text-lg text-slate-600 leading-relaxed">Find local services and government offices</p>
-                </div>
-            </div>
-        </div>
-    </div>
-);
+import Services from './Services';
+import Profile from './Profile';
 
 // Reusable Back to Dashboard component
 const BackToDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => (
@@ -43,6 +29,7 @@ const Dashboard: React.FC = () => {
     const [showCommunity, setShowCommunity] = React.useState(false);
     const [showDocuments, setShowDocuments] = React.useState(false);
     const [showServices, setShowServices] = React.useState(false);
+    const [showProfile, setShowProfile] = React.useState(false);
 
     // Reset all states when going back to dashboard
     const resetAllStates = () => {
@@ -50,6 +37,7 @@ const Dashboard: React.FC = () => {
         setShowCommunity(false);
         setShowDocuments(false);
         setShowServices(false);
+        setShowProfile(false);
     };
 
     // Listen for logo click events to reset dashboard states
@@ -58,11 +46,17 @@ const Dashboard: React.FC = () => {
             resetAllStates();
         };
 
-        // Listen for custom event from Layout component
+        const handleProfileNavigation = () => {
+            setShowProfile(true);
+        };
+
+        // Listen for custom events from Layout component
         window.addEventListener('dashboard-reset', handleLogoClick);
+        window.addEventListener('navigate-to-profile', handleProfileNavigation);
 
         return () => {
             window.removeEventListener('dashboard-reset', handleLogoClick);
+            window.removeEventListener('navigate-to-profile', handleProfileNavigation);
         };
     }, []);
 
@@ -111,14 +105,23 @@ const Dashboard: React.FC = () => {
         return (
             <div>
                 <BackToDashboard onBack={resetAllStates} />
-                <ServicesSection />
+                <Services />
+            </div>
+        );
+    }
+
+    if (showProfile) {
+        return (
+            <div>
+                <BackToDashboard onBack={resetAllStates} />
+                <Profile />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen py-8">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen pt-16">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 {/* Welcome Section */}
                 <div className="mb-10 text-center">
                     <h1 className="text-4xl font-bold text-gradient mb-3 leading-tight py-2">
@@ -136,9 +139,9 @@ const Dashboard: React.FC = () => {
                         <h2 className="text-xl font-bold text-slate-800 mb-6 text-center">Quick Access</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {/* Settlement Checklist */}
-                            <div className="card-hover bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6 rounded-2xl border border-blue-100 flex flex-col h-full">
+                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
                                 <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
                                         <span className="text-white text-xl">📋</span>
                                     </div>
                                 </div>
@@ -148,16 +151,16 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={() => setShowChecklist(true)}
-                                    className="btn btn-primary w-full text-sm py-2"
+                                    className="btn bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl w-full text-sm py-2"
                                 >
                                     View Checklist
                                 </button>
                             </div>
 
                             {/* Documents */}
-                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
+                            <div className="card-hover bg-gradient-to-br from-teal-50 via-cyan-50 to-sky-50 p-6 rounded-2xl border border-teal-100 flex flex-col h-full">
                                 <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
                                         <span className="text-white text-xl">📄</span>
                                     </div>
                                 </div>
@@ -167,16 +170,16 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={() => setShowDocuments(true)}
-                                    className="btn w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
+                                    className="btn w-full bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
                                 >
                                     Manage Documents
                                 </button>
                             </div>
 
                             {/* Services */}
-                            <div className="card-hover bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-6 rounded-2xl border border-violet-100 flex flex-col h-full">
+                            <div className="card-hover bg-gradient-to-br from-cyan-50 via-sky-50 to-teal-50 p-6 rounded-2xl border border-cyan-100 flex flex-col h-full">
                                 <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
                                         <span className="text-white text-xl">🏛️</span>
                                     </div>
                                 </div>
@@ -186,16 +189,16 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={() => setShowServices(true)}
-                                    className="btn w-full bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
+                                    className="btn w-full bg-gradient-to-r from-cyan-500 to-sky-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
                                 >
                                     Explore Services
                                 </button>
                             </div>
 
                             {/* Community */}
-                            <div className="card-hover bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-6 rounded-2xl border border-rose-100 flex flex-col h-full">
+                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50 p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
                                 <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
                                         <span className="text-white text-xl">💬</span>
                                     </div>
                                 </div>
@@ -205,7 +208,7 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <button
                                     onClick={() => setShowCommunity(true)}
-                                    className="btn w-full bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
+                                    className="btn w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
                                 >
                                     Join Community
                                 </button>
@@ -213,22 +216,6 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
 
-
-                    {/* Quick Actions */}
-                    <div className="card">
-                        <h3 className="text-xl font-bold text-slate-800 mb-6 text-center">Quick Actions</h3>
-                        <div className="flex flex-wrap justify-center gap-4">
-                            <button className="btn btn-primary text-sm py-2 px-4">
-                                Update Profile
-                            </button>
-                            <button className="btn btn-secondary text-sm py-2 px-4">
-                                Export Data
-                            </button>
-                            <button className="btn btn-outline text-sm py-2 px-4">
-                                Settings
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

@@ -146,7 +146,7 @@ const JoinCommunity: React.FC = () => {
                         Need More Resources?
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <div className="text-center p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 card-hover">
+                        <div className="text-center p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 card-hover">
                             <div className="text-4xl mb-4">📞</div>
                             <h3 className="text-xl font-bold text-slate-800 mb-3">Emergency Numbers</h3>
                             <p className="text-slate-600">
