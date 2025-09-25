@@ -8,3 +8,4 @@ pydantic-settings
 python-jose[cryptography]
 aiofiles
 cloudinary
+psycopg2-binary
