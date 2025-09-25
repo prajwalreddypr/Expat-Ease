@@ -46,7 +46,7 @@ class UserCreate(SQLModel):
     Used when registering a new user account.
     """
     email: str = Field(max_length=255)
-    password: str = Field(min_length=8, max_length=100)
+    password: str = Field(min_length=8, max_length=72)
     full_name: Optional[str] = Field(default=None, max_length=255)
     country: Optional[str] = Field(default=None, max_length=100)
 
@@ -83,7 +83,7 @@ class UserUpdate(SQLModel):
     """
     # Note: email is intentionally excluded - cannot be updated after registration
     full_name: Optional[str] = Field(default=None, max_length=255)
-    password: Optional[str] = Field(default=None, min_length=8, max_length=100)
+        password: Optional[str] = Field(default=None, min_length=8, max_length=72)
     is_active: Optional[bool] = None
     country: Optional[str] = Field(default=None, max_length=100)  # Country of Origin
     settlement_country: Optional[str] = Field(default=None, max_length=100)  # Settlement Country
