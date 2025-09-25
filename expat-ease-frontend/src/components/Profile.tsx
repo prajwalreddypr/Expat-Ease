@@ -249,9 +249,9 @@ const Profile: React.FC = () => {
                         )}
 
                         {/* Form Fields */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                             {/* Full Name */}
-                            <div className="md:col-span-2">
+                            <div className="sm:col-span-2">
                                 <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-2">
                                     Full Name
                                 </label>
@@ -261,13 +261,12 @@ const Profile: React.FC = () => {
                                     name="full_name"
                                     value={formData.full_name}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50"
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50 text-sm sm:text-base"
                                 />
                             </div>
 
-
                             {/* Phone Number */}
-                            <div>
+                            <div className="sm:col-span-2">
                                 <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700 mb-2">
                                     Phone Number
                                 </label>
@@ -278,12 +277,12 @@ const Profile: React.FC = () => {
                                     value={formData.phone_number}
                                     onChange={handleChange}
                                     placeholder="+33 1 23 45 67 89"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50"
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50 text-sm sm:text-base"
                                 />
                             </div>
 
                             {/* Street Address */}
-                            <div className="md:col-span-2">
+                            <div className="sm:col-span-2">
                                 <label htmlFor="street_address" className="block text-sm font-medium text-gray-700 mb-2">
                                     Street Address
                                 </label>
@@ -294,7 +293,7 @@ const Profile: React.FC = () => {
                                     value={formData.street_address}
                                     onChange={handleChange}
                                     placeholder="123 Main Street"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50"
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50 text-sm sm:text-base"
                                 />
                             </div>
 
@@ -310,7 +309,7 @@ const Profile: React.FC = () => {
                                     value={formData.city}
                                     onChange={handleChange}
                                     placeholder="Paris"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50"
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50 text-sm sm:text-base"
                                 />
                             </div>
 
@@ -326,7 +325,7 @@ const Profile: React.FC = () => {
                                     value={formData.postal_code}
                                     onChange={handleChange}
                                     placeholder="75001"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50"
+                                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-gray-50 text-sm sm:text-base"
                                 />
                             </div>
                         </div>
