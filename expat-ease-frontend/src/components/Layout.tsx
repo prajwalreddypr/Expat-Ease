@@ -13,37 +13,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showLoginForm, setShowLoginForm] = useState(false);
     const [showRegisterForm, setShowRegisterForm] = useState(false);
-    const [progressData, setProgressData] = useState<{ completed: number; total: number; percentage: number } | null>(null);
-
-    // Fetch progress data when user is logged in
-    useEffect(() => {
-        if (user && token && selectedCountry) {
-            fetchProgressData();
-        } else {
-            setProgressData(null);
-        }
-    }, [user, token, selectedCountry]);
-
-    const fetchProgressData = async () => {
-        try {
-            const response = await fetch('http://localhost:8000/api/v1/tasks/', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-
-            if (response.ok) {
-                const tasks = await response.json();
-                const completed = tasks.filter((task: any) => task.status === 'completed').length;
-                const total = tasks.length;
-                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-                setProgressData({ completed, total, percentage });
-            }
-        } catch (error) {
-            console.error('Failed to fetch progress data:', error);
-        }
-    };
 
     const handleLogout = () => {
         logout();
@@ -97,60 +66,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             </button>
                         </div>
 
-                        {/* Center Section - Progress Bar (Desktop Only) */}
-                        {user && progressData && (
-                            <div className="hidden lg:flex items-center flex-1 max-w-xl mx-8">
-                                <div className="w-full">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="text-sm font-medium text-slate-600">
-                                            Progress
-                                        </span>
-                                        <span className="text-sm font-medium text-slate-600">
-                                            {progressData.completed}/{progressData.total}
-                                        </span>
-                                    </div>
-                                    <div className="relative">
-                                        <div className="w-full bg-slate-200 rounded-full h-3 shadow-inner">
-                                            <div
-                                                className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-300 shadow-sm"
-                                                style={{ width: `${progressData.percentage}%` }}
-                                            ></div>
-                                        </div>
-                                        <div className="absolute top-4 left-0 right-0 text-center">
-                                            <span className="text-xs font-semibold text-slate-700 bg-white px-2 py-1 rounded-full shadow-sm">
-                                                {progressData.percentage}%
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
 
                         {/* Right Section - User Actions */}
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-6">
                             {user ? (
-                                <div className="flex items-center space-x-3">
+                                <div className="flex items-center space-x-6">
                                     {/* User Info */}
-                                    <div className="hidden sm:flex items-center space-x-3">
-                                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                    <div className="hidden sm:flex items-center space-x-4">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
                                             <span className="text-white text-sm font-semibold">
                                                 {(user.full_name || user.email).charAt(0).toUpperCase()}
                                             </span>
                                         </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-medium text-slate-700 leading-tight">
+                                        <div className="flex flex-col justify-center">
+                                            <span className="text-sm font-semibold text-slate-700 leading-tight">
                                                 {user.full_name || user.email.split('@')[0]}
                                             </span>
-                                            <span className="text-xs text-slate-500 leading-tight">
-                                                {user.country || 'No country selected'}
+                                            <span className="text-xs text-slate-500 leading-tight mt-0.5">
+                                                {user.country || 'Not specified'}
                                             </span>
                                         </div>
                                     </div>
 
-                                    {/* Logout Button - Properly sized */}
+                                    {/* Logout Button - Industry standard spacing */}
                                     <button
                                         onClick={handleLogout}
-                                        className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
+                                        className="px-6 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
                                     >
                                         <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -190,49 +131,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                     <div className="px-4 py-3">
                                         {/* Mobile User Info */}
                                         <div className="flex items-center space-x-4 mb-6">
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
                                                 <span className="text-white text-lg font-semibold">
                                                     {(user.full_name || user.email).charAt(0).toUpperCase()}
                                                 </span>
                                             </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-base font-medium text-slate-700 leading-tight">
+                                            <div className="flex flex-col justify-center">
+                                                <span className="text-base font-semibold text-slate-700 leading-tight">
                                                     {user.full_name || user.email.split('@')[0]}
                                                 </span>
-                                                <span className="text-sm text-slate-500 leading-tight">
-                                                    {user.country || 'No country selected'}
+                                                <span className="text-sm text-slate-500 leading-tight mt-0.5">
+                                                    {user.country || 'Not specified'}
                                                 </span>
                                             </div>
                                         </div>
 
-                                        {/* Mobile Progress Bar */}
-                                        {progressData && (
-                                            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                                                <div className="flex items-center justify-between mb-3">
-                                                    <span className="text-sm font-semibold text-slate-700">
-                                                        Settlement Progress
-                                                    </span>
-                                                    <span className="text-sm font-semibold text-slate-700">
-                                                        {progressData.percentage}%
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-xs text-slate-600">
-                                                        {progressData.completed}/{progressData.total} tasks completed
-                                                    </span>
-                                                </div>
-                                                <div className="w-full bg-slate-200 rounded-full h-3 shadow-inner">
-                                                    <div
-                                                        className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-300 shadow-sm"
-                                                        style={{ width: `${progressData.percentage}%` }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        )}
 
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
+                                            className="w-full px-6 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
                                         >
                                             <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

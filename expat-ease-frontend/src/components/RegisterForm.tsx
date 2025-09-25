@@ -10,7 +10,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose, onOpenLogin }) => 
         email: '',
         password: '',
         fullName: '',
-        country: 'France',
+        country_of_origin: 'United States', // Changed to country_of_origin for clarity
     });
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +31,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose, onOpenLogin }) => 
                     email: formData.email,
                     password: formData.password,
                     full_name: formData.fullName,
-                    country: formData.country,
+                    country: formData.country_of_origin, // Send as country for backend compatibility
                 }),
             });
 
@@ -128,20 +128,20 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose, onOpenLogin }) => 
                     </div>
 
                     <div>
-                        <select
-                            id="country"
-                            name="country"
-                            value={formData.country}
+                        <label htmlFor="country_of_origin" className="block text-sm font-medium text-gray-700 mb-1">
+                            Country of Origin
+                        </label>
+                        <input
+                            type="text"
+                            id="country_of_origin"
+                            name="country_of_origin"
+                            value={formData.country_of_origin}
                             onChange={handleChange}
                             className="w-full px-3 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 bg-gray-50"
-                            aria-label="Country"
-                        >
-                            <option value="France">France</option>
-                            <option value="Germany">Germany</option>
-                            <option value="Spain">Spain</option>
-                            <option value="Italy">Italy</option>
-                            <option value="Other">Other</option>
-                        </select>
+                            placeholder="e.g., United States, Spain, India..."
+                            aria-label="Country of Origin"
+                        />
+                        <p className="mt-1 text-xs text-gray-500">This is for display purposes only</p>
                     </div>
 
                     {error && (

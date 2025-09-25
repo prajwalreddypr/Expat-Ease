@@ -158,14 +158,14 @@ async def save_document_record(
     if not task or task.user_id != user_id:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    # Save file to storage
-    relative_path, filename, file_size, content_type = await save_upload_file(user_id, upload_file)
+    # Save file to Cloudinary
+    cloudinary_url, filename, file_size, content_type = await save_upload_file(user_id, upload_file)
     
     # Create document record
     document = Document(
         filename=filename,
         original_filename=upload_file.filename or "unknown",
-        file_path=relative_path,
+        file_path=cloudinary_url,  # Now stores Cloudinary URL
         file_size=file_size,
         content_type=content_type,
         task_id=task_id,

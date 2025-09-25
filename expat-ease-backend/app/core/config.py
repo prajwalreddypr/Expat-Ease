@@ -19,9 +19,15 @@ class Settings(BaseSettings):
     # Secret key for JWT tokens (to be implemented later)
     SECRET_KEY: str = "changeme123"
     
+    # Cloudinary configuration
+    CLOUDINARY_CLOUD_NAME: str = ""
+    CLOUDINARY_API_KEY: str = ""
+    CLOUDINARY_API_SECRET: str = ""
+    
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "allow"
 
 
 # Global settings instance

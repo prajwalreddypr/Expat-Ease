@@ -52,21 +52,21 @@ const JoinCommunity: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen py-12">
+        <div className="min-h-screen py-4">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="text-center mb-16">
-                    <h1 className="text-5xl font-bold text-gradient mb-6 leading-tight py-2">
+                <div className="text-center mb-4">
+                    <h1 className="text-4xl font-bold text-gradient mb-3 leading-tight py-2">
                         Join the Community
                     </h1>
-                    <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
                         Connect with local organizations and initiatives that support expats in France.
                         Discover resources for food, housing, energy, and community support.
                     </p>
                 </div>
 
                 {/* Community Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {communities.map((community, index) => (
                         <div
                             key={index}

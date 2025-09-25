@@ -6,7 +6,8 @@ interface User {
     full_name: string | null;
     is_active: boolean;
     created_at: string;
-    country: string | null;
+    country: string | null;  // Country of Origin
+    settlement_country: string | null;  // Settlement Country
     country_selected: boolean;
 }
 
@@ -72,9 +73,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
                 // Only auto-set country if user has completed country selection flow
                 // Registration country doesn't count - only country selection flow does
-                if (userData.country_selected === true && userData.country) {
-                    setSelectedCountry(userData.country);
-                    localStorage.setItem('selectedCountry', userData.country);
+                if (userData.country_selected === true && userData.settlement_country) {
+                    setSelectedCountry(userData.settlement_country);
+                    localStorage.setItem('selectedCountry', userData.settlement_country);
                 }
 
                 // Ensure page starts from top when user profile loads
@@ -150,7 +151,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        country: country,
+                        settlement_country: country,
                         country_selected: true
                     }),
                 });

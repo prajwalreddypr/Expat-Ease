@@ -56,7 +56,7 @@ def get_tasks(
                 task_id=doc.task_id,
                 user_id=doc.user_id,
                 created_at=doc.created_at,
-                download_url=f"/uploads/{doc.file_path}"
+                download_url=doc.file_path  # Now it's already a Cloudinary URL
             )
             for doc in documents
         ]
@@ -193,7 +193,7 @@ async def upload_document(
         task_id=document.task_id,
         user_id=document.user_id,
         created_at=document.created_at,
-        download_url=f"/uploads/{document.file_path}"
+        download_url=document.file_path  # Now it's already a Cloudinary URL
     )
 
 
@@ -217,7 +217,7 @@ def get_task_documents(
             task_id=doc.task_id,
             user_id=doc.user_id,
             created_at=doc.created_at,
-            download_url=f"/uploads/{doc.file_path}"
+            download_url=doc.file_path  # Now it's already a Cloudinary URL
         )
         for doc in documents
     ]
