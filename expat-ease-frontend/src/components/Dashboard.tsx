@@ -137,78 +137,78 @@ const Dashboard: React.FC = () => {
                     {/* Feature Cards */}
                     <div className="card">
                         <h2 className="text-xl font-bold text-slate-800 mb-6 text-center">Quick Access</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                             {/* Settlement Checklist */}
-                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
-                                <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
-                                        <span className="text-white text-xl">📋</span>
+                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
+                                <div className="text-center mb-3 sm:mb-4">
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-lg sm:text-xl">📋</span>
                                     </div>
                                 </div>
-                                <div className="text-center mb-4 flex-grow">
-                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Settlement Checklist</h3>
-                                    <p className="text-sm text-slate-600 leading-relaxed">Track your progress with our step-by-step guide</p>
+                                <div className="text-center mb-3 sm:mb-4 flex-grow">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2">Settlement Checklist</h3>
+                                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">Track your progress with our step-by-step guide</p>
                                 </div>
                                 <button
                                     onClick={() => setShowChecklist(true)}
-                                    className="btn bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl w-full text-sm py-2"
+                                    className="btn bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl w-full text-xs sm:text-sm py-2"
                                 >
                                     View Checklist
                                 </button>
                             </div>
 
                             {/* Documents */}
-                            <div className="card-hover bg-gradient-to-br from-teal-50 via-cyan-50 to-sky-50 p-6 rounded-2xl border border-teal-100 flex flex-col h-full">
-                                <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
-                                        <span className="text-white text-xl">📄</span>
+                            <div className="card-hover bg-gradient-to-br from-teal-50 via-cyan-50 to-sky-50 p-4 sm:p-6 rounded-2xl border border-teal-100 flex flex-col h-full">
+                                <div className="text-center mb-3 sm:mb-4">
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-lg sm:text-xl">📄</span>
                                     </div>
                                 </div>
-                                <div className="text-center mb-4 flex-grow">
-                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Documents</h3>
-                                    <p className="text-sm text-slate-600 leading-relaxed">Manage required documents and deadlines</p>
+                                <div className="text-center mb-3 sm:mb-4 flex-grow">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2">Documents</h3>
+                                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">Manage required documents and deadlines</p>
                                 </div>
                                 <button
                                     onClick={() => setShowDocuments(true)}
-                                    className="btn w-full bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
+                                    className="btn w-full bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg hover:shadow-xl text-xs sm:text-sm py-2"
                                 >
                                     Manage Documents
                                 </button>
                             </div>
 
                             {/* Services */}
-                            <div className="card-hover bg-gradient-to-br from-cyan-50 via-sky-50 to-teal-50 p-6 rounded-2xl border border-cyan-100 flex flex-col h-full">
-                                <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
-                                        <span className="text-white text-xl">🏛️</span>
+                            <div className="card-hover bg-gradient-to-br from-cyan-50 via-sky-50 to-teal-50 p-4 sm:p-6 rounded-2xl border border-cyan-100 flex flex-col h-full">
+                                <div className="text-center mb-3 sm:mb-4">
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-cyan-500 to-sky-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-lg sm:text-xl">🏛️</span>
                                     </div>
                                 </div>
-                                <div className="text-center mb-4 flex-grow">
-                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Services</h3>
-                                    <p className="text-sm text-slate-600 leading-relaxed">Find local services and government offices</p>
+                                <div className="text-center mb-3 sm:mb-4 flex-grow">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2">Services</h3>
+                                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">Find local services and government offices</p>
                                 </div>
                                 <button
                                     onClick={() => setShowServices(true)}
-                                    className="btn w-full bg-gradient-to-r from-cyan-500 to-sky-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
+                                    className="btn w-full bg-gradient-to-r from-cyan-500 to-sky-600 text-white shadow-lg hover:shadow-xl text-xs sm:text-sm py-2"
                                 >
                                     Explore Services
                                 </button>
                             </div>
 
                             {/* Community */}
-                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50 p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
-                                <div className="text-center mb-4">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
-                                        <span className="text-white text-xl">💬</span>
+                            <div className="card-hover bg-gradient-to-br from-emerald-50 via-green-50 to-lime-50 p-4 sm:p-6 rounded-2xl border border-emerald-100 flex flex-col h-full">
+                                <div className="text-center mb-3 sm:mb-4">
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg mx-auto">
+                                        <span className="text-white text-lg sm:text-xl">💬</span>
                                     </div>
                                 </div>
-                                <div className="text-center mb-4 flex-grow">
-                                    <h3 className="text-lg font-bold text-slate-800 mb-2">Community</h3>
-                                    <p className="text-sm text-slate-600 leading-relaxed">Connect with other expats in {user?.country}</p>
+                                <div className="text-center mb-3 sm:mb-4 flex-grow">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2">Community</h3>
+                                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">Connect with other expats in {user?.country}</p>
                                 </div>
                                 <button
                                     onClick={() => setShowCommunity(true)}
-                                    className="btn w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg hover:shadow-xl text-sm py-2"
+                                    className="btn w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg hover:shadow-xl text-xs sm:text-sm py-2"
                                 >
                                     Join Community
                                 </button>

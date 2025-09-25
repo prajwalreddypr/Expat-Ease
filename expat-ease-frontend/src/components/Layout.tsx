@@ -68,11 +68,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
 
                         {/* Right Section - User Actions */}
-                        <div className="flex items-center space-x-6">
+                        <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6">
                             {user ? (
-                                <div className="flex items-center space-x-6">
-                                    {/* User Info */}
-                                    <div className="hidden sm:flex items-center space-x-4">
+                                <div className="hidden lg:flex items-center space-x-4 lg:space-x-6">
+                                    {/* User Info - Hidden on smaller screens */}
+                                    <div className="hidden xl:flex items-center space-x-4">
                                         <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md overflow-hidden">
                                             {user.profile_photo ? (
                                                 <img
@@ -96,30 +96,30 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                         </div>
                                     </div>
 
-                                    {/* Profile Button */}
+                                    {/* Profile Button - Responsive sizing */}
                                     <button
                                         onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-profile'))}
-                                        className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                                        className="hidden sm:flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
                                     >
-                                        <svg className="w-4 h-4 mr-1.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
-                                        Profile
+                                        <span className="hidden lg:inline">Profile</span>
                                     </button>
 
-                                    {/* Logout Button - Industry standard spacing */}
+                                    {/* Logout Button - Responsive sizing */}
                                     <button
                                         onClick={handleLogout}
-                                        className="px-6 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                                        className="hidden sm:flex items-center px-3 lg:px-6 py-2 lg:py-2.5 text-xs lg:text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
                                     >
-                                        <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                         </svg>
-                                        Logout
+                                        <span className="hidden lg:inline">Logout</span>
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex items-center space-x-3">
+                                <div className="hidden lg:flex items-center space-x-3">
                                     <button
                                         onClick={() => setShowLoginForm(true)}
                                         className="px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200"
@@ -129,9 +129,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 </div>
                             )}
 
-                            {/* Mobile menu button */}
+                            {/* Mobile menu button - Always visible on mobile */}
                             <button
-                                className="md:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200"
+                                className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 aria-label="Toggle mobile menu"
                             >
@@ -144,13 +144,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                     {/* Mobile Navigation Menu */}
                     {isMobileMenuOpen && (
-                        <div className="md:hidden border-t border-white/20 py-4 bg-white/50 backdrop-blur-sm">
+                        <div className="lg:hidden border-t border-white/20 py-4 bg-white/50 backdrop-blur-sm">
                             <div className="space-y-4">
                                 {user ? (
                                     <div className="px-4 py-3">
                                         {/* Mobile User Info */}
-                                        <div className="flex items-center space-x-4 mb-6">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                                        <div className="flex items-center space-x-3 mb-4">
+                                            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md overflow-hidden">
                                                 {user.profile_photo ? (
                                                     <img
                                                         src={user.profile_photo}
@@ -158,16 +158,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                                         className="w-full h-full object-cover"
                                                     />
                                                 ) : (
-                                                    <span className="text-white text-lg font-semibold">
+                                                    <span className="text-white text-sm font-semibold">
                                                         {(user.full_name || user.email).charAt(0).toUpperCase()}
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="flex flex-col justify-center">
-                                                <span className="text-base font-semibold text-slate-700 leading-tight">
+                                            <div className="flex flex-col justify-center min-w-0 flex-1">
+                                                <span className="text-sm font-semibold text-slate-700 leading-tight truncate">
                                                     {user.full_name || user.email.split('@')[0]}
                                                 </span>
-                                                <span className="text-sm text-slate-500 leading-tight mt-0.5">
+                                                <span className="text-xs text-slate-500 leading-tight mt-0.5 truncate">
                                                     {user.country || 'Not specified'}
                                                 </span>
                                             </div>
@@ -179,7 +179,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                                 window.dispatchEvent(new CustomEvent('navigate-to-profile'));
                                                 setIsMobileMenuOpen(false);
                                             }}
-                                            className="w-full px-6 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md mb-4"
+                                            className="w-full px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
                                         >
                                             <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -189,7 +189,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full px-6 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                                            className="w-full px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
                                         >
                                             <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

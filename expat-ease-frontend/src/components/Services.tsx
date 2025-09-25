@@ -33,7 +33,7 @@ const Services: React.FC = () => {
 
     const getServiceCategories = (): ServiceCategory[] => {
         const settlementCountry = user?.settlement_country || 'France';
-        
+
         if (settlementCountry === 'Germany') {
             return [
                 {
@@ -229,13 +229,13 @@ const Services: React.FC = () => {
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header Section */}
                 <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-md mb-3">
-                        <span className="text-white text-xl">🏛️</span>
+                    <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-md mb-3">
+                        <span className="text-white text-lg sm:text-xl">🏛️</span>
                     </div>
-                    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 via-emerald-800 to-teal-800 bg-clip-text text-transparent mb-2">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 via-emerald-800 to-teal-800 bg-clip-text text-transparent mb-2">
                         Local Services & Resources
                     </h1>
-                    <p className="text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
                         Essential services and government offices to help you navigate life in {user?.settlement_country || 'France'}
                     </p>
                 </div>
@@ -293,11 +293,11 @@ const Services: React.FC = () => {
                                                             </div>
 
                                                             <div className="flex-1 min-w-0">
-                                                                <div className="flex items-start justify-between mb-1">
+                                                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-1 gap-2">
                                                                     <h3 className="text-base font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">
                                                                         {service.name}
                                                                     </h3>
-                                                                    <div className="flex items-center gap-2 mt-1">
+                                                                    <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                                                                         {service.banks?.map((bank, bankIndex) => (
                                                                             <button
                                                                                 key={bankIndex}
@@ -305,7 +305,7 @@ const Services: React.FC = () => {
                                                                                     e.stopPropagation();
                                                                                     handleServiceClick(bank.link);
                                                                                 }}
-                                                                                className="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium hover:bg-emerald-100 transition-colors border border-emerald-200 hover:border-emerald-300"
+                                                                                className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium hover:bg-emerald-100 transition-colors border border-emerald-200 hover:border-emerald-300 whitespace-nowrap"
                                                                             >
                                                                                 {bank.name}
                                                                             </button>
