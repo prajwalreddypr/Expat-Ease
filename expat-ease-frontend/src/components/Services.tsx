@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Bank {
     name: string;
@@ -22,6 +23,7 @@ interface ServiceCategory {
 }
 
 const Services: React.FC = () => {
+    const { user } = useAuth();
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
     // Scroll to top when component mounts
@@ -29,96 +31,188 @@ const Services: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
-    const serviceCategories: ServiceCategory[] = [
-        {
-            title: "Government Services & Offices",
-            items: [
+    const getServiceCategories = (): ServiceCategory[] => {
+        const settlementCountry = user?.settlement_country || 'France';
+        
+        if (settlementCountry === 'Germany') {
+            return [
                 {
-                    name: "Préfecture / Sous-Préfecture",
-                    description: "For residence permits, visa validation, and other administrative processes",
-                    link: "https://www.service-public.fr",
-                    icon: "🏛️"
-                },
-                {
-                    name: "CAF (Caisse d'Allocations Familiales)",
-                    description: "For housing benefits, family allowances, and social help",
-                    link: "https://www.caf.fr",
-                    icon: "🏠"
-                },
-                {
-                    name: "CPAM (Caisse Primaire d'Assurance Maladie)",
-                    description: "For health insurance registration (Carte Vitale)",
-                    link: "https://www.ameli.fr",
-                    icon: "🏥"
-                },
-                {
-                    name: "Pôle Emploi",
-                    description: "For job seekers, training, and unemployment benefits",
-                    link: "https://www.pole-emploi.fr",
-                    icon: "💼"
-                },
-                {
-                    name: "URSSAF",
-                    description: "For freelancers or self-employed registration",
-                    link: "https://www.urssaf.fr",
-                    icon: "📊"
-                }
-            ]
-        },
-        {
-            title: "Local / Essential Services",
-            items: [
-                {
-                    name: "Public Transport Authority (RATP)",
-                    description: "For transport cards (Navigo pass) and public transportation",
-                    link: "https://www.ratp.fr",
-                    icon: "🚇"
-                },
-                {
-                    name: "Waste Management / Recycling Centers",
-                    description: "Local mairie or municipal waste services",
-                    link: "https://www.ademe.fr/particuliers-eco-citoyens/dechets",
-                    icon: "♻️"
-                },
-                {
-                    name: "City Hall (Mairie)",
-                    description: "For official documents like birth certificates, marriage certificates, etc.",
-                    link: "https://www.service-public.fr/particuliers/vosdroits/F1574",
-                    icon: "🏛️"
-                },
-                {
-                    name: "Electricity, Gas & Water Suppliers",
-                    description: "EDF for electricity, Engie for gas, local water companies",
-                    link: "https://www.service-public.fr/particuliers/vosdroits/F1407",
-                    icon: "⚡"
-                },
-                {
-                    name: "Banks",
-                    description: "Major French banks with expat-friendly services",
-                    link: "",
-                    icon: "🏦",
-                    isBankSection: true,
-                    banks: [
+                    title: "Government Services & Offices",
+                    items: [
                         {
-                            name: "BNP Paribas",
-                            logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/BNP_Paribas.svg/1200px-BNP_Paribas.svg.png",
-                            link: "https://mabanque.bnpparibas/"
+                            name: "Ausländerbehörde (Foreigners' Office)",
+                            description: "For residence permits, visa validation, and other administrative processes",
+                            link: "https://www.bamf.de/DE/Themen/Aufenthalt/aufenthalt-node.html",
+                            icon: "🏛️"
                         },
                         {
-                            name: "Société Générale",
-                            logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale_logo.svg/1200px-Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale_logo.svg.png",
-                            link: "https://www.societegenerale.fr/"
+                            name: "Jobcenter / Agentur für Arbeit",
+                            description: "For job seekers, training, unemployment benefits, and social assistance",
+                            link: "https://www.arbeitsagentur.de/",
+                            icon: "💼"
                         },
                         {
-                            name: "La Banque Postale",
-                            logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Logo_La_Banque_Postale.svg/1200px-Logo_La_Banque_Postale.svg.png",
-                            link: "https://www.labanquepostale.fr/"
+                            name: "Krankenkasse (Health Insurance)",
+                            description: "For health insurance registration and healthcare services",
+                            link: "https://www.gkv-spitzenverband.de/",
+                            icon: "🏥"
+                        },
+                        {
+                            name: "Finanzamt (Tax Office)",
+                            description: "For tax registration, tax ID, and tax-related services",
+                            link: "https://www.bzst.de/",
+                            icon: "📊"
+                        },
+                        {
+                            name: "Rathaus (City Hall)",
+                            description: "For official documents, registration, and local services",
+                            link: "https://www.service-bw.de/",
+                            icon: "🏛️"
+                        }
+                    ]
+                },
+                {
+                    title: "Local / Essential Services",
+                    items: [
+                        {
+                            name: "Public Transport (Deutsche Bahn)",
+                            description: "For train tickets, regional transport, and travel planning",
+                            link: "https://www.bahn.de/",
+                            icon: "🚇"
+                        },
+                        {
+                            name: "Waste Management / Recycling",
+                            description: "Local waste management services and recycling centers",
+                            link: "https://www.bmu.de/themen/wasser-ressourcen-abfall/kreislaufwirtschaft/",
+                            icon: "♻️"
+                        },
+                        {
+                            name: "Electricity, Gas & Water Suppliers",
+                            description: "Energy providers like E.ON, RWE, and local utility companies",
+                            link: "https://www.bdew.de/",
+                            icon: "⚡"
+                        },
+                        {
+                            name: "Banks",
+                            description: "Major German banks with expat-friendly services",
+                            link: "",
+                            icon: "🏦",
+                            isBankSection: true,
+                            banks: [
+                                {
+                                    name: "Deutsche Bank",
+                                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Deutsche_Bank_Logo.svg/1200px-Deutsche_Bank_Logo.svg.png",
+                                    link: "https://www.deutsche-bank.de/"
+                                },
+                                {
+                                    name: "Commerzbank",
+                                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Commerzbank_logo.svg/1200px-Commerzbank_logo.svg.png",
+                                    link: "https://www.commerzbank.de/"
+                                },
+                                {
+                                    name: "Sparkasse",
+                                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Sparkasse_logo.svg/1200px-Sparkasse_logo.svg.png",
+                                    link: "https://www.sparkasse.de/"
+                                }
+                            ]
                         }
                     ]
                 }
-            ]
+            ];
+        } else {
+            // France (default)
+            return [
+                {
+                    title: "Government Services & Offices",
+                    items: [
+                        {
+                            name: "Préfecture / Sous-Préfecture",
+                            description: "For residence permits, visa validation, and other administrative processes",
+                            link: "https://www.service-public.fr",
+                            icon: "🏛️"
+                        },
+                        {
+                            name: "CAF (Caisse d'Allocations Familiales)",
+                            description: "For housing benefits, family allowances, and social help",
+                            link: "https://www.caf.fr",
+                            icon: "🏠"
+                        },
+                        {
+                            name: "CPAM (Caisse Primaire d'Assurance Maladie)",
+                            description: "For health insurance registration (Carte Vitale)",
+                            link: "https://www.ameli.fr",
+                            icon: "🏥"
+                        },
+                        {
+                            name: "Pôle Emploi",
+                            description: "For job seekers, training, and unemployment benefits",
+                            link: "https://www.pole-emploi.fr",
+                            icon: "💼"
+                        },
+                        {
+                            name: "URSSAF",
+                            description: "For freelancers or self-employed registration",
+                            link: "https://www.urssaf.fr",
+                            icon: "📊"
+                        }
+                    ]
+                },
+                {
+                    title: "Local / Essential Services",
+                    items: [
+                        {
+                            name: "Public Transport Authority (RATP)",
+                            description: "For transport cards (Navigo pass) and public transportation",
+                            link: "https://www.ratp.fr",
+                            icon: "🚇"
+                        },
+                        {
+                            name: "Waste Management / Recycling Centers",
+                            description: "Local mairie or municipal waste services",
+                            link: "https://www.ademe.fr/particuliers-eco-citoyens/dechets",
+                            icon: "♻️"
+                        },
+                        {
+                            name: "City Hall (Mairie)",
+                            description: "For official documents like birth certificates, marriage certificates, etc.",
+                            link: "https://www.service-public.fr/particuliers/vosdroits/F1574",
+                            icon: "🏛️"
+                        },
+                        {
+                            name: "Electricity, Gas & Water Suppliers",
+                            description: "EDF for electricity, Engie for gas, local water companies",
+                            link: "https://www.service-public.fr/particuliers/vosdroits/F1407",
+                            icon: "⚡"
+                        },
+                        {
+                            name: "Banks",
+                            description: "Major French banks with expat-friendly services",
+                            link: "",
+                            icon: "🏦",
+                            isBankSection: true,
+                            banks: [
+                                {
+                                    name: "BNP Paribas",
+                                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/BNP_Paribas.svg/1200px-BNP_Paribas.svg.png",
+                                    link: "https://mabanque.bnpparibas/"
+                                },
+                                {
+                                    name: "Société Générale",
+                                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale_logo.svg/1200px-Soci%C3%A9t%C3%A9_G%C3%A9n%C3%A9rale_logo.svg.png",
+                                    link: "https://www.societegenerale.fr/"
+                                },
+                                {
+                                    name: "La Banque Postale",
+                                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Logo_La_Banque_Postale.svg/1200px-Logo_La_Banque_Postale.svg.png",
+                                    link: "https://www.labanquepostale.fr/"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ];
         }
-    ];
+    };
 
     const toggleCategory = (categoryTitle: string) => {
         setActiveCategory(activeCategory === categoryTitle ? null : categoryTitle);
@@ -142,13 +236,13 @@ const Services: React.FC = () => {
                         Local Services & Resources
                     </h1>
                     <p className="text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                        Essential services and government offices to help you navigate life in France
+                        Essential services and government offices to help you navigate life in {user?.settlement_country || 'France'}
                     </p>
                 </div>
 
                 {/* Services Categories */}
                 <div className="space-y-4">
-                    {serviceCategories.map((category, categoryIndex) => (
+                    {getServiceCategories().map((category, categoryIndex) => (
                         <div key={categoryIndex} className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
                             {/* Category Header */}
                             <button
