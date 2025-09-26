@@ -13,6 +13,12 @@ const AppContent: React.FC = () => {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+
+  // Debug showProfile state changes
+  useEffect(() => {
+    console.log('showProfile state changed:', showProfile);
+  }, [showProfile]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -22,10 +28,24 @@ const AppContent: React.FC = () => {
       // Close any open modals when user clicks browser back button
       setShowLoginForm(false);
       setShowRegisterForm(false);
+      setShowProfile(false);
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Listen for profile navigation from any component
+  useEffect(() => {
+    const handleProfileNavigation = () => {
+      console.log('Profile navigation event received');
+      setShowProfile(true);
+    };
+
+    window.addEventListener('navigate-to-profile', handleProfileNavigation);
+    return () => {
+      window.removeEventListener('navigate-to-profile', handleProfileNavigation);
+    };
   }, []);
 
   // Redirect logged-out users from protected routes to homepage
@@ -60,6 +80,7 @@ const AppContent: React.FC = () => {
   const closeModals = () => {
     setShowLoginForm(false);
     setShowRegisterForm(false);
+    setShowProfile(false);
     // Go back in history to remove the modal state
     window.history.back();
   };
@@ -95,7 +116,7 @@ const AppContent: React.FC = () => {
     // Handle routing for logged-in users
     if (location.pathname === '/checklist') {
       return (
-        <Layout>
+        <Layout showProfile={showProfile} onCloseProfile={() => setShowProfile(false)}>
           <ChecklistPage />
         </Layout>
       );
@@ -103,7 +124,7 @@ const AppContent: React.FC = () => {
 
     // Show dashboard if user is logged in and has completed country selection flow
     return (
-      <Layout>
+      <Layout showProfile={showProfile} onCloseProfile={() => setShowProfile(false)}>
         <Dashboard />
       </Layout>
     );
@@ -268,6 +289,7 @@ const AppContent: React.FC = () => {
           }}
         />
       )}
+
     </Layout>
   );
 };
