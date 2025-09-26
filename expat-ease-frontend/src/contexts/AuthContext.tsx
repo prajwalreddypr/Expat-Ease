@@ -87,8 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     localStorage.setItem('selectedCountry', userData.settlement_country);
                 }
 
-                // Ensure page starts from top when user profile loads
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // User profile loaded successfully
             } else {
                 // Token is invalid, remove it
                 localStorage.removeItem('token');
@@ -123,8 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 // Fetch user profile
                 await fetchUserProfile(access_token);
 
-                // Scroll to top when user logs in successfully
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // User logged in successfully
             } else {
                 const errorData = await response.json();
                 throw new Error(errorData.detail || 'Login failed');

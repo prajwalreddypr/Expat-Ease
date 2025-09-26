@@ -46,17 +46,11 @@ const Dashboard: React.FC = () => {
             resetAllStates();
         };
 
-        const handleProfileNavigation = () => {
-            setShowProfile(true);
-        };
-
         // Listen for custom events from Layout component
         window.addEventListener('dashboard-reset', handleLogoClick);
-        window.addEventListener('navigate-to-profile', handleProfileNavigation);
 
         return () => {
             window.removeEventListener('dashboard-reset', handleLogoClick);
-            window.removeEventListener('navigate-to-profile', handleProfileNavigation);
         };
     }, []);
 
