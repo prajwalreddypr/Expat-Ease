@@ -2,7 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getApiUrl } from '../utils/api';
 
-const Profile: React.FC = () => {
+interface ProfileProps {
+    onClose?: () => void;
+}
+
+const Profile: React.FC<ProfileProps> = ({ onClose }) => {
     const { user, token, refreshUser } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -151,6 +155,13 @@ const Profile: React.FC = () => {
                 fileInputRef.current.value = '';
             }
 
+            // Scroll modal content to top after successful update
+            // Target the specific modal container by ID
+            const modalContainer = document.getElementById('profile-modal-container');
+            if (modalContainer) {
+                modalContainer.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
         } catch (error) {
             console.error('Error updating profile:', error);
             setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
@@ -172,8 +183,23 @@ const Profile: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen py-6">
+        <div className={onClose ? "py-6" : "min-h-screen py-6"}>
             <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Close Button */}
+                {onClose && (
+                    <div className="flex justify-end mb-4">
+                        <button
+                            onClick={onClose}
+                            className="flex items-center px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
+                        >
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Close
+                        </button>
+                    </div>
+                )}
+
                 {/* Header */}
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-md mb-4">

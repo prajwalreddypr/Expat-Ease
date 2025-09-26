@@ -3,12 +3,15 @@ import { useAuth } from '../contexts/AuthContext';
 import Container from './Container';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import Profile from './Profile';
 
 interface LayoutProps {
     children: React.ReactNode;
+    showProfile?: boolean;
+    onCloseProfile?: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, showProfile, onCloseProfile }) => {
     const { user, logout, selectedCountry } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showLoginForm, setShowLoginForm] = useState(false);
@@ -31,8 +34,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             // Logged in with country selected - reset dashboard to main view
             // Dispatch custom event to reset dashboard states
             window.dispatchEvent(new CustomEvent('dashboard-reset'));
-            // Also scroll to top when returning to dashboard
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Close any open modals
@@ -98,7 +99,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                                     {/* Profile Button - Responsive sizing */}
                                     <button
-                                        onClick={() => window.dispatchEvent(new CustomEvent('navigate-to-profile'))}
+                                        onClick={() => {
+                                            console.log('Profile button clicked');
+                                            window.dispatchEvent(new CustomEvent('navigate-to-profile'));
+                                        }}
                                         className="hidden sm:flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
                                     >
                                         <svg className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,6 +180,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                         {/* Mobile Profile Button */}
                                         <button
                                             onClick={() => {
+                                                console.log('Mobile profile button clicked');
                                                 window.dispatchEvent(new CustomEvent('navigate-to-profile'));
                                                 setIsMobileMenuOpen(false);
                                             }}
@@ -251,6 +256,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         setShowLoginForm(true);
                     }}
                 />
+            )}
+
+            {/* Profile Modal */}
+            {showProfile && onCloseProfile && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+                    onClick={(e) => {
+                        // Close modal when clicking on the overlay (outside the modal content)
+                        if (e.target === e.currentTarget) {
+                            onCloseProfile();
+                        }
+                    }}
+                >
+                    <div id="profile-modal-container" className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                        <Profile onClose={onCloseProfile} />
+                    </div>
+                </div>
             )}
         </div>
     );
