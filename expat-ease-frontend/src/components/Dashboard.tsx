@@ -5,6 +5,7 @@ import ChecklistPage from '../pages/ChecklistPage';
 import DocumentsSection from './DocumentsSection';
 import Services from './Services';
 import Profile from './Profile';
+import Chatbot from './Chatbot';
 
 // Reusable Back to Dashboard component
 const BackToDashboard: React.FC<{ onBack: () => void }> = ({ onBack }) => (
@@ -212,6 +213,9 @@ const Dashboard: React.FC = () => {
 
                 </div>
             </div>
+
+            {/* AI Chatbot - Floating Widget */}
+            <Chatbot />
         </div>
     );
 };
