@@ -133,7 +133,7 @@ const ChecklistPage: React.FC = () => {
         setSteps(data);
 
         // Check if steps are already completed and set the celebration flag accordingly
-        const completedCount = data.filter(step => step.is_completed).length;
+        const completedCount = data.filter((step: SettlementStep) => step.is_completed).length;
         if (completedCount === data.length && data.length > 0) {
           // If all steps are already completed, mark that celebration has been shown
           // This prevents fireworks from showing on page load if user already completed everything
