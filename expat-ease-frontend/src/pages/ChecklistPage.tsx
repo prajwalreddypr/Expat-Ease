@@ -25,6 +25,8 @@ const ChecklistPage: React.FC = () => {
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [showFireworks, setShowFireworks] = useState(false);
+  const [hasShownCompletionCelebration, setHasShownCompletionCelebration] = useState(false);
+  const [previousCompletionCount, setPreviousCompletionCount] = useState(0);
 
   useEffect(() => {
     if (token && user) {
@@ -44,12 +46,26 @@ const ChecklistPage: React.FC = () => {
     };
   }, []);
 
-  // Trigger fireworks when all steps are completed
+  // Trigger fireworks when all steps are completed for the first time
   useEffect(() => {
     const completedSteps = steps.filter(step => step.is_completed).length;
     const totalSteps = steps.length;
 
-    if (totalSteps > 0 && completedSteps === totalSteps) {
+    // Only show fireworks if:
+    // 1. We have steps loaded
+    // 2. All steps are completed
+    // 3. We haven't shown the celebration before
+    // 4. We're not currently resetting
+    // 5. The completion count increased (not decreased, which happens during reset)
+    if (totalSteps > 0 &&
+      completedSteps === totalSteps &&
+      !hasShownCompletionCelebration &&
+      !isResetting &&
+      completedSteps > previousCompletionCount) {
+
+      // Mark that we've shown the celebration
+      setHasShownCompletionCelebration(true);
+
       // Trigger fireworks after a short delay
       const timer = setTimeout(() => {
         setShowFireworks(true);
@@ -61,7 +77,10 @@ const ChecklistPage: React.FC = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [steps]);
+
+    // Update the previous completion count
+    setPreviousCompletionCount(completedSteps);
+  }, [steps, hasShownCompletionCelebration, isResetting, previousCompletionCount]);
 
   const initializeOrFetchSteps = async () => {
     try {
@@ -112,6 +131,14 @@ const ChecklistPage: React.FC = () => {
       } else {
         console.log('Found existing steps:', data);
         setSteps(data);
+
+        // Check if steps are already completed and set the celebration flag accordingly
+        const completedCount = data.filter(step => step.is_completed).length;
+        if (completedCount === data.length && data.length > 0) {
+          // If all steps are already completed, mark that celebration has been shown
+          // This prevents fireworks from showing on page load if user already completed everything
+          setHasShownCompletionCelebration(true);
+        }
       }
     } catch (err) {
       console.error('Error fetching steps:', err);
@@ -231,6 +258,10 @@ const ChecklistPage: React.FC = () => {
 
       const resetSteps = await response.json();
       setSteps(resetSteps);
+
+      // Reset the celebration state so fireworks can show again when all steps are completed
+      setHasShownCompletionCelebration(false);
+      setPreviousCompletionCount(0);
 
       // Show success message
       alert('Settlement steps have been reset successfully! You can now start over.');

@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Container from './Container';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
-import Profile from './Profile';
 
 interface LayoutProps {
     children: React.ReactNode;
-    showProfile?: boolean;
-    onCloseProfile?: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, showProfile, onCloseProfile }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { user, logout, selectedCountry } = useAuth();
+    const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showLoginForm, setShowLoginForm] = useState(false);
     const [showRegisterForm, setShowRegisterForm] = useState(false);
@@ -31,9 +30,8 @@ const Layout: React.FC<LayoutProps> = ({ children, showProfile, onCloseProfile }
             // Logged in but hasn't completed country selection - stay on country selection
             return;
         } else {
-            // Logged in with country selected - reset dashboard to main view
-            // Dispatch custom event to reset dashboard states
-            window.dispatchEvent(new CustomEvent('dashboard-reset'));
+            // Logged in with country selected - navigate to dashboard
+            navigate('/dashboard');
         }
 
         // Close any open modals
@@ -99,10 +97,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showProfile, onCloseProfile }
 
                                     {/* Profile Button - Responsive sizing */}
                                     <button
-                                        onClick={() => {
-                                            console.log('Profile button clicked');
-                                            window.dispatchEvent(new CustomEvent('navigate-to-profile'));
-                                        }}
+                                        onClick={() => navigate('/profile')}
                                         className="hidden sm:flex items-center px-3 lg:px-4 py-2 text-xs lg:text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md"
                                     >
                                         <svg className="w-3 h-3 lg:w-4 lg:h-4 mr-1 lg:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,8 +175,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showProfile, onCloseProfile }
                                         {/* Mobile Profile Button */}
                                         <button
                                             onClick={() => {
-                                                console.log('Mobile profile button clicked');
-                                                window.dispatchEvent(new CustomEvent('navigate-to-profile'));
+                                                navigate('/profile');
                                                 setIsMobileMenuOpen(false);
                                             }}
                                             className="w-full px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200 shadow-sm hover:shadow-md mb-3"
@@ -258,22 +252,6 @@ const Layout: React.FC<LayoutProps> = ({ children, showProfile, onCloseProfile }
                 />
             )}
 
-            {/* Profile Modal */}
-            {showProfile && onCloseProfile && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-                    onClick={(e) => {
-                        // Close modal when clicking on the overlay (outside the modal content)
-                        if (e.target === e.currentTarget) {
-                            onCloseProfile();
-                        }
-                    }}
-                >
-                    <div id="profile-modal-container" className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                        <Profile onClose={onCloseProfile} />
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

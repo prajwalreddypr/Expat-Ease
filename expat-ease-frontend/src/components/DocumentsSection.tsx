@@ -210,18 +210,20 @@ const DocumentsSection: React.FC = () => {
                     </p>
                 </div>
 
-                {/* Upload Button */}
-                <div className="mb-8">
-                    <button
-                        onClick={() => setShowUploadModal(true)}
-                        className="btn btn-primary inline-flex items-center"
-                    >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Upload Document
-                    </button>
-                </div>
+                {/* Upload Button - Only show when there are existing documents */}
+                {documents.length > 0 && (
+                    <div className="mb-8">
+                        <button
+                            onClick={() => setShowUploadModal(true)}
+                            className="btn btn-primary inline-flex items-center"
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Upload Document
+                        </button>
+                    </div>
+                )}
 
                 {/* Documents List */}
                 <div className="space-y-4">

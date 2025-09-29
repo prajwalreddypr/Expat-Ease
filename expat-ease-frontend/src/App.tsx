@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, useLocation, useNavigate, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CountrySelection from './components/CountrySelection';
 import ChecklistPage from './pages/ChecklistPage';
+import DocumentsSection from './components/DocumentsSection';
+import Services from './components/Services';
+import JoinCommunity from './components/JoinCommunity';
+import Profile from './components/Profile';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -13,12 +17,6 @@ const AppContent: React.FC = () => {
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-  const [showProfile, setShowProfile] = useState(false);
-
-  // Debug showProfile state changes
-  useEffect(() => {
-    console.log('showProfile state changed:', showProfile);
-  }, [showProfile]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -28,24 +26,10 @@ const AppContent: React.FC = () => {
       // Close any open modals when user clicks browser back button
       setShowLoginForm(false);
       setShowRegisterForm(false);
-      setShowProfile(false);
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  // Listen for profile navigation from any component
-  useEffect(() => {
-    const handleProfileNavigation = () => {
-      console.log('Profile navigation event received');
-      setShowProfile(true);
-    };
-
-    window.addEventListener('navigate-to-profile', handleProfileNavigation);
-    return () => {
-      window.removeEventListener('navigate-to-profile', handleProfileNavigation);
-    };
   }, []);
 
   // Redirect logged-out users from protected routes to homepage
@@ -80,7 +64,6 @@ const AppContent: React.FC = () => {
   const closeModals = () => {
     setShowLoginForm(false);
     setShowRegisterForm(false);
-    setShowProfile(false);
     // Go back in history to remove the modal state
     window.history.back();
   };
@@ -113,19 +96,20 @@ const AppContent: React.FC = () => {
       );
     }
 
-    // Handle routing for logged-in users
-    if (location.pathname === '/checklist') {
-      return (
-        <Layout showProfile={showProfile} onCloseProfile={() => setShowProfile(false)}>
-          <ChecklistPage />
-        </Layout>
-      );
-    }
-
-    // Show dashboard if user is logged in and has completed country selection flow
+    // Handle routing for logged-in users with proper React Router
     return (
-      <Layout showProfile={showProfile} onCloseProfile={() => setShowProfile(false)}>
-        <Dashboard />
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/checklist" element={<ChecklistPage />} />
+          <Route path="/documents" element={<DocumentsSection />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/community" element={<JoinCommunity />} />
+          <Route path="/profile" element={<Profile />} />
+          {/* Catch-all route - redirect to dashboard */}
+          <Route path="*" element={<Dashboard />} />
+        </Routes>
       </Layout>
     );
   }

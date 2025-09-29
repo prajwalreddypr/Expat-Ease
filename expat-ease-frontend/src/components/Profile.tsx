@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getApiUrl } from '../utils/api';
 
@@ -6,7 +7,8 @@ interface ProfileProps {
     onClose?: () => void;
 }
 
-const Profile: React.FC<ProfileProps> = ({ onClose }) => {
+const Profile: React.FC<ProfileProps> = () => {
+    const navigate = useNavigate();
     const { user, token, refreshUser } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -183,22 +185,20 @@ const Profile: React.FC<ProfileProps> = ({ onClose }) => {
     };
 
     return (
-        <div className={onClose ? "py-6" : "min-h-screen py-6"}>
+        <div className="min-h-screen py-6">
             <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Close Button */}
-                {onClose && (
-                    <div className="flex justify-end mb-4">
-                        <button
-                            onClick={onClose}
-                            className="flex items-center px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
-                        >
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Close
-                        </button>
-                    </div>
-                )}
+                {/* Back Button */}
+                <div className="flex justify-end mb-4">
+                    <button
+                        onClick={() => navigate('/dashboard')}
+                        className="flex items-center px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 border border-slate-300 rounded-lg hover:bg-slate-50 transition-all duration-200"
+                    >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Dashboard
+                    </button>
+                </div>
 
                 {/* Header */}
                 <div className="text-center mb-8">
