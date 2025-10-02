@@ -6,8 +6,9 @@ import CountrySelection from './components/CountrySelection';
 import ChecklistPage from './pages/ChecklistPage';
 import DocumentsSection from './components/DocumentsSection';
 import Services from './components/Services';
-import JoinCommunity from './components/JoinCommunity';
 import Profile from './components/Profile';
+import ForumPage from './pages/ForumPage';
+import ForumThreadPage from './pages/ForumThreadPage';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -105,7 +106,9 @@ const AppContent: React.FC = () => {
           <Route path="/checklist" element={<ChecklistPage />} />
           <Route path="/documents" element={<DocumentsSection />} />
           <Route path="/services" element={<Services />} />
-          <Route path="/community" element={<JoinCommunity />} />
+          <Route path="/community" element={<ForumPage />} />
+          <Route path="/forum" element={<ForumPage />} />
+          <Route path="/forum/question/:questionId" element={<ForumThreadPage />} />
           <Route path="/profile" element={<Profile />} />
           {/* Catch-all route - redirect to dashboard */}
           <Route path="*" element={<Dashboard />} />

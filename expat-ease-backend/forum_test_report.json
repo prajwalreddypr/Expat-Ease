@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-09-30T09:22:01.743672",
+  "total_tests": 12,
+  "passed_tests": 0,
+  "failed_tests": 12,
+  "test_results": [
+    {
+      "test": "Health Check",
+      "success": false,
+      "message": "Error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000018FC0717D00>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-09-30T09:21:43.472024"
+    },
+    {
+      "test": "User Registration",
+      "success": false,
+      "message": "Error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/users/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000018FC073D220>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-09-30T09:21:46.017013"
+    },
+    {
+      "test": "User Login",
+      "success": false,
+      "message": "Error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/auth/login (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000018FC073D6A0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-09-30T09:21:48.566798"
+    },
+    {
+      "test": "Create Question",
+      "success": false,
+      "message": "Error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/forum/questions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000018FC073DAC0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-09-30T09:21:51.101390"
+    },
+    {
+      "test": "Get Questions",
+      "success": false,
+      "message": "Error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/forum/questions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000018FC073DE50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-09-30T09:21:53.631626"
+    },
+    {
+      "test": "Get Question Details",
+      "success": false,
+      "message": "No question ID available",
+      "timestamp": "2025-09-30T09:21:54.140588"
+    },
+    {
+      "test": "Create Answer",
+      "success": false,
+      "message": "No question ID available",
+      "timestamp": "2025-09-30T09:21:54.640868"
+    },
+    {
+      "test": "Vote Question",
+      "success": false,
+      "message": "No question ID available",
+      "timestamp": "2025-09-30T09:21:55.154063"
+    },
+    {
+      "test": "Vote Answer",
+      "success": false,
+      "message": "No answer ID available",
+      "timestamp": "2025-09-30T09:21:55.664481"
+    },
+    {
+      "test": "Accept Answer",
+      "success": false,
+      "message": "No answer ID available",
+      "timestamp": "2025-09-30T09:21:56.177925"
+    },
+    {
+      "test": "Category Filtering",
+      "success": false,
+      "message": "Error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/forum/questions?category=general (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000018FC074E220>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-09-30T09:21:58.722832"
+    },
+    {
+      "test": "Unauthorized Access",
+      "success": false,
+      "message": "Error: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/forum/questions (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000018FC074EC70>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-09-30T09:22:01.242846"
+    }
+  ]
+}
