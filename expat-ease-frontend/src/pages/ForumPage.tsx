@@ -433,43 +433,30 @@ const ForumPage: React.FC = () => {
                                                 </div>
                                             ) : (
                                                 questionAnswers[question.id].map((answer) => (
-                                                    <div key={answer.id} className="bg-slate-50 p-2 rounded border border-slate-200">
+                                                    <div key={answer.id} className="bg-slate-50 rounded p-2">
                                                         <div className="flex items-start space-x-2">
-                                                            <div className="w-5 h-5 bg-slate-300 rounded-full flex items-center justify-center overflow-hidden">
+                                                            <div className="w-4 h-4 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-sm overflow-hidden">
                                                                 {answer.user.profile_photo ? (
-                                                                    <img src={answer.user.profile_photo} alt="Profile" className="w-full h-full object-cover" />
+                                                                    <img
+                                                                        src={answer.user.profile_photo}
+                                                                        alt="Profile"
+                                                                        className="w-full h-full object-cover"
+                                                                    />
                                                                 ) : (
-                                                                    <span className="text-slate-600 text-xs font-semibold">
+                                                                    <span className="text-white text-xs font-semibold">
                                                                         {answer.user.full_name.charAt(0).toUpperCase()}
                                                                     </span>
                                                                 )}
                                                             </div>
                                                             <div className="flex-1">
                                                                 <div className="flex items-center space-x-2 mb-1">
-                                                                    <span className="font-semibold text-slate-800 text-xs">{answer.user.full_name}</span>
+                                                                    <span className="text-xs font-semibold text-slate-800">{answer.user.full_name}</span>
                                                                     <span className="text-xs text-slate-500">{formatDate(answer.created_at)}</span>
                                                                     {answer.is_accepted && (
-                                                                        <span className="px-1 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                                                                            ✓
-                                                                        </span>
+                                                                        <span className="px-1 py-0.5 bg-green-100 text-green-800 rounded text-xs font-medium">✓</span>
                                                                     )}
                                                                 </div>
-                                                                <p className="text-slate-700 text-xs mb-1">{answer.content}</p>
-                                                                <div className="flex items-center space-x-1">
-                                                                    <button
-                                                                        onClick={() => handleVoteAnswer(answer.id, true)}
-                                                                        className="text-slate-500 hover:text-emerald-600 text-xs"
-                                                                    >
-                                                                        👍
-                                                                    </button>
-                                                                    <span className="text-xs text-slate-600">{answer.upvotes - answer.downvotes}</span>
-                                                                    <button
-                                                                        onClick={() => handleVoteAnswer(answer.id, false)}
-                                                                        className="text-slate-500 hover:text-red-600 text-xs"
-                                                                    >
-                                                                        👎
-                                                                    </button>
-                                                                </div>
+                                                                <p className="text-xs text-slate-700">{answer.content}</p>
                                                             </div>
                                                         </div>
                                                     </div>
