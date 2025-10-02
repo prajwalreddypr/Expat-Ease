@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Container from './Container';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import Sidebar from './Sidebar';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -15,6 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showLoginForm, setShowLoginForm] = useState(false);
     const [showRegisterForm, setShowRegisterForm] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -48,8 +50,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {/* Main Navigation Row */}
                     <div className="flex justify-between items-center h-16 px-4">
 
-                        {/* Left Section - Logo */}
-                        <div className="flex items-center">
+                        {/* Left Section - Sidebar Button & Logo */}
+                        <div className="flex items-center space-x-4">
+                            {/* Sidebar Button - Only show when user is logged in */}
+                            {user && (
+                                <button
+                                    onClick={() => setIsSidebarOpen(true)}
+                                    className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200"
+                                    aria-label="Open navigation menu"
+                                >
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            )}
+
                             <button
                                 onClick={handleLogoClick}
                                 className="text-2xl font-bold text-gradient hover:scale-105 transition-transform duration-200"
@@ -214,6 +229,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     )}
                 </Container>
             </nav>
+
+            {/* Sidebar */}
+            <Sidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+            />
 
             {/* Main Content */}
             <main className="flex-grow pt-6">

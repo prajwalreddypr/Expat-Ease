@@ -2,12 +2,13 @@
 User model and schemas for the application.
 """
 from datetime import datetime
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, List
 
 from sqlmodel import Field, SQLModel, Relationship
 
 if TYPE_CHECKING:
     from app.models.settlement_step import SettlementStep
+    from app.models.forum import Question, Answer
 
 
 class User(SQLModel, table=True):
@@ -37,6 +38,8 @@ class User(SQLModel, table=True):
     
     # Relationships
     settlement_steps: list["SettlementStep"] = Relationship(back_populates="user")
+    questions: List["Question"] = Relationship(back_populates="user")
+    answers: List["Answer"] = Relationship(back_populates="user")
 
 
 class UserCreate(SQLModel):
