@@ -203,35 +203,6 @@ const ForumPage: React.FC = () => {
         }
     };
 
-    const handleVoteAnswer = async (answerId: number, isUpvote: boolean) => {
-        try {
-            console.log('Voting on answer:', answerId, 'isUpvote:', isUpvote);
-            const response = await fetch(getApiUrl(`/api/v1/forum/answers/${answerId}/vote?is_upvote=${isUpvote}`), {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Answer vote response status:', response.status);
-            if (response.ok) {
-                console.log('Answer vote successful, refreshing...');
-                // Find which question this answer belongs to and refresh its answers
-                const questionId = Object.keys(questionAnswers).find(id =>
-                    questionAnswers[parseInt(id)].some(answer => answer.id === answerId)
-                );
-                if (questionId) {
-                    fetchQuestionAnswers(parseInt(questionId));
-                }
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to vote on answer:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error voting on answer:', error);
-        }
-    };
 
 
     const formatDate = (dateString: string) => {
