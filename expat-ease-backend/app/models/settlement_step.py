@@ -19,8 +19,8 @@ class SettlementStep(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
     # Relationships
-    user: Optional["User"] = Relationship(back_populates="settlement_steps")
-    documents: list["Document"] = Relationship(back_populates="settlement_step")
+    user: Optional["User"] = Relationship()
+    documents: list["Document"] = Relationship()
 
 
 class SettlementStepCreate(SQLModel):
