@@ -18,7 +18,7 @@ class Document(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     
     # Relationships
-    settlement_step: Optional["SettlementStep"] = Relationship(back_populates="documents")
+    settlement_step: Optional["SettlementStep"] = Relationship()
 
 
 class DocumentCreate(SQLModel):
