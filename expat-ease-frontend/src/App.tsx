@@ -89,7 +89,9 @@ const AppContent: React.FC = () => {
   if (user) {
     // Show country selection if user is logged in but hasn't completed country selection flow
     // Registration country doesn't count - only country selection flow does
-    if (!selectedCountry || user.country_selected === false) {
+    // Also check localStorage in case API update failed but country was selected
+    const hasSelectedCountry = selectedCountry || localStorage.getItem('selectedCountry');
+    if (!hasSelectedCountry || user.country_selected === false) {
       return (
         <Layout>
           <CountrySelection onCountrySelect={selectCountry} />

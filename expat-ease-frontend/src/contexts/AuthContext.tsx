@@ -145,12 +145,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     const selectCountry = async (country: string) => {
+        console.log('Selecting country:', country);
         setSelectedCountry(country);
         localStorage.setItem('selectedCountry', country);
 
         // Update user's country and mark country_selected as true in the database
         if (user && token) {
             try {
+                console.log('Updating user country in database...');
                 const response = await fetch(getApiUrl('/api/v1/users/me'), {
                     method: 'PATCH',
                     headers: {
@@ -166,10 +168,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 if (response.ok) {
                     const updatedUser = await response.json();
                     setUser(updatedUser);
+                    console.log('User country updated successfully');
+                } else {
+                    console.error('Failed to update user country:', response.status, response.statusText);
+                    // Continue with the flow even if API call fails
                 }
             } catch (error) {
                 console.error('Failed to update user country:', error);
+                // Continue with the flow even if API call fails
             }
+        } else {
+            console.log('No user or token available, skipping database update');
         }
     };
 
