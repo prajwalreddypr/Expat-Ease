@@ -23,6 +23,23 @@ class Settings(BaseSettings):
     CLOUDINARY_CLOUD_NAME: str = ""
     CLOUDINARY_API_KEY: str = ""
     CLOUDINARY_API_SECRET: str = ""
+
+    # Optional SMTP/email settings for password reset (production)
+    SMTP_HOST: Optional[str] = None
+    SMTP_PORT: Optional[int] = None
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    EMAIL_FROM: Optional[str] = None
+    # Development helper: when true, forgot-password will return the token in the response
+    # WARNING: set to False in production
+    DEV_RETURN_RESET_TOKEN: bool = True
+
+    # Security/Audit defaults to avoid AttributeError in optional modules
+    LOG_LEVEL: str = "INFO"
+    RATE_LIMIT_PER_MINUTE: int = 60
+    ENABLE_HTTPS: bool = False
+    AUDIT_LOG_ENABLED: bool = False
+    ALLOWED_HOSTS: list[str] = ["*"]
     
     class Config:
         env_file = ".env"

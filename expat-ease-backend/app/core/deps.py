@@ -46,7 +46,11 @@ def get_current_user(
             raise credentials_exception
         
         # Extract user ID from token
-        user_id: int = payload.get("sub")
+        user_sub = payload.get("sub")
+        try:
+            user_id: int = int(user_sub)
+        except Exception:
+            raise credentials_exception
         if user_id is None:
             raise credentials_exception
             
