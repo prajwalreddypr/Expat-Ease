@@ -1,0 +1,107 @@
+{
+  "total_tests": 14,
+  "passed_tests": 0,
+  "failed_tests": 14,
+  "success_rate": 0.0,
+  "test_results": [
+    {
+      "test": "Backend Connectivity",
+      "success": false,
+      "message": "Server not accessible",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE020D60>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:26:40.216888"
+    },
+    {
+      "test": "CORS Configuration",
+      "success": false,
+      "message": "CORS test failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/auth/login (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE04A100>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:26:44.310720"
+    },
+    {
+      "test": "User Registration",
+      "success": false,
+      "message": "Registration request failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/users/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE04ACD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:26:56.604176"
+    },
+    {
+      "test": "Duplicate Registration Prevention",
+      "success": false,
+      "message": "Test failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/users/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE05D100>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:27:00.669531"
+    },
+    {
+      "test": "User Login",
+      "success": false,
+      "message": "Login request failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/auth/login (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE05D490>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:27:04.757340"
+    },
+    {
+      "test": "Invalid Login",
+      "success": false,
+      "message": "Test failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/auth/login (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE05D820>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:27:08.823930"
+    },
+    {
+      "test": "Token Verification",
+      "success": false,
+      "message": "No token available for testing",
+      "details": null,
+      "timestamp": "2025-10-05T02:27:08.823930"
+    },
+    {
+      "test": "Invalid Token Handling",
+      "success": false,
+      "message": "Test failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/users/me (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE04AFD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:27:12.961889"
+    },
+    {
+      "test": "User Profile Update",
+      "success": false,
+      "message": "No token available for testing",
+      "details": null,
+      "timestamp": "2025-10-05T02:27:12.961889"
+    },
+    {
+      "test": "Password Validation",
+      "success": false,
+      "message": "Test failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/users/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE04AC10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:27:17.093086"
+    },
+    {
+      "test": "Email Validation",
+      "success": false,
+      "message": "Test failed",
+      "details": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /api/v1/users/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000026ACE04A8B0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))",
+      "timestamp": "2025-10-05T02:27:21.165852"
+    },
+    {
+      "test": "Database Integrity",
+      "success": false,
+      "message": "No user ID available for testing",
+      "details": null,
+      "timestamp": "2025-10-05T02:27:21.165852"
+    },
+    {
+      "test": "Token Expiration",
+      "success": false,
+      "message": "No token available for testing",
+      "details": null,
+      "timestamp": "2025-10-05T02:27:21.165852"
+    },
+    {
+      "test": "Frontend API Compatibility",
+      "success": false,
+      "message": "No token available for testing",
+      "details": null,
+      "timestamp": "2025-10-05T02:27:21.165852"
+    }
+  ],
+  "timestamp": "2025-10-05T02:27:21.165852"
+}

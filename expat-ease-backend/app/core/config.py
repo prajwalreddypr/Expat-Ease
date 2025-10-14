@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     CLOUDINARY_CLOUD_NAME: str = ""
     CLOUDINARY_API_KEY: str = ""
     CLOUDINARY_API_SECRET: str = ""
+
+    # Security/Audit defaults to avoid AttributeError in optional modules
+    LOG_LEVEL: str = "INFO"
+    RATE_LIMIT_PER_MINUTE: int = 60
+    ENABLE_HTTPS: bool = False
+    AUDIT_LOG_ENABLED: bool = False
+    ALLOWED_HOSTS: list[str] = ["*"]
     
     class Config:
         env_file = ".env"
