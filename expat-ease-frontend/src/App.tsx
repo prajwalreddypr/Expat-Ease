@@ -11,6 +11,7 @@ import ForumPage from './pages/ForumPage';
 import ForumThreadPage from './pages/ForumThreadPage';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const AppContent: React.FC = () => {
@@ -35,7 +36,9 @@ const AppContent: React.FC = () => {
 
   // Redirect logged-out users from protected routes to homepage
   useEffect(() => {
-    if (!isLoading && !user && location.pathname !== '/') {
+    // Allow unauthenticated access to public routes like /reset-password
+    const publicPaths = ['/', '/reset-password'];
+    if (!isLoading && !user && !publicPaths.includes(location.pathname)) {
       navigate('/', { replace: true });
     }
   }, [user, isLoading, location.pathname, navigate]);
@@ -278,6 +281,11 @@ const AppContent: React.FC = () => {
           }}
         />
       )}
+
+      {/* Public route: reset password */}
+      <Routes>
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+      </Routes>
 
     </Layout>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
 interface LoginFormProps {
   onClose: () => void;
@@ -14,6 +15,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onOpenRegister }) => {
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,10 +108,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onOpenRegister }) => {
 
         {/* Forgot Password */}
         <div className="text-center mb-6">
-          <button className="text-sm text-gray-600 hover:text-primary-600">
+          <button onClick={() => setShowForgot(true)} className="text-sm text-gray-600 hover:text-primary-600">
             Forgot password?
           </button>
         </div>
+
+        {showForgot && <ForgotPasswordModal onClose={() => setShowForgot(false)} />}
 
         {/* Sign Up Section */}
         <div className="border-t border-gray-200 pt-6 text-center">
