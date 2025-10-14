@@ -3,11 +3,25 @@ from sqlmodel import Session, select, func, Field, SQLModel
 from typing import List, Optional
 from datetime import datetime
 
-from app.core.deps import get_current_user, get_session
+from app.core.deps import get_current_user
+from app.db.session import get_session
 from app.models.user import User
 from app.models.forum import Question, Answer, QuestionVote, AnswerVote, QuestionCategory
 
 router = APIRouter()
+
+
+def _user_summary(session: Session, user_id: int) -> dict:
+    """Return a minimal public user summary dict for embedding in responses."""
+    user = session.get(User, user_id)
+    if not user:
+        return {"id": user_id, "full_name": "Unknown", "profile_photo": None, "country": None}
+    return {
+        "id": user.id,
+        "full_name": user.full_name or user.email,
+        "profile_photo": user.profile_photo,
+        "country": user.country,
+    }
 
 
 # Question endpoints
@@ -55,12 +69,7 @@ def get_questions(
             "answer_count": answer_count,
             "upvotes": upvotes,
             "downvotes": downvotes,
-            "user": {
-                "id": question.user.id,
-                "full_name": question.user.full_name,
-                "profile_photo": question.user.profile_photo,
-                "country": question.user.country
-            }
+            "user": _user_summary(session, question.user_id),
         })
     
     return result
@@ -82,7 +91,7 @@ def create_question(
         title=question_data.title,
         content=question_data.content,
         category=question_data.category,
-        user_id=current_user.id
+        user_id=current_user.id,
     )
     
     session.add(question)
@@ -100,12 +109,7 @@ def create_question(
         "answer_count": 0,
         "upvotes": 0,
         "downvotes": 0,
-        "user": {
-            "id": current_user.id,
-            "full_name": current_user.full_name,
-            "profile_photo": current_user.profile_photo,
-            "country": current_user.country
-        }
+        "user": _user_summary(session, current_user.id),
     }
 
 
@@ -126,7 +130,9 @@ def get_question(
     session.commit()
     
     # Get answers
-    answers = session.exec(select(Answer).where(Answer.question_id == question_id).order_by(Answer.created_at.asc())).all()
+    answers = session.exec(
+        select(Answer).where(Answer.question_id == question_id).order_by(Answer.created_at.asc())
+    ).all()
     
     answer_list = []
     for answer in answers:
@@ -148,12 +154,7 @@ def get_question(
             "is_accepted": answer.is_accepted,
             "upvotes": upvotes,
             "downvotes": downvotes,
-            "user": {
-                "id": answer.user.id,
-                "full_name": answer.user.full_name,
-                "profile_photo": answer.user.profile_photo,
-                "country": answer.user.country
-            }
+            "user": _user_summary(session, answer.user_id),
         })
     
     # Get vote counts for question
@@ -178,13 +179,8 @@ def get_question(
         "answer_count": len(answer_list),
         "upvotes": upvotes,
         "downvotes": downvotes,
-        "user": {
-            "id": question.user.id,
-            "full_name": question.user.full_name,
-            "profile_photo": question.user.profile_photo,
-            "country": question.user.country
-        },
-        "answers": answer_list
+        "user": _user_summary(session, question.user_id),
+        "answers": answer_list,
     }
 
 
@@ -222,12 +218,7 @@ def create_answer(
         "is_accepted": answer.is_accepted,
         "upvotes": 0,
         "downvotes": 0,
-        "user": {
-            "id": current_user.id,
-            "full_name": current_user.full_name,
-            "profile_photo": current_user.profile_photo,
-            "country": current_user.country
-        }
+        "user": _user_summary(session, current_user.id),
     }
 
 

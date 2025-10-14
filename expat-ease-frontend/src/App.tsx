@@ -11,6 +11,7 @@ import ForumPage from './pages/ForumPage';
 import ForumThreadPage from './pages/ForumThreadPage';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const AppContent: React.FC = () => {
@@ -35,7 +36,9 @@ const AppContent: React.FC = () => {
 
   // Redirect logged-out users from protected routes to homepage
   useEffect(() => {
-    if (!isLoading && !user && location.pathname !== '/') {
+    // Allow unauthenticated access to public routes like /reset-password
+    const publicPaths = ['/', '/reset-password'];
+    if (!isLoading && !user && !publicPaths.includes(location.pathname)) {
       navigate('/', { replace: true });
     }
   }, [user, isLoading, location.pathname, navigate]);
@@ -89,7 +92,9 @@ const AppContent: React.FC = () => {
   if (user) {
     // Show country selection if user is logged in but hasn't completed country selection flow
     // Registration country doesn't count - only country selection flow does
-    if (!selectedCountry || user.country_selected === false) {
+    // Also check localStorage in case API update failed but country was selected
+    const hasSelectedCountry = selectedCountry || localStorage.getItem('selectedCountry');
+    if (!hasSelectedCountry || user.country_selected === false) {
       return (
         <Layout>
           <CountrySelection onCountrySelect={selectCountry} />
@@ -276,6 +281,11 @@ const AppContent: React.FC = () => {
           }}
         />
       )}
+
+      {/* Public route: reset password */}
+      <Routes>
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+      </Routes>
 
     </Layout>
   );
