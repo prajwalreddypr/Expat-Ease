@@ -5,6 +5,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import logging
+
+from app.core.config import settings
 from fastapi.staticfiles import StaticFiles
 
 from app.api.api_v1.api import api_router
@@ -32,14 +35,29 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS - Allow all origins for production
+# Configure CORS using configured FRONTEND_URL or ALLOWED_HOSTS
+allowed_origins = []
+if settings.FRONTEND_URL:
+    allowed_origins.append(settings.FRONTEND_URL)
+if settings.ALLOWED_HOSTS:
+    # If ALLOWED_HOSTS includes hosts, allow them as well
+    allowed_origins.extend(settings.ALLOWED_HOSTS)
+
+# Fallback: do NOT allow wildcard origins in production; allow none if nothing is configured
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for production deployment
+    allow_origins=allowed_origins or [],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Startup checks
+logger = logging.getLogger("uvicorn")
+if not settings.SECRET_KEY:
+    logger.warning(
+        "SECRET_KEY is empty. Set a secure SECRET_KEY in environment for production deployments."
+    )
 
 # Include API routes
 app.include_router(api_router, prefix="/api/v1")

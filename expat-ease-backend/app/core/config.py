@@ -16,8 +16,9 @@ class Settings(BaseSettings):
     # Frontend URL for CORS
     FRONTEND_URL: str = "http://localhost:5173"
     
-    # Secret key for JWT tokens (to be implemented later)
-    SECRET_KEY: str = "changeme123"
+    # Secret key for JWT tokens
+    # IMPORTANT: do not commit a real secret to the repo. Provide via environment in production.
+    SECRET_KEY: str = ""
     
     # Cloudinary configuration
     CLOUDINARY_CLOUD_NAME: str = ""
@@ -32,14 +33,15 @@ class Settings(BaseSettings):
     EMAIL_FROM: Optional[str] = None
     # Development helper: when true, forgot-password will return the token in the response
     # WARNING: set to False in production
-    DEV_RETURN_RESET_TOKEN: bool = True
+    DEV_RETURN_RESET_TOKEN: bool = False
 
     # Security/Audit defaults to avoid AttributeError in optional modules
     LOG_LEVEL: str = "INFO"
     RATE_LIMIT_PER_MINUTE: int = 60
     ENABLE_HTTPS: bool = False
     AUDIT_LOG_ENABLED: bool = False
-    ALLOWED_HOSTS: list[str] = ["*"]
+    # In production set this to a list of allowed hostnames/origins. Empty means no wildcard.
+    ALLOWED_HOSTS: list[str] = []
     
     class Config:
         env_file = ".env"
