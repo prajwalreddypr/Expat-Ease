@@ -62,7 +62,8 @@ interface ToastContainerProps {
 
 const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onRemove }) => {
     return (
-        <div className="fixed top-4 right-4 z-50 space-y-2">
+        // Center toasts horizontally near the top so they're clearly visible
+        <div className="fixed left-1/2 transform -translate-x-1/2 top-4 z-50 space-y-2 w-full max-w-xl px-4">
             {toasts.map(toast => (
                 <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
             ))}
