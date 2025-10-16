@@ -81,10 +81,44 @@ if settings.ALLOWED_HOSTS:
 # This is a deliberate, temporary convenience for deployments where the env
 # variable was not set. For production, set FRONTEND_URLS to a comma-separated
 # list of allowed origins and remove this fallback.
-logger.warning("CORS policy set to allow all origins. This is permissive; consider restricting origins for production.")
-allowed_origins = ["*"]
-# When using wildcard origins we must not allow credentials per the CORS spec
-cors_allow_credentials = False
+# Preferred: honor FRONTEND_URL / FRONTEND_URLS from environment (set on Render)
+resolved = []
+if settings.FRONTEND_URL:
+    resolved.append(settings.FRONTEND_URL)
+if settings.FRONTEND_URLS:
+    resolved.extend([u.strip() for u in settings.FRONTEND_URLS.split(',') if u.strip()])
+if settings.ALLOWED_HOSTS:
+    resolved.extend(settings.ALLOWED_HOSTS)
+
+# If the environment didn't provide any origins, fall back to a safe allow-list
+# containing only the production Vercel origins and localhost for development.
+if not resolved:
+    resolved = [
+        "https://expat-ease.vercel.app",
+        "https://expat-ease-4s7h4um2o-prajwal-reddys-projects.vercel.app",
+        "http://localhost:5173",
+    ]
+    logger.info(f"No FRONTEND_URL(S) provided; defaulting allowed_origins to {resolved}")
+
+# Use the resolved list as allowed_origins (no wildcard)
+allowed_origins = resolved
+# When explicit origins are used we can allow credentials
+cors_allow_credentials = True
+
+# Ensure the production frontend origins are included in the allow-list so
+# deployed requests from those domains are accepted even if env vars are missing.
+production_origins = [
+    "https://expat-ease.vercel.app",
+    "https://expat-ease-4s7h4um2o-prajwal-reddys-projects.vercel.app",
+    "https://expat-ease.onrender.com",
+]
+for o in production_origins:
+    if o not in allowed_origins:
+        allowed_origins.append(o)
+
+# Ensure localhost dev origin is allowed for local testing
+if "http://localhost:5173" not in allowed_origins:
+    allowed_origins.append("http://localhost:5173")
 
 # Add request logging middleware first so we capture preflight requests in logs
 app.add_middleware(RequestLoggingMiddleware)
@@ -159,16 +193,7 @@ def debug_cors() -> dict:
     Recompute and return the resolved allowed_origins based on current settings.
     Useful for debugging what the application thinks should be allowed.
     """
-    resolved = []
-    if settings.FRONTEND_URL:
-        resolved.append(settings.FRONTEND_URL)
-    if settings.FRONTEND_URLS:
-        resolved.extend([u.strip() for u in settings.FRONTEND_URLS.split(',') if u.strip()])
-    if settings.ALLOWED_HOSTS:
-        resolved.extend(settings.ALLOWED_HOSTS)
-    if not resolved:
-        resolved = ["*"]
-    return {"allowed_origins": resolved}
+    return {"allowed_origins": allowed_origins}
 
 
 # TODO: Add more endpoints and functionality
