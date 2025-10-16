@@ -14,7 +14,10 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./dev.db"
     
     # Frontend URL for CORS
+    # Frontend URL for CORS (single). For multiple origins use FRONTEND_URLS comma-separated.
     FRONTEND_URL: str = "http://localhost:5173"
+    # Comma-separated list of allowed frontend origins (e.g. https://app.example.com,https://staging.example.com)
+    FRONTEND_URLS: Optional[str] = None
     
     # Secret key for JWT tokens
     # IMPORTANT: do not commit a real secret to the repo. Provide via environment in production.

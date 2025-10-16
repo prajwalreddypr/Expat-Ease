@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from app.core.config import settings
+import logging
 from fastapi.staticfiles import StaticFiles
 
 from app.api.api_v1.api import api_router
@@ -37,10 +38,14 @@ app = FastAPI(
 
 # Configure CORS using configured FRONTEND_URL or ALLOWED_HOSTS
 allowed_origins = []
+# Prefer FRONTEND_URL (single) but allow FRONTEND_URLS (comma-separated) for multiple origins
 if settings.FRONTEND_URL:
     allowed_origins.append(settings.FRONTEND_URL)
+if settings.FRONTEND_URLS:
+    # Split comma-separated list and strip whitespace
+    urls = [u.strip() for u in settings.FRONTEND_URLS.split(',') if u.strip()]
+    allowed_origins.extend(urls)
 if settings.ALLOWED_HOSTS:
-    # If ALLOWED_HOSTS includes hosts, allow them as well
     allowed_origins.extend(settings.ALLOWED_HOSTS)
 
 # Fallback: do NOT allow wildcard origins in production; allow none if nothing is configured
@@ -58,6 +63,8 @@ if not settings.SECRET_KEY:
     logger.warning(
         "SECRET_KEY is empty. Set a secure SECRET_KEY in environment for production deployments."
     )
+# Log resolved allowed origins for troubleshooting (safe to log)
+logger.info(f"CORS allowed_origins: {allowed_origins}")
 
 # Include API routes
 app.include_router(api_router, prefix="/api/v1")
