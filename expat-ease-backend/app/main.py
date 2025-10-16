@@ -3,8 +3,10 @@ Main FastAPI application.
 """
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 import logging
 
 from app.core.config import settings
@@ -35,6 +37,32 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    """
+    Simple middleware that logs incoming request method and selected headers.
+    This runs before other middleware (when added before them) so we can
+    observe OPTIONS (preflight) requests and their headers in deployed logs.
+    """
+
+    async def dispatch(self, request: Request, call_next):
+        try:
+            # Use the root logger so test runs and simple deployments surface these logs
+            log = logging.getLogger()
+            # Only log a few key headers to avoid overly verbose logs
+            hdrs = {k: v for k, v in request.headers.items() if k.lower() in (
+                "origin",
+                "access-control-request-method",
+                "access-control-request-headers",
+                "content-type",
+                "host",
+            )}
+            log.info(f"Incoming request {request.method} {request.url.path} headers: {hdrs}")
+        except Exception:
+            logging.getLogger("uvicorn.error").exception("Failed to log request headers")
+        response = await call_next(request)
+        return response
+
 # Configure CORS using configured FRONTEND_URL or ALLOWED_HOSTS
 # Prepare logger early for startup messages
 logger = logging.getLogger("uvicorn")
@@ -53,16 +81,19 @@ if settings.ALLOWED_HOSTS:
 # This is a deliberate, temporary convenience for deployments where the env
 # variable was not set. For production, set FRONTEND_URLS to a comma-separated
 # list of allowed origins and remove this fallback.
-if not allowed_origins:
-    logger.warning(
-        "No FRONTEND_URL(S) or ALLOWED_HOSTS configured; falling back to allow all origins."
-    )
-    allowed_origins = ["*"]
+logger.warning("CORS policy set to allow all origins. This is permissive; consider restricting origins for production.")
+allowed_origins = ["*"]
+# When using wildcard origins we must not allow credentials per the CORS spec
+cors_allow_credentials = False
 
+# Add request logging middleware first so we capture preflight requests in logs
+app.add_middleware(RequestLoggingMiddleware)
+
+# Then add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=cors_allow_credentials,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
 )
@@ -103,6 +134,41 @@ def test_cors() -> dict:
         dict: CORS test response
     """
     return {"message": "CORS is working", "origin": "test"}
+
+
+@app.options("/debug-echo")
+def debug_echo_options(request: Request):
+    """
+    Minimal debug endpoint that echoes a few request headers back.
+    Designed for quick preflight inspection from deployed environment.
+    """
+    # Note: FastAPI normally handles OPTIONS via CORSMiddleware, but
+    # having an explicit route can help in situations where proxies
+    # alter the preflight and cause a 400 before middleware runs.
+    headers = {k: v for k, v in request.headers.items() if k.lower() in (
+        "origin",
+        "access-control-request-method",
+        "access-control-request-headers",
+    )}
+    return {"method": "OPTIONS", "headers": headers}
+
+
+@app.get("/debug-cors")
+def debug_cors() -> dict:
+    """
+    Recompute and return the resolved allowed_origins based on current settings.
+    Useful for debugging what the application thinks should be allowed.
+    """
+    resolved = []
+    if settings.FRONTEND_URL:
+        resolved.append(settings.FRONTEND_URL)
+    if settings.FRONTEND_URLS:
+        resolved.extend([u.strip() for u in settings.FRONTEND_URLS.split(',') if u.strip()])
+    if settings.ALLOWED_HOSTS:
+        resolved.extend(settings.ALLOWED_HOSTS)
+    if not resolved:
+        resolved = ["*"]
+    return {"allowed_origins": resolved}
 
 
 # TODO: Add more endpoints and functionality
