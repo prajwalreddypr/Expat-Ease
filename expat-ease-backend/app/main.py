@@ -8,7 +8,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from app.core.config import settings
-import logging
 from fastapi.staticfiles import StaticFiles
 
 from app.api.api_v1.api import api_router
