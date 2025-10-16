@@ -36,6 +36,8 @@ app = FastAPI(
 )
 
 # Configure CORS using configured FRONTEND_URL or ALLOWED_HOSTS
+# Prepare logger early for startup messages
+logger = logging.getLogger("uvicorn")
 allowed_origins = []
 # Prefer FRONTEND_URL (single) but allow FRONTEND_URLS (comma-separated) for multiple origins
 if settings.FRONTEND_URL:
@@ -47,10 +49,19 @@ if settings.FRONTEND_URLS:
 if settings.ALLOWED_HOSTS:
     allowed_origins.extend(settings.ALLOWED_HOSTS)
 
-# Fallback: do NOT allow wildcard origins in production; allow none if nothing is configured
+# If no allowed origins were configured, fall back to wildcard with a warning.
+# This is a deliberate, temporary convenience for deployments where the env
+# variable was not set. For production, set FRONTEND_URLS to a comma-separated
+# list of allowed origins and remove this fallback.
+if not allowed_origins:
+    logger.warning(
+        "No FRONTEND_URL(S) or ALLOWED_HOSTS configured; falling back to allow all origins."
+    )
+    allowed_origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins or [],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
