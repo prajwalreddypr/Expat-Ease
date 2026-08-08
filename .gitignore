@@ -1,0 +1,6 @@
+# Claude Code internals — never commit these
+.claude/
+MEMORY.md
+memory/
+*.claude.md
+PROJECT_OVERVIEW.md
