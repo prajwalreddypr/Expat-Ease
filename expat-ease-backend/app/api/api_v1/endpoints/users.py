@@ -9,7 +9,8 @@ from app.core.deps import get_current_active_user
 from app.core.storage import save_upload_file
 from app.crud.crud_user import create_user, get_user, update_user
 from app.db.session import get_session
-from app.models.user import User, UserCreate, UserRead, UserUpdate
+from app.models.user import User
+from app.schemas.user import UserCreate, UserRead, UserUpdate
 
 router = APIRouter()
 

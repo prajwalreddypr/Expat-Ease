@@ -9,7 +9,21 @@ def test_question_vote_counts_use_boolean_database_predicates(client, auth_heade
         },
     )
     assert created.status_code == 200
-    question_id = created.json()["id"]
+    created_question = created.json()
+    question_id = created_question["id"]
+    assert set(created_question) == {
+        "id",
+        "title",
+        "content",
+        "category",
+        "created_at",
+        "is_resolved",
+        "view_count",
+        "answer_count",
+        "upvotes",
+        "downvotes",
+        "user",
+    }
 
     vote = client.post(
         f"/api/v1/forum/questions/{question_id}/vote?is_upvote=true",

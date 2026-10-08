@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, EmailStr
 from sqlmodel import Session
 
 from app.core import password_security
@@ -13,20 +12,25 @@ from app.crud import crud_user
 from app.crud.crud_password_reset import create_token, delete_token, get_by_token
 from app.db.session import get_session
 from app.models.user import User
+from app.schemas.auth import (
+    ChangeByEmailRequest,
+    ChangePasswordRequest,
+    ForgotPasswordRequest,
+    PasswordResetRequestResponse,
+    ResetPasswordRequest,
+    VerifyPasswordRequest,
+)
+from app.schemas.common import StatusMessageResponse
 
 router = APIRouter()
 
 
-class ForgotPasswordRequest(BaseModel):
-    email: EmailStr
-
-
-class ResetPasswordRequest(BaseModel):
-    token: str
-    new_password: str
-
-
-@router.post("/forgot-password", status_code=status.HTTP_200_OK)
+@router.post(
+    "/forgot-password",
+    status_code=status.HTTP_200_OK,
+    response_model=PasswordResetRequestResponse,
+    response_model_exclude_none=True,
+)
 def forgot_password(request: ForgotPasswordRequest, session: Session = Depends(get_session)) -> Any:
     """Create a password reset token for the given email and log it.
 
@@ -47,7 +51,9 @@ def forgot_password(request: ForgotPasswordRequest, session: Session = Depends(g
     return {"msg": "If an account with this email exists, a reset token has been issued."}
 
 
-@router.post("/reset-password", status_code=status.HTTP_200_OK)
+@router.post(
+    "/reset-password", status_code=status.HTTP_200_OK, response_model=StatusMessageResponse
+)
 def reset_password(request: ResetPasswordRequest, session: Session = Depends(get_session)) -> Any:
     prt = get_by_token(session, request.token)
     if not prt:
@@ -83,15 +89,9 @@ def reset_password(request: ResetPasswordRequest, session: Session = Depends(get
     return {"msg": "Password reset successful"}
 
 
-class VerifyPasswordRequest(BaseModel):
-    current_password: str
-
-
-class ChangePasswordRequest(BaseModel):
-    new_password: str
-
-
-@router.post("/verify-password", status_code=status.HTTP_200_OK)
+@router.post(
+    "/verify-password", status_code=status.HTTP_200_OK, response_model=StatusMessageResponse
+)
 def verify_current_password(
     request: VerifyPasswordRequest,
     current_user: User = Depends(get_current_active_user),
@@ -104,7 +104,9 @@ def verify_current_password(
     return {"msg": "Password verified"}
 
 
-@router.post("/change-password", status_code=status.HTTP_200_OK)
+@router.post(
+    "/change-password", status_code=status.HTTP_200_OK, response_model=StatusMessageResponse
+)
 def change_password(
     request: ChangePasswordRequest,
     session: Session = Depends(get_session),
@@ -120,13 +122,11 @@ def change_password(
     return {"msg": "Password changed successfully"}
 
 
-class ChangeByEmailRequest(BaseModel):
-    email: EmailStr
-    current_password: str
-    new_password: str
-
-
-@router.post("/change-password-by-email", status_code=status.HTTP_200_OK)
+@router.post(
+    "/change-password-by-email",
+    status_code=status.HTTP_200_OK,
+    response_model=StatusMessageResponse,
+)
 def change_password_by_email(
     request: ChangeByEmailRequest, session: Session = Depends(get_session)
 ) -> Any:

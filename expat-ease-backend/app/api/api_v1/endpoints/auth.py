@@ -11,8 +11,9 @@ from app.core.deps import get_current_user
 from app.core.security import create_access_token, verify_password
 from app.crud.crud_user import get_user_by_email
 from app.db.session import get_session
-from app.models.auth import LoginRequest, Token
-from app.models.user import User, UserRead
+from app.models.user import User
+from app.schemas.auth import LoginRequest, Token
+from app.schemas.user import UserRead
 
 router = APIRouter()
 

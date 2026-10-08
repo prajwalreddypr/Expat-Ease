@@ -14,13 +14,13 @@ from sqlmodel import Session, select
 
 from app.core.deps import get_current_active_user
 from app.db.session import get_session
-from app.models.settlement_step import (
-    SettlementStep,
+from app.models.settlement_step import SettlementStep
+from app.models.user import User
+from app.schemas.settlement_step import (
     SettlementStepResponse,
     SettlementStepUpdate,
     StepDocumentInfo,
 )
-from app.models.user import User
 
 logger = logging.getLogger(__name__)
 

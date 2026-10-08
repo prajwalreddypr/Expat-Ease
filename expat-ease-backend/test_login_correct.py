@@ -3,7 +3,7 @@
 Test login with correct password
 """
 from app.api.api_v1.endpoints.auth import login
-from app.models.auth import LoginRequest
+from app.schemas.auth import LoginRequest
 from app.db.session import get_session
 
 def test_login():

@@ -72,3 +72,15 @@ def test_login_rejects_incorrect_password(client, user_factory):
 
     assert response.status_code == 401
     assert response.json() == {"detail": "Incorrect password"}
+
+
+def test_forgot_password_does_not_add_empty_token(client):
+    response = client.post(
+        "/api/v1/auth/forgot-password",
+        json={"email": "missing@example.com"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "msg": "If an account with this email exists, a reset token has been issued."
+    }

@@ -11,9 +11,11 @@ from sqlmodel import Session, select
 from app.core.deps import get_current_active_user
 from app.core.storage import save_upload_file
 from app.db.session import get_session
-from app.models.document import Document, DocumentResponse
+from app.models.document import Document
 from app.models.settlement_step import SettlementStep
 from app.models.user import User
+from app.schemas.common import MessageResponse
+from app.schemas.document import DocumentResponse
 
 router = APIRouter()
 
@@ -215,7 +217,7 @@ def get_document(
     return response
 
 
-@router.delete("/{document_id}")
+@router.delete("/{document_id}", response_model=MessageResponse)
 def delete_document(
     document_id: int,
     current_user: User = Depends(get_current_active_user),

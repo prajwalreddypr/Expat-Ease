@@ -22,6 +22,20 @@ def test_create_and_list_task_with_concrete_values(client, auth_headers):
     assert task["country"] == "France"
     assert task["order_index"] == 3
     assert task["estimated_days"] == 2
+    assert set(task) == {
+        "id",
+        "title",
+        "description",
+        "status",
+        "priority",
+        "country",
+        "user_id",
+        "order_index",
+        "is_required",
+        "estimated_days",
+        "created_at",
+        "updated_at",
+    }
 
     listed = client.get("/api/v1/tasks/?country=France", headers=auth_headers)
     assert listed.status_code == 200

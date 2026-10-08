@@ -76,7 +76,8 @@ def test_user_model():
     """Test 3: User model functionality"""
     print("Testing User model...")
     
-    from app.models.user import User, UserCreate, UserRead
+    from app.models.user import User
+    from app.schemas.user import UserCreate, UserRead
     from datetime import datetime
     
     # Test model creation
@@ -137,7 +138,7 @@ def test_crud_operations():
     
     from app.crud.crud_user import get_user_by_email, create_user
     from app.db.session import get_session
-    from app.models.user import UserCreate
+    from app.schemas.user import UserCreate
     
     session = next(get_session())
     
@@ -156,7 +157,7 @@ def test_auth_endpoint_logic():
     print("Testing authentication endpoint logic...")
     
     from app.api.api_v1.endpoints.auth import login
-    from app.models.auth import LoginRequest
+    from app.schemas.auth import LoginRequest
     from app.db.session import get_session
     from app.crud.crud_user import get_user_by_email
     from fastapi import HTTPException
@@ -212,7 +213,7 @@ def test_manual_server_test():
     
     from app.main import app
     from app.api.api_v1.endpoints.auth import login
-    from app.models.auth import LoginRequest
+    from app.schemas.auth import LoginRequest
     from app.db.session import get_session
     
     # Simulate the login endpoint call

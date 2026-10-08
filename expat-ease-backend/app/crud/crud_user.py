@@ -7,7 +7,8 @@ from typing import Optional
 from sqlmodel import Session, select
 
 from app.core.security import hash_password
-from app.models.user import User, UserCreate, UserUpdate
+from app.models.user import User
+from app.schemas.user import UserCreate, UserUpdate
 
 
 def get_user_by_email(session: Session, email: str) -> Optional[User]:
