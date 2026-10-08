@@ -6,7 +6,9 @@ from sqlmodel import Session, select
 from app.models.password_reset_token import PasswordResetToken
 
 
-def create_token(session: Session, user_id: int, expires_in_minutes: int = 60) -> PasswordResetToken:
+def create_token(
+    session: Session, user_id: int, expires_in_minutes: int = 60
+) -> PasswordResetToken:
     # generate a secure random token
     import secrets
 
@@ -36,9 +38,10 @@ def delete_token(session: Session, token_id: int) -> None:
 def delete_expired(session: Session) -> int:
     """Delete expired tokens. Returns number deleted."""
     from sqlalchemy import delete
+
     now = datetime.utcnow()
     stmt = delete(PasswordResetToken).where(PasswordResetToken.expires_at < now)
-    result = session.exec(stmt)
+    session.exec(stmt)
     session.commit()
     # session.exec(delete(...)) returns execution result; we can't easily get rowcount in a DB-agnostic way here
     return 0

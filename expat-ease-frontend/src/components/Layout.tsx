@@ -52,8 +52,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                         {/* Left Section - Sidebar Button & Logo */}
                         <div className="flex items-center space-x-4">
-                            {/* Sidebar Button - Only show when user is logged in */}
-                            {user && (
+                            {/* Sidebar Button - Only show when user has completed country selection */}
+                            {user && user.country_selected && (
                                 <button
                                     onClick={() => setIsSidebarOpen(true)}
                                     className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200"
@@ -230,11 +230,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Container>
             </nav>
 
-            {/* Sidebar */}
-            <Sidebar
-                isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
-            />
+            {/* Sidebar — only after country selection is complete */}
+            {user && user.country_selected && (
+                <Sidebar
+                    isOpen={isSidebarOpen}
+                    onClose={() => setIsSidebarOpen(false)}
+                />
+            )}
 
             {/* Main Content */}
             <main className="flex-grow pt-6">

@@ -1,6 +1,7 @@
 """
 Security utilities for password hashing, verification, and JWT tokens.
 """
+
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -20,42 +21,42 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours (1 day)
 def hash_password(plain_password: str) -> str:
     """
     Hash a plain text password using bcrypt.
-    
+
     Args:
         plain_password: The plain text password to hash
-        
+
     Returns:
         str: The hashed password
     """
     # Truncate password to 72 bytes to prevent bcrypt errors
-    truncated_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    truncated_password = plain_password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
     return pwd_context.hash(truncated_password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     Verify a plain text password against its hash.
-    
+
     Args:
         plain_password: The plain text password to verify
         hashed_password: The hashed password to compare against
-        
+
     Returns:
         bool: True if the password matches, False otherwise
     """
     # Truncate password to 72 bytes to match the hashing behavior
-    truncated_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    truncated_password = plain_password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
     return pwd_context.verify(truncated_password, hashed_password)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """
     Create a JWT access token.
-    
+
     Args:
         data: The data to encode in the token
         expires_delta: Optional expiration time override
-        
+
     Returns:
         str: The encoded JWT token
     """
@@ -64,7 +65,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
         expire = datetime.now(timezone.utc) + expires_delta
     else:
         expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -73,10 +74,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 def verify_token(token: str) -> Optional[dict]:
     """
     Verify and decode a JWT token.
-    
+
     Args:
         token: The JWT token to verify
-        
+
     Returns:
         Optional[dict]: The decoded token payload if valid, None otherwise
     """

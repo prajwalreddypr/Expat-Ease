@@ -1,18 +1,16 @@
 """
 Main FastAPI application.
 """
+
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
-import logging
-
-from app.core.config import settings
-from fastapi.staticfiles import StaticFiles
 
 from app.api.api_v1.api import api_router
+from app.core.config import settings
 from app.db.init_db import create_db_and_tables
 
 
@@ -50,18 +48,24 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
             # Use the root logger so test runs and simple deployments surface these logs
             log = logging.getLogger()
             # Only log a few key headers to avoid overly verbose logs
-            hdrs = {k: v for k, v in request.headers.items() if k.lower() in (
-                "origin",
-                "access-control-request-method",
-                "access-control-request-headers",
-                "content-type",
-                "host",
-            )}
+            hdrs = {
+                k: v
+                for k, v in request.headers.items()
+                if k.lower()
+                in (
+                    "origin",
+                    "access-control-request-method",
+                    "access-control-request-headers",
+                    "content-type",
+                    "host",
+                )
+            }
             log.info(f"Incoming request {request.method} {request.url.path} headers: {hdrs}")
         except Exception:
             logging.getLogger("uvicorn.error").exception("Failed to log request headers")
         response = await call_next(request)
         return response
+
 
 # Configure CORS using configured FRONTEND_URL or ALLOWED_HOSTS
 # Prepare logger early for startup messages
@@ -72,7 +76,7 @@ if settings.FRONTEND_URL:
     allowed_origins.append(settings.FRONTEND_URL)
 if settings.FRONTEND_URLS:
     # Split comma-separated list and strip whitespace
-    urls = [u.strip() for u in settings.FRONTEND_URLS.split(',') if u.strip()]
+    urls = [u.strip() for u in settings.FRONTEND_URLS.split(",") if u.strip()]
     allowed_origins.extend(urls)
 if settings.ALLOWED_HOSTS:
     allowed_origins.extend(settings.ALLOWED_HOSTS)
@@ -86,7 +90,7 @@ resolved = []
 if settings.FRONTEND_URL:
     resolved.append(settings.FRONTEND_URL)
 if settings.FRONTEND_URLS:
-    resolved.extend([u.strip() for u in settings.FRONTEND_URLS.split(',') if u.strip()])
+    resolved.extend([u.strip() for u in settings.FRONTEND_URLS.split(",") if u.strip()])
 if settings.ALLOWED_HOSTS:
     resolved.extend(settings.ALLOWED_HOSTS)
 
@@ -152,7 +156,7 @@ app.include_router(api_router, prefix="/api/v1")
 def health_check() -> dict:
     """
     Health check endpoint.
-    
+
     Returns:
         dict: Health status
     """
@@ -163,7 +167,7 @@ def health_check() -> dict:
 def test_cors() -> dict:
     """
     Test CORS endpoint.
-    
+
     Returns:
         dict: CORS test response
     """
@@ -179,11 +183,16 @@ def debug_echo_options(request: Request):
     # Note: FastAPI normally handles OPTIONS via CORSMiddleware, but
     # having an explicit route can help in situations where proxies
     # alter the preflight and cause a 400 before middleware runs.
-    headers = {k: v for k, v in request.headers.items() if k.lower() in (
-        "origin",
-        "access-control-request-method",
-        "access-control-request-headers",
-    )}
+    headers = {
+        k: v
+        for k, v in request.headers.items()
+        if k.lower()
+        in (
+            "origin",
+            "access-control-request-method",
+            "access-control-request-headers",
+        )
+    }
     return {"method": "OPTIONS", "headers": headers}
 
 

@@ -1,6 +1,7 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, TYPE_CHECKING
 from datetime import datetime
+from typing import TYPE_CHECKING, Optional
+
+from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from app.models.settlement_step import SettlementStep
@@ -16,7 +17,7 @@ class Document(SQLModel, table=True):
     settlement_step_id: Optional[int] = Field(default=None, foreign_key="settlementstep.id")
     user_id: int = Field(foreign_key="users.id")
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     # Relationships
     settlement_step: Optional["SettlementStep"] = Relationship()
 

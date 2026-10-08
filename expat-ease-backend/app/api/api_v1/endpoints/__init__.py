@@ -1,10 +1,4 @@
-from . import auth
-from . import users
-from . import tasks
-from . import documents
-from . import settlement_steps
-from . import forum
-from . import auth_reset
+from . import auth, auth_reset, documents, forum, settlement_steps, tasks, users
 
 __all__ = [
     "auth",
