@@ -4,13 +4,14 @@ Document upload and management endpoints.
 import os
 import uuid
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File, Form
 from sqlmodel import Session, select
 from aiofiles import open as aio_open
 
 from app.core.deps import get_current_active_user
 from app.db.session import get_session
 from app.models.document import Document, DocumentCreate, DocumentResponse
+from app.models.settlement_step import SettlementStep
 from app.models.user import User
 from app.core.storage import save_upload_file
 
@@ -46,7 +47,7 @@ def validate_file(file: UploadFile) -> None:
 async def upload_document(
     file: UploadFile = File(...),
     custom_name: Optional[str] = Form(None),
-    settlement_step_id: Optional[int] = Form(None),
+    settlement_step_id: Optional[int] = Query(None),
     current_user: User = Depends(get_current_active_user),
     session: Session = Depends(get_session)
 ) -> Document:
@@ -67,6 +68,19 @@ async def upload_document(
     try:
         # Validate file
         validate_file(file)
+
+        if settlement_step_id is not None:
+            settlement_step = session.exec(
+                select(SettlementStep).where(
+                    SettlementStep.id == settlement_step_id,
+                    SettlementStep.user_id == current_user.id,
+                )
+            ).first()
+            if not settlement_step:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Settlement step not found",
+                )
         
         # Upload file to Cloudinary
         cloudinary_url, unique_filename, file_size, content_type = await save_upload_file(
