@@ -52,5 +52,5 @@ class Settings(BaseSettings):
         extra = "allow"
 
 
-# Global settings instance
-settings = Settings()
+# Tests provide configuration explicitly and must not inherit developer secrets.
+settings = Settings(_env_file=None if os.getenv("ENVIRONMENT") == "test" else ".env")
