@@ -1,7 +1,11 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, List
 from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING, List, Optional
+
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class QuestionCategory(str, Enum):
@@ -26,7 +30,7 @@ class Question(SQLModel, table=True):
     updated_at: Optional[datetime] = Field(default=None)
     is_resolved: bool = Field(default=False)
     view_count: int = Field(default=0)
-    
+
     # Relationships
     user: Optional["User"] = Relationship(back_populates="questions")
     answers: List["Answer"] = Relationship(back_populates="question", cascade_delete=True)
@@ -41,7 +45,7 @@ class Answer(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = Field(default=None)
     is_accepted: bool = Field(default=False)
-    
+
     # Relationships
     question: Optional["Question"] = Relationship(back_populates="answers")
     user: Optional["User"] = Relationship(back_populates="answers")
@@ -54,7 +58,7 @@ class QuestionVote(SQLModel, table=True):
     user_id: int = Field(foreign_key="users.id")
     is_upvote: bool = Field(default=True)  # True for upvote, False for downvote
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     # Relationships
     question: Optional["Question"] = Relationship(back_populates="votes")
     user: Optional["User"] = Relationship()
@@ -66,7 +70,7 @@ class AnswerVote(SQLModel, table=True):
     user_id: int = Field(foreign_key="users.id")
     is_upvote: bool = Field(default=True)  # True for upvote, False for downvote
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    
+
     # Relationships
     answer: Optional["Answer"] = Relationship(back_populates="votes")
     user: Optional["User"] = Relationship()

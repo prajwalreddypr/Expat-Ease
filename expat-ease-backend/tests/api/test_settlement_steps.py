@@ -28,9 +28,7 @@ def test_completing_step_unlocks_next_step(client, auth_headers):
     assert updated_step["is_skipped"] is False
     assert updated_step["notes"] == "Visa validated on October 9"
 
-    refreshed_steps = client.get(
-        "/api/v1/settlement-steps/", headers=auth_headers
-    ).json()
+    refreshed_steps = client.get("/api/v1/settlement-steps/", headers=auth_headers).json()
     assert refreshed_steps[1]["title"] == "Get a Local SIM Card"
     assert refreshed_steps[1]["is_unlocked"] is True
 

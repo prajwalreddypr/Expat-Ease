@@ -1,10 +1,10 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING, List, Optional
+
+from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
     from app.models.user import User
-    from app.models.document import Document
 
 
 class SettlementStep(SQLModel, table=True):
@@ -20,7 +20,7 @@ class SettlementStep(SQLModel, table=True):
     notes: Optional[str] = Field(default=None)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    
+
     # Relationships
     user: Optional["User"] = Relationship(back_populates="settlement_steps")
     # documents relationship left as-is on Document side to avoid additional changes

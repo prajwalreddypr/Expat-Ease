@@ -1,6 +1,7 @@
 """
 Settlement steps management endpoints.
 """
+
 import logging
 import os
 import re
@@ -15,8 +16,8 @@ from app.core.deps import get_current_active_user
 from app.db.session import get_session
 from app.models.settlement_step import (
     SettlementStep,
-    SettlementStepUpdate,
     SettlementStepResponse,
+    SettlementStepUpdate,
     StepDocumentInfo,
 )
 from app.models.user import User
@@ -128,7 +129,10 @@ DEFAULT_STEPS = FRANCE_DEFAULT_STEPS
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _create_default_steps(user_id: int, session: Session, country: str = "France") -> List[SettlementStep]:
+
+def _create_default_steps(
+    user_id: int, session: Session, country: str = "France"
+) -> List[SettlementStep]:
     """Create and persist the country-specific settlement steps for a user."""
     steps_data = STEPS_BY_COUNTRY.get(country, FRANCE_DEFAULT_STEPS)
     steps = []
@@ -162,7 +166,7 @@ def _delete_cloudinary_file(file_path: str, content_type: str) -> None:
             logger.warning("Cannot extract Cloudinary public_id from URL: %s", file_path)
             return
 
-        public_id_raw = path[upload_idx + len("/upload/"):]
+        public_id_raw = path[upload_idx + len("/upload/") :]
         # Strip optional version prefix (v1234567890/)
         public_id = re.sub(r"^v\d+/", "", public_id_raw)
 
@@ -193,16 +197,16 @@ def _get_steps_with_documents(
         return []
 
     step_ids = [s.id for s in steps]
-    all_docs = session.exec(
-        select(Document).where(Document.settlement_step_id.in_(step_ids))
-    ).all()
+    all_docs = session.exec(select(Document).where(Document.settlement_step_id.in_(step_ids))).all()
 
     docs_by_step: dict[int, list] = {}
     for doc in all_docs:
         if doc.settlement_step_id not in docs_by_step:
             docs_by_step[doc.settlement_step_id] = []
         docs_by_step[doc.settlement_step_id].append(
-            StepDocumentInfo(id=doc.id, original_filename=doc.original_filename, file_path=doc.file_path)
+            StepDocumentInfo(
+                id=doc.id, original_filename=doc.original_filename, file_path=doc.file_path
+            )
         )
 
     return [
@@ -225,15 +229,11 @@ def _get_steps_with_documents(
     ]
 
 
-def _get_step_with_documents(
-    step: SettlementStep, session: Session
-) -> SettlementStepResponse:
+def _get_step_with_documents(step: SettlementStep, session: Session) -> SettlementStepResponse:
     """Convert a single settlement step to response format."""
     from app.models.document import Document
 
-    docs = session.exec(
-        select(Document).where(Document.settlement_step_id == step.id)
-    ).all()
+    docs = session.exec(select(Document).where(Document.settlement_step_id == step.id)).all()
 
     return SettlementStepResponse(
         id=step.id,
@@ -259,6 +259,7 @@ def _get_step_with_documents(
 # Endpoints
 # ---------------------------------------------------------------------------
 
+
 @router.post("/initialize", response_model=List[SettlementStepResponse])
 def initialize_settlement_steps(
     current_user: User = Depends(get_current_active_user),
@@ -275,12 +276,20 @@ def initialize_settlement_steps(
     if existing:
         logger.info(
             "User %d already has %d settlement steps — returning existing",
-            current_user.id, len(existing),
+            current_user.id,
+            len(existing),
         )
         return _get_steps_with_documents(existing, session)
 
-    steps = _create_default_steps(current_user.id, session, country=current_user.settlement_country or "France")
-    logger.info("Initialized %d settlement steps for user %d (country=%s)", len(steps), current_user.id, current_user.settlement_country)
+    steps = _create_default_steps(
+        current_user.id, session, country=current_user.settlement_country or "France"
+    )
+    logger.info(
+        "Initialized %d settlement steps for user %d (country=%s)",
+        len(steps),
+        current_user.id,
+        current_user.settlement_country,
+    )
     return _get_steps_with_documents(steps, session)
 
 
@@ -300,8 +309,14 @@ def get_user_settlement_steps(
     ).all()
 
     if not steps:
-        logger.info("No steps found for user %d — auto-initializing (country=%s)", current_user.id, current_user.settlement_country)
-        steps = _create_default_steps(current_user.id, session, country=current_user.settlement_country or "France")
+        logger.info(
+            "No steps found for user %d — auto-initializing (country=%s)",
+            current_user.id,
+            current_user.settlement_country,
+        )
+        steps = _create_default_steps(
+            current_user.id, session, country=current_user.settlement_country or "France"
+        )
 
     return _get_steps_with_documents(steps, session)
 
@@ -417,8 +432,14 @@ def reset_settlement_steps(
 
         session.commit()
 
-        steps = _create_default_steps(current_user.id, session, country=current_user.settlement_country or "France")
-        logger.info("Reset settlement steps for user %d (country=%s)", current_user.id, current_user.settlement_country)
+        steps = _create_default_steps(
+            current_user.id, session, country=current_user.settlement_country or "France"
+        )
+        logger.info(
+            "Reset settlement steps for user %d (country=%s)",
+            current_user.id,
+            current_user.settlement_country,
+        )
         return _get_steps_with_documents(steps, session)
 
     except Exception as exc:

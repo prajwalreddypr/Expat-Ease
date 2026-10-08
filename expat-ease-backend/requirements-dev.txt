@@ -2,3 +2,4 @@
 
 pytest
 httpx
+ruff==0.8.4
