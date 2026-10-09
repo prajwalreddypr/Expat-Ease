@@ -6,11 +6,11 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlmodel import Session
 
 from app.core.deps import get_current_active_user
-from app.core.storage import save_upload_file
 from app.crud.crud_user import create_user, get_user, update_user
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserRead, UserUpdate
+from app.services import users as user_service
 
 router = APIRouter()
 
@@ -99,33 +99,17 @@ async def upload_profile_photo(
     Raises:
         HTTPException: 400 if file type is not supported or upload fails
     """
-    # Validate file type
-    if not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only image files are allowed for profile photos",
-        )
-
     try:
-        # Upload file to Cloudinary
-        cloudinary_url, filename, file_size, content_type = await save_upload_file(
-            user_id=current_user.id, upload_file=file
-        )
-
-        # Update user's profile photo
-        user_update = UserUpdate(profile_photo=cloudinary_url)
-        updated_user = update_user(session=session, user_id=current_user.id, user_in=user_update)
-
-        if not updated_user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-        return updated_user
-
-    except Exception as e:
+        return await user_service.update_profile_photo(session, current_user.id, file)
+    except user_service.ProfilePhotoValidationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except user_service.UserNotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found") from exc
+    except user_service.ProfilePhotoStorageError as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to upload profile photo: {str(e)}",
-        )
+            detail="Failed to upload profile photo",
+        ) from exc
 
 
 @router.get("/{user_id}", response_model=UserRead)

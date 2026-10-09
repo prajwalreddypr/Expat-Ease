@@ -3,16 +3,14 @@ Settlement steps management endpoints.
 """
 
 import logging
-import os
-import re
 from datetime import datetime, timezone
 from typing import List
-from urllib.parse import urlparse
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
 from app.core.deps import get_current_active_user
+from app.core.storage import StorageError, cloudinary_storage
 from app.db.session import get_session
 from app.models.settlement_step import SettlementStep
 from app.models.user import User
@@ -155,35 +153,10 @@ def _create_default_steps(
 
 def _delete_cloudinary_file(file_path: str, content_type: str) -> None:
     """Delete a file from Cloudinary given its URL and content type."""
-    import cloudinary.uploader
-
     try:
-        parsed = urlparse(file_path)
-        path = parsed.path  # e.g. /mycloud/image/upload/v123/expat-ease/user_1/uuid.jpg
-
-        upload_idx = path.find("/upload/")
-        if upload_idx == -1:
-            logger.warning("Cannot extract Cloudinary public_id from URL: %s", file_path)
-            return
-
-        public_id_raw = path[upload_idx + len("/upload/") :]
-        # Strip optional version prefix (v1234567890/)
-        public_id = re.sub(r"^v\d+/", "", public_id_raw)
-
-        if content_type.startswith("image/"):
-            resource_type = "image"
-            public_id = os.path.splitext(public_id)[0]
-        elif content_type.startswith("video/"):
-            resource_type = "video"
-            public_id = os.path.splitext(public_id)[0]
-        else:
-            # raw resources (PDF, DOC, etc.) keep their extension in the public_id
-            resource_type = "raw"
-
-        cloudinary.uploader.destroy(public_id, resource_type=resource_type)
-        logger.info("Deleted Cloudinary file: %s (type=%s)", public_id, resource_type)
-
-    except Exception as exc:
+        cloudinary_storage.delete(file_path, content_type)
+        logger.info("Deleted Cloudinary file: %s", file_path)
+    except StorageError as exc:
         logger.warning("Failed to delete Cloudinary file %s: %s", file_path, exc)
 
 
