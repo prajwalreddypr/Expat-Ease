@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlmodel import Session
 
 from app.core.deps import get_current_active_user
-from app.crud.crud_user import create_user, get_user, update_user
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserRead, UserUpdate
@@ -47,10 +46,12 @@ def create_new_user(user_in: UserCreate, session: Session = Depends(get_session)
         HTTPException: 400 if email already exists
     """
     try:
-        user = create_user(session=session, user_in=user_in)
-        return user
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        values = user_in.model_dump(exclude={"password"})
+        return user_service.create_user(session, values, user_in.password)
+    except user_service.EmailAlreadyRegisteredError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except user_service.UserValidationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
 
 @router.patch("/me", response_model=UserRead)
@@ -73,10 +74,12 @@ def update_current_user(
     Raises:
         HTTPException: 404 if user not found
     """
-    updated_user = update_user(session=session, user_id=current_user.id, user_in=user_update)
-    if not updated_user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return updated_user
+    try:
+        return user_service.update_user(
+            session, current_user.id, user_update.model_dump(exclude_unset=True)
+        )
+    except user_service.UserNotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found") from exc
 
 
 @router.post("/me/profile-photo", response_model=UserRead)
@@ -127,7 +130,7 @@ def get_user_by_id(user_id: int, session: Session = Depends(get_session)) -> Use
     Raises:
         HTTPException: 404 if user not found
     """
-    user = get_user(session=session, user_id=user_id)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return user
+    try:
+        return user_service.require_user(session, user_id)
+    except user_service.UserNotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found") from exc

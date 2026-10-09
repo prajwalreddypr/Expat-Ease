@@ -283,9 +283,9 @@ expat-ease-backend/
 │   │   ├── deps.py             # Dependency injection
 │   │   ├── security.py         # Security utilities
 │   │   └── storage.py          # File storage handling
-│   ├── crud/                   # Database operations
-│   │   ├── crud_user.py        # User CRUD operations
-│   │   └── crud_task.py        # Task CRUD operations
+│   ├── services/
+│   │   ├── tasks.py            # Task workflows and ownership rules
+│   │   └── users.py            # User registration and profile workflows
 │   ├── db/                     # Database configuration
 │   │   ├── base.py             # Base model definitions
 │   │   ├── init_db.py          # Database initialization

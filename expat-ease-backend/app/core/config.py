@@ -5,7 +5,15 @@ Configuration settings for the application.
 import os
 from typing import Optional
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+DEFAULT_CORS_ORIGINS = (
+    "https://expat-ease.vercel.app",
+    "https://expat-ease-4s7h4um2o-prajwal-reddys-projects.vercel.app",
+    "https://expat-ease.onrender.com",
+    "http://localhost:5173",
+)
 
 
 class Settings(BaseSettings):
@@ -47,7 +55,16 @@ class Settings(BaseSettings):
     ENABLE_HTTPS: bool = False
     AUDIT_LOG_ENABLED: bool = False
     # In production set this to a list of allowed hostnames/origins. Empty means no wildcard.
-    ALLOWED_HOSTS: list[str] = []
+    ALLOWED_HOSTS: list[str] = Field(default_factory=list)
+
+
+def cors_origins(config: Settings) -> list[str]:
+    """Return normalized, de-duplicated browser origins."""
+    configured = [config.FRONTEND_URL]
+    if config.FRONTEND_URLS:
+        configured.extend(config.FRONTEND_URLS.split(","))
+    origins = [origin.strip().rstrip("/") for origin in configured if origin.strip()]
+    return list(dict.fromkeys([*origins, *DEFAULT_CORS_ORIGINS]))
 
 
 # Tests provide configuration explicitly and must not inherit developer secrets.

@@ -204,10 +204,10 @@ SQLModel models (combines SQLAlchemy ORM + Pydantic validation):
 
 Database operation modules:
 
-- **`crud_user.py`**: User CRUD operations
+- **`services/users.py`**: User profiles, registration, and profile-photo workflows
   - `get_user()`, `get_user_by_email()`, `create_user()`, `update_user()`
 
-- **`crud_task.py`**: Task CRUD operations
+- **`services/tasks.py`**: Task workflows, ownership checks, and sequential unlocking
   - `get_tasks_for_user()`, `create_task()`, `update_task()`, `delete_task()`
 
 - **`crud_password_reset.py`**: Password reset token management

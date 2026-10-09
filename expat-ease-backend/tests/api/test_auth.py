@@ -84,3 +84,16 @@ def test_forgot_password_does_not_add_empty_token(client):
     assert response.json() == {
         "msg": "If an account with this email exists, a reset token has been issued."
     }
+
+
+def test_malformed_token_subject_returns_unauthorized(client):
+    token = jwt.encode(
+        {"sub": "not-a-user-id", "email": "invalid@example.com"},
+        "test-secret-key",
+        algorithm=ALGORITHM,
+    )
+
+    response = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 401
+    assert response.json() == {"detail": "Could not validate credentials"}
