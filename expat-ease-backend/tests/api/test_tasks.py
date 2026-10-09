@@ -65,3 +65,18 @@ def test_user_cannot_update_another_users_task(client, auth_headers, session, us
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Task not found"}
+
+
+def test_status_endpoint_preserves_status_query_parameter(client, auth_headers):
+    task = client.post(
+        "/api/v1/tasks/",
+        headers=auth_headers,
+        json={"title": "Open account", "country": "France"},
+    ).json()
+
+    response = client.patch(
+        f"/api/v1/tasks/{task['id']}/status?status=completed", headers=auth_headers
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "completed"
