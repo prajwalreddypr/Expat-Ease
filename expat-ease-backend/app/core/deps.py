@@ -38,23 +38,13 @@ def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    try:
-        # Verify the token
-        payload = verify_token(credentials.credentials)
-        if payload is None:
-            raise credentials_exception
-
-        # Extract user ID from token
-        user_sub = payload.get("sub")
-        try:
-            user_id: int = int(user_sub)
-        except Exception:
-            raise credentials_exception
-        if user_id is None:
-            raise credentials_exception
-
-    except Exception:
+    payload = verify_token(credentials.credentials)
+    if payload is None:
         raise credentials_exception
+    try:
+        user_id = int(payload.get("sub"))
+    except (TypeError, ValueError) as exc:
+        raise credentials_exception from exc
 
     # Get user from database
     user = get_user(session=session, user_id=user_id)

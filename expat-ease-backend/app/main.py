@@ -9,7 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.api_v1.api import api_router
-from app.core.config import settings
+from app.core.config import cors_origins, settings
+from app.core.security_middleware import SecurityHeadersMiddleware
 
 # Create FastAPI application instance
 app = FastAPI(
@@ -28,8 +29,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         try:
-            # Use the root logger so test runs and simple deployments surface these logs
-            log = logging.getLogger()
+            log = logging.getLogger(__name__)
             # Only log a few key headers to avoid overly verbose logs
             hdrs = {
                 k: v
@@ -43,78 +43,25 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
                     "host",
                 )
             }
-            log.info(f"Incoming request {request.method} {request.url.path} headers: {hdrs}")
+            log.info("Incoming request %s %s headers=%s", request.method, request.url.path, hdrs)
         except Exception:
             logging.getLogger("uvicorn.error").exception("Failed to log request headers")
         response = await call_next(request)
         return response
 
 
-# Configure CORS using configured FRONTEND_URL or ALLOWED_HOSTS
-# Prepare logger early for startup messages
 logger = logging.getLogger("uvicorn")
-allowed_origins = []
-# Prefer FRONTEND_URL (single) but allow FRONTEND_URLS (comma-separated) for multiple origins
-if settings.FRONTEND_URL:
-    allowed_origins.append(settings.FRONTEND_URL)
-if settings.FRONTEND_URLS:
-    # Split comma-separated list and strip whitespace
-    urls = [u.strip() for u in settings.FRONTEND_URLS.split(",") if u.strip()]
-    allowed_origins.extend(urls)
-if settings.ALLOWED_HOSTS:
-    allowed_origins.extend(settings.ALLOWED_HOSTS)
-
-# If no allowed origins were configured, fall back to wildcard with a warning.
-# This is a deliberate, temporary convenience for deployments where the env
-# variable was not set. For production, set FRONTEND_URLS to a comma-separated
-# list of allowed origins and remove this fallback.
-# Preferred: honor FRONTEND_URL / FRONTEND_URLS from environment (set on Render)
-resolved = []
-if settings.FRONTEND_URL:
-    resolved.append(settings.FRONTEND_URL)
-if settings.FRONTEND_URLS:
-    resolved.extend([u.strip() for u in settings.FRONTEND_URLS.split(",") if u.strip()])
-if settings.ALLOWED_HOSTS:
-    resolved.extend(settings.ALLOWED_HOSTS)
-
-# If the environment didn't provide any origins, fall back to a safe allow-list
-# containing only the production Vercel origins and localhost for development.
-if not resolved:
-    resolved = [
-        "https://expat-ease.vercel.app",
-        "https://expat-ease-4s7h4um2o-prajwal-reddys-projects.vercel.app",
-        "http://localhost:5173",
-    ]
-    logger.info(f"No FRONTEND_URL(S) provided; defaulting allowed_origins to {resolved}")
-
-# Use the resolved list as allowed_origins (no wildcard)
-allowed_origins = resolved
-# When explicit origins are used we can allow credentials
-cors_allow_credentials = True
-
-# Ensure the production frontend origins are included in the allow-list so
-# deployed requests from those domains are accepted even if env vars are missing.
-production_origins = [
-    "https://expat-ease.vercel.app",
-    "https://expat-ease-4s7h4um2o-prajwal-reddys-projects.vercel.app",
-    "https://expat-ease.onrender.com",
-]
-for o in production_origins:
-    if o not in allowed_origins:
-        allowed_origins.append(o)
-
-# Ensure localhost dev origin is allowed for local testing
-if "http://localhost:5173" not in allowed_origins:
-    allowed_origins.append("http://localhost:5173")
+allowed_origins = cors_origins(settings)
 
 # Add request logging middleware first so we capture preflight requests in logs
 app.add_middleware(RequestLoggingMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 
 # Then add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=cors_allow_credentials,
+    allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
 )
@@ -126,7 +73,7 @@ if not settings.SECRET_KEY:
         "SECRET_KEY is empty. Set a secure SECRET_KEY in environment for production deployments."
     )
 # Log resolved allowed origins for troubleshooting (safe to log)
-logger.info(f"CORS allowed_origins: {allowed_origins}")
+logger.info("CORS allowed_origins: %s", allowed_origins)
 
 # Include API routes
 app.include_router(api_router, prefix="/api/v1")
