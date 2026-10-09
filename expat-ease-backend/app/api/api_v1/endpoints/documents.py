@@ -1,207 +1,23 @@
-"""
-Document upload and management endpoints.
-"""
+"""Document upload and management endpoints."""
 
-import os
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from app.core.deps import get_current_active_user
-from app.core.storage import save_upload_file
 from app.db.session import get_session
 from app.models.document import Document
-from app.models.settlement_step import SettlementStep
 from app.models.user import User
 from app.schemas.common import MessageResponse
 from app.schemas.document import DocumentResponse
+from app.services import documents as document_service
 
 router = APIRouter()
 
-# Ensure uploads directory exists
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-ALLOWED_EXTENSIONS = {".pdf", ".jpg", ".jpeg", ".png", ".doc", ".docx"}
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
-
-
-def validate_file(file: UploadFile) -> None:
-    """Validate uploaded file."""
-    # Check file extension
-    file_ext = os.path.splitext(file.filename)[1].lower()
-    if file_ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File type not allowed. Allowed types: {', '.join(ALLOWED_EXTENSIONS)}",
-        )
-
-    # Check file size (if available)
-    if hasattr(file, "size") and file.size and file.size > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File too large. Maximum size: {MAX_FILE_SIZE // (1024*1024)}MB",
-        )
-
-
-@router.post("/upload", response_model=DocumentResponse)
-async def upload_document(
-    file: UploadFile = File(...),
-    custom_name: Optional[str] = Form(None),
-    settlement_step_id: Optional[int] = Query(None),
-    current_user: User = Depends(get_current_active_user),
-    session: Session = Depends(get_session),
-) -> Document:
-    """
-    Upload a document file.
-
-    Args:
-        file: The uploaded file
-        current_user: Current authenticated user
-        session: Database session
-
-    Returns:
-        DocumentResponse: Information about the uploaded document
-
-    Raises:
-        HTTPException: 400 if file validation fails, 500 if upload fails
-    """
-    try:
-        # Validate file
-        validate_file(file)
-
-        if settlement_step_id is not None:
-            settlement_step = session.exec(
-                select(SettlementStep).where(
-                    SettlementStep.id == settlement_step_id,
-                    SettlementStep.user_id == current_user.id,
-                )
-            ).first()
-            if not settlement_step:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Settlement step not found",
-                )
-
-        # Upload file to Cloudinary
-        cloudinary_url, unique_filename, file_size, content_type = await save_upload_file(
-            user_id=current_user.id, upload_file=file
-        )
-
-        # Use custom name if provided, otherwise use original filename
-        display_name = custom_name.strip() if custom_name and custom_name.strip() else file.filename
-
-        # Create document record in database
-        document = Document(
-            filename=unique_filename,
-            original_filename=display_name,  # Store custom name as original_filename
-            file_path=cloudinary_url,  # Now stores Cloudinary URL
-            file_size=file_size,
-            content_type=content_type,
-            settlement_step_id=settlement_step_id,
-            user_id=current_user.id,
-        )
-
-        session.add(document)
-        session.commit()
-        session.refresh(document)
-
-        # Create response with Cloudinary URL
-        response = DocumentResponse(
-            id=document.id,
-            filename=document.filename,
-            original_filename=document.original_filename,
-            file_path=document.file_path,
-            file_size=document.file_size,
-            content_type=document.content_type,
-            settlement_step_id=document.settlement_step_id,
-            user_id=document.user_id,
-            created_at=document.created_at,
-            download_url=document.file_path,  # Now it's already a Cloudinary URL
-        )
-
-        return response
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to upload file: {str(e)}",
-        )
-
-
-@router.get("/", response_model=List[DocumentResponse])
-def get_user_documents(
-    current_user: User = Depends(get_current_active_user), session: Session = Depends(get_session)
-) -> List[DocumentResponse]:
-    """
-    Get all documents uploaded by the current user.
-
-    Args:
-        current_user: Current authenticated user
-        session: Database session
-
-    Returns:
-        List[DocumentResponse]: List of user's documents
-    """
-    documents = session.exec(
-        select(Document)
-        .where(Document.user_id == current_user.id)
-        .order_by(Document.created_at.desc())
-    ).all()
-
-    # Add download URLs
-    response_documents = []
-    for doc in documents:
-        download_url = doc.file_path  # Now it's already a Cloudinary URL
-        response_doc = DocumentResponse(
-            id=doc.id,
-            filename=doc.filename,
-            original_filename=doc.original_filename,
-            file_path=doc.file_path,
-            file_size=doc.file_size,
-            content_type=doc.content_type,
-            settlement_step_id=doc.settlement_step_id,
-            user_id=doc.user_id,
-            created_at=doc.created_at,
-            download_url=download_url,
-        )
-        response_documents.append(response_doc)
-
-    return response_documents
-
-
-@router.get("/{document_id}", response_model=DocumentResponse)
-def get_document(
-    document_id: int,
-    current_user: User = Depends(get_current_active_user),
-    session: Session = Depends(get_session),
-) -> DocumentResponse:
-    """
-    Get a specific document by ID.
-
-    Args:
-        document_id: Document ID
-        current_user: Current authenticated user
-        session: Database session
-
-    Returns:
-        DocumentResponse: Document information
-
-    Raises:
-        HTTPException: 404 if document not found or not owned by user
-    """
-    document = session.exec(
-        select(Document).where(Document.id == document_id, Document.user_id == current_user.id)
-    ).first()
-
-    if not document:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
-
-    download_url = document.file_path  # Now it's already a Cloudinary URL
-    response = DocumentResponse(
+def _to_response(document: Document) -> DocumentResponse:
+    return DocumentResponse(
         id=document.id,
         filename=document.filename,
         original_filename=document.original_filename,
@@ -211,10 +27,55 @@ def get_document(
         settlement_step_id=document.settlement_step_id,
         user_id=document.user_id,
         created_at=document.created_at,
-        download_url=download_url,
+        download_url=document.file_path,
     )
 
-    return response
+
+@router.post("/upload", response_model=DocumentResponse)
+async def upload_document(
+    file: UploadFile = File(...),
+    custom_name: Optional[str] = Form(None),
+    settlement_step_id: Optional[int] = Query(None),
+    current_user: User = Depends(get_current_active_user),
+    session: Session = Depends(get_session),
+) -> DocumentResponse:
+    try:
+        document = await document_service.create_document(
+            session, current_user.id, file, custom_name, settlement_step_id
+        )
+    except document_service.UploadValidationError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+    except document_service.SettlementStepNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Settlement step not found"
+        ) from exc
+    except document_service.DocumentStorageError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to upload document",
+        ) from exc
+    return _to_response(document)
+
+
+@router.get("/", response_model=List[DocumentResponse])
+def get_user_documents(
+    current_user: User = Depends(get_current_active_user), session: Session = Depends(get_session)
+) -> List[DocumentResponse]:
+    return [_to_response(doc) for doc in document_service.list_documents(session, current_user.id)]
+
+
+@router.get("/{document_id}", response_model=DocumentResponse)
+def get_document(
+    document_id: int,
+    current_user: User = Depends(get_current_active_user),
+    session: Session = Depends(get_session),
+) -> DocumentResponse:
+    try:
+        return _to_response(document_service.get_document(session, document_id, current_user.id))
+    except document_service.DocumentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
+        ) from exc
 
 
 @router.delete("/{document_id}", response_model=MessageResponse)
@@ -223,33 +84,15 @@ def delete_document(
     current_user: User = Depends(get_current_active_user),
     session: Session = Depends(get_session),
 ) -> dict:
-    """
-    Delete a document.
-
-    Args:
-        document_id: Document ID
-        current_user: Current authenticated user
-        session: Database session
-
-    Returns:
-        dict: Success message
-
-    Raises:
-        HTTPException: 404 if document not found or not owned by user
-    """
-    document = session.exec(
-        select(Document).where(Document.id == document_id, Document.user_id == current_user.id)
-    ).first()
-
-    if not document:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
-
-    # Delete file from disk
-    if os.path.exists(document.file_path):
-        os.remove(document.file_path)
-
-    # Delete from database
-    session.delete(document)
-    session.commit()
-
+    try:
+        document_service.delete_document(session, document_id, current_user.id)
+    except document_service.DocumentNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
+        ) from exc
+    except document_service.DocumentStorageError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete document",
+        ) from exc
     return {"message": "Document deleted successfully"}

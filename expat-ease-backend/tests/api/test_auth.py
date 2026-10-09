@@ -1,6 +1,6 @@
 from jose import jwt
 
-from app.core.security import ALGORITHM
+from app.core.tokens import ALGORITHM
 
 
 def test_register_login_and_read_current_user(client):

@@ -2,23 +2,17 @@
 Authentication endpoints.
 """
 
-from datetime import timedelta
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
 from app.core.deps import get_current_user
-from app.core.security import create_access_token, verify_password
-from app.crud.crud_user import get_user_by_email
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.auth import LoginRequest, Token
 from app.schemas.user import UserRead
+from app.services import authentication
 
 router = APIRouter()
-
-# Token expiration time (24 hours)
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 
 @router.post("/login", response_model=Token)
@@ -36,34 +30,24 @@ def login(login_data: LoginRequest, session: Session = Depends(get_session)) -> 
     Raises:
         HTTPException: 401 if credentials are invalid
     """
-    # Get user by email
-    user = get_user_by_email(session=session, email=login_data.email)
-
-    # Check if user exists
-    if not user:
+    try:
+        access_token = authentication.login(session, login_data.email, login_data.password)
+    except authentication.UserNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User does not exist. Please register first.",
             headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    # Verify password is correct
-    if not verify_password(login_data.password, user.hashed_password):
+        ) from None
+    except authentication.IncorrectPasswordError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect password",
             headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    # Check if user is active
-    if not user.is_active:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
-
-    # Create access token
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": str(user.id), "email": user.email}, expires_delta=access_token_expires
-    )
+        ) from None
+    except authentication.InactiveUserError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
+        ) from None
 
     return Token(access_token=access_token, token_type="bearer")
 

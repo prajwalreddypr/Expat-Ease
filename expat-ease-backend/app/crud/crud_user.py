@@ -6,7 +6,7 @@ from typing import Optional
 
 from sqlmodel import Session, select
 
-from app.core.security import hash_password
+from app.core.passwords import hash_password
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
 
@@ -93,10 +93,6 @@ def update_user(session: Session, user_id: int, user_in: UserUpdate) -> Optional
 
     # Get update data, excluding None values
     update_data = user_in.model_dump(exclude_unset=True)
-
-    # Hash password if provided
-    if "password" in update_data:
-        update_data["hashed_password"] = hash_password(update_data.pop("password"))
 
     # Update user fields (email is not included in UserUpdate schema)
     for field, value in update_data.items():

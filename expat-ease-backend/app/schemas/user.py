@@ -30,8 +30,9 @@ class UserRead(BaseModel):
 
 
 class UserUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     full_name: Optional[str] = Field(default=None, max_length=255)
-    password: Optional[str] = Field(default=None, min_length=8, max_length=72)
     is_active: Optional[bool] = None
     country: Optional[str] = Field(default=None, max_length=100)
     settlement_country: Optional[str] = Field(default=None, max_length=100)

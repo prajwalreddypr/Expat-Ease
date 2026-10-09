@@ -1,116 +1,148 @@
 import os
+import re
 import uuid
-from typing import Tuple
+from dataclasses import dataclass
+from typing import Optional, Protocol
+from urllib.parse import urlparse
 
 import cloudinary
 import cloudinary.uploader
-from fastapi import UploadFile
 
 from app.core.config import settings
 
-# Global flag to track if Cloudinary has been configured
-_cloudinary_configured = False
+
+class UploadFileLike(Protocol):
+    filename: Optional[str]
+    content_type: Optional[str]
+    size: Optional[int]
+
+    async def read(self, size: int = -1) -> bytes: ...
 
 
-def _ensure_cloudinary_configured():
-    """Configure Cloudinary only when needed (lazy initialization)."""
-    global _cloudinary_configured
-    if not _cloudinary_configured:
+class StorageError(Exception):
+    pass
+
+
+@dataclass(frozen=True)
+class StoredFile:
+    url: str
+    filename: str
+    size: int
+    content_type: str
+
+
+class CloudinaryStorage:
+    def __init__(self) -> None:
+        self._configured = False
+
+    def _configure(self) -> None:
+        if self._configured:
+            return
+        if not all(
+            (
+                settings.CLOUDINARY_CLOUD_NAME,
+                settings.CLOUDINARY_API_KEY,
+                settings.CLOUDINARY_API_SECRET,
+            )
+        ):
+            raise StorageError("Cloudinary is not configured")
         cloudinary.config(
             cloud_name=settings.CLOUDINARY_CLOUD_NAME,
             api_key=settings.CLOUDINARY_API_KEY,
             api_secret=settings.CLOUDINARY_API_SECRET,
         )
-        _cloudinary_configured = True
+        self._configured = True
+
+    async def upload(self, user_id: int, upload_file: UploadFileLike, max_size: int) -> StoredFile:
+        self._configure()
+        extension = os.path.splitext(upload_file.filename or "")[1].lower()
+        filename = f"{uuid.uuid4()}{extension}"
+        content = await upload_file.read()
+        if len(content) > max_size:
+            raise StorageError(f"File too large. Maximum size: {max_size // (1024 * 1024)}MB")
+
+        resource_type = self._resource_type(extension)
+        try:
+            result = cloudinary.uploader.upload(
+                content,
+                public_id=f"expat-ease/user_{user_id}/{filename}",
+                folder="expat-ease",
+                resource_type=resource_type,
+                use_filename=True,
+                unique_filename=True,
+                overwrite=True,
+                access_mode="public",
+                type="upload",
+                invalidate=True,
+                tags=["expat-ease", "public"],
+            )
+            return StoredFile(
+                url=result["secure_url"],
+                filename=filename,
+                size=len(content),
+                content_type=upload_file.content_type or "application/octet-stream",
+            )
+        except Exception as exc:
+            raise StorageError("Failed to upload file") from exc
+
+    def delete(self, file_url: str, content_type: str) -> None:
+        self._configure()
+        public_id = self._public_id(file_url, content_type)
+        resource_type = self._resource_type_for_content_type(content_type)
+        try:
+            result = cloudinary.uploader.destroy(public_id, resource_type=resource_type)
+        except Exception as exc:
+            raise StorageError("Failed to delete file") from exc
+        if result.get("result") not in {"ok", "not found"}:
+            raise StorageError("Failed to delete file")
+
+    @staticmethod
+    def _resource_type(extension: str) -> str:
+        if extension in {".jpg", ".jpeg", ".png", ".gif", ".webp"}:
+            return "image"
+        if extension in {".mp4", ".avi", ".mov", ".wmv", ".mp3", ".wav", ".ogg"}:
+            return "video"
+        return "raw"
+
+    @staticmethod
+    def _resource_type_for_content_type(content_type: str) -> str:
+        if content_type.startswith("image/"):
+            return "image"
+        if content_type.startswith(("video/", "audio/")):
+            return "video"
+        return "raw"
+
+    @classmethod
+    def _public_id(cls, file_url: str, content_type: str) -> str:
+        path = urlparse(file_url).path
+        upload_index = path.find("/upload/")
+        if upload_index == -1:
+            raise StorageError("Invalid Cloudinary file URL")
+        public_id = re.sub(r"^v\d+/", "", path[upload_index + len("/upload/") :])
+        if cls._resource_type_for_content_type(content_type) != "raw":
+            public_id = os.path.splitext(public_id)[0]
+        return public_id
 
 
-async def save_upload_file(user_id: int, upload_file: UploadFile) -> Tuple[str, str, int, str]:
-    """
-    Save uploaded file to Cloudinary and return file info.
-
-    Args:
-        user_id: ID of the user uploading the file
-        upload_file: FastAPI UploadFile object
-
-    Returns:
-        Tuple of (cloudinary_url, filename, size, content_type)
-    """
-    # Configure Cloudinary only when upload is actually needed
-    _ensure_cloudinary_configured()
-
-    # Generate unique filename
-    file_extension = os.path.splitext(upload_file.filename)[1] if upload_file.filename else ""
-    unique_filename = f"{uuid.uuid4()}{file_extension}"
-
-    # Read file content
-    content = await upload_file.read()
-    file_size = len(content)
-
-    # Upload to Cloudinary
-    try:
-        # Determine resource type based on file extension
-        file_extension = file_extension.lower()
-        if file_extension in [".jpg", ".jpeg", ".png", ".gif", ".webp"]:
-            resource_type = "image"
-        elif file_extension in [".mp4", ".avi", ".mov", ".wmv", ".mp3", ".wav", ".ogg"]:
-            resource_type = "video"
-        else:
-            # For PDFs, DOCs, and other documents, use 'raw' but ensure public access
-            resource_type = "raw"
-
-        result = cloudinary.uploader.upload(
-            content,
-            public_id=f"expat-ease/user_{user_id}/{unique_filename}",
-            folder="expat-ease",
-            resource_type=resource_type,
-            use_filename=True,
-            unique_filename=True,
-            overwrite=True,
-            access_mode="public",
-            type="upload",
-            invalidate=True,  # Force cache refresh
-            tags=["expat-ease", "public"],  # Add tags for easier management
-        )
-
-        # Return Cloudinary URL, filename, size, and content type
-        cloudinary_url = result["secure_url"]
-        return (
-            cloudinary_url,
-            unique_filename,
-            file_size,
-            upload_file.content_type or "application/octet-stream",
-        )
-
-    except Exception as e:
-        raise Exception(f"Failed to upload file to Cloudinary: {str(e)}")
+cloudinary_storage = CloudinaryStorage()
 
 
-def get_file_extension(content_type: str) -> str:
-    """Get file extension from content type."""
-    extension_map = {
-        "application/pdf": ".pdf",
-        "image/jpeg": ".jpg",
-        "image/jpg": ".jpg",
-        "image/png": ".png",
-        "image/gif": ".gif",
-        "image/webp": ".webp",
-    }
-    return extension_map.get(content_type, "")
+async def save_upload_file(user_id: int, upload_file: UploadFileLike):
+    """Compatibility wrapper for the disabled task-document workflow."""
+    stored = await cloudinary_storage.upload(user_id, upload_file, 10 * 1024 * 1024)
+    return stored.url, stored.filename, stored.size, stored.content_type
 
 
 def is_valid_file_type(content_type: str) -> bool:
-    """Check if file type is allowed."""
-    allowed_types = [
+    return content_type in {
         "application/pdf",
         "image/jpeg",
         "image/jpg",
         "image/png",
         "image/gif",
         "image/webp",
-    ]
-    return content_type in allowed_types
+    }
 
 
 def get_max_file_size() -> int:
-    """Get maximum file size in bytes (5MB)."""
-    return 5 * 1024 * 1024  # 5MB
+    return 5 * 1024 * 1024

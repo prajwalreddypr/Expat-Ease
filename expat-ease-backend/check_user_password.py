@@ -4,7 +4,7 @@ Script to check user password in database
 """
 from app.db.session import get_session
 from app.crud.crud_user import get_user_by_email
-from app.core.security import verify_password
+from app.core.passwords import verify_password
 
 def check_user_password():
     """Check the user's password in the database"""

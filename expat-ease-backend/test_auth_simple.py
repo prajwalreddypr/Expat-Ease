@@ -45,7 +45,8 @@ def test_imports():
     from app.crud.crud_user import get_user_by_email, create_user
     print("  ✅ CRUD functions import successful")
     
-    from app.core.security import verify_password, hash_password, create_access_token
+    from app.core.passwords import hash_password, verify_password
+    from app.core.tokens import create_access_token
     print("  ✅ Security functions import successful")
     
     from app.api.api_v1.endpoints.auth import login
@@ -98,7 +99,7 @@ def test_password_hashing():
     """Test 4: Password hashing and verification"""
     print("Testing password hashing...")
     
-    from app.core.security import hash_password, verify_password
+    from app.core.passwords import hash_password, verify_password
     
     # Test password hashing
     password = "testpassword123"
@@ -121,7 +122,7 @@ def test_jwt_token():
     """Test 5: JWT token creation and verification"""
     print("Testing JWT token functionality...")
     
-    from app.core.security import create_access_token
+    from app.core.tokens import create_access_token
     from app.core.deps import get_current_user
     from datetime import timedelta
     
@@ -182,7 +183,7 @@ def test_auth_endpoint_logic():
     print(f"  ✅ User found: {user.email}")
     
     # Test password verification
-    from app.core.security import verify_password
+    from app.core.passwords import verify_password
     if not verify_password(login_data.password, user.hashed_password):
         print("  ❌ Password verification failed - this might be the issue")
         session.close()

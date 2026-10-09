@@ -11,7 +11,7 @@ os.environ["DATABASE_URL"] = "sqlite://"
 os.environ["SECRET_KEY"] = "test-secret-key"
 os.environ["DEV_RETURN_RESET_TOKEN"] = "false"
 
-from app.core.security import hash_password  # noqa: E402
+from app.core.passwords import hash_password  # noqa: E402
 from app.db import base  # noqa: E402, F401
 from app.db.session import get_session  # noqa: E402
 from app.main import app  # noqa: E402
