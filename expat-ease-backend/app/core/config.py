@@ -5,11 +5,13 @@ Configuration settings for the application.
 import os
 from typing import Optional
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
+
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="allow")
 
     # Database configuration
     DATABASE_URL: str = "sqlite:///./dev.db"
@@ -46,11 +48,6 @@ class Settings(BaseSettings):
     AUDIT_LOG_ENABLED: bool = False
     # In production set this to a list of allowed hostnames/origins. Empty means no wildcard.
     ALLOWED_HOSTS: list[str] = []
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
-        extra = "allow"
 
 
 # Tests provide configuration explicitly and must not inherit developer secrets.

@@ -5,7 +5,8 @@ from sqlmodel import Session, select
 
 from app.core.storage import save_upload_file
 from app.models.document import Document
-from app.models.task import Task, TaskCreate, TaskStatus
+from app.models.task import Task, TaskStatus
+from app.schemas.task import TaskCreate
 
 
 def get_tasks_for_user(session: Session, user_id: int, country: Optional[str] = None) -> List[Task]:
@@ -111,7 +112,7 @@ def create_default_tasks_for_user(session: Session, user_id: int, country: str) 
 
 def create_task(session: Session, task_data: TaskCreate, user_id: int) -> Task:
     """Create a new task for a user."""
-    task = Task(**task_data.dict(), user_id=user_id)
+    task = Task(**task_data.model_dump(), user_id=user_id)
     session.add(task)
     session.commit()
     session.refresh(task)

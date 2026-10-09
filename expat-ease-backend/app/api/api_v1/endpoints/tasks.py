@@ -7,9 +7,11 @@ from sqlmodel import Session
 import app.crud.crud_task as task_crud
 from app.core.deps import get_current_user
 from app.db.session import get_session
-from app.models.document import DocumentResponse
-from app.models.task import Task, TaskCreate, TaskResponse, TaskStatus, TaskUpdate
+from app.models.task import Task, TaskStatus
 from app.models.user import User
+from app.schemas.common import MessageResponse
+from app.schemas.document import DocumentResponse
+from app.schemas.task import TaskCreate, TaskRead, TaskResponse, TaskUpdate
 
 router = APIRouter()
 
@@ -60,7 +62,7 @@ def get_tasks(
     return task_responses
 
 
-@router.post("/", response_model=Task)
+@router.post("/", response_model=TaskRead)
 def create_task_endpoint(
     task_data: TaskCreate,
     session: Session = Depends(get_session),
@@ -70,7 +72,7 @@ def create_task_endpoint(
     return task_crud.create_task(session, task_data, current_user.id)
 
 
-@router.post("/initialize", response_model=List[Task])
+@router.post("/initialize", response_model=List[TaskRead])
 def initialize_default_tasks(
     country: str = Form(...),
     session: Session = Depends(get_session),
@@ -85,7 +87,7 @@ def initialize_default_tasks(
     return task_crud.create_default_tasks_for_user(session, current_user.id, country)
 
 
-@router.patch("/{task_id}", response_model=Task)
+@router.patch("/{task_id}", response_model=TaskRead)
 def update_task(
     task_id: int,
     task_update: TaskUpdate,
@@ -98,7 +100,7 @@ def update_task(
         raise HTTPException(status_code=404, detail="Task not found")
 
     # Update fields
-    update_data = task_update.dict(exclude_unset=True)
+    update_data = task_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(task, field, value)
 
@@ -108,7 +110,7 @@ def update_task(
     return task
 
 
-@router.patch("/{task_id}/status", response_model=Task)
+@router.patch("/{task_id}/status", response_model=TaskRead)
 def update_task_status_endpoint(
     task_id: int,
     status: TaskStatus,
@@ -122,7 +124,7 @@ def update_task_status_endpoint(
     return task
 
 
-@router.delete("/{task_id}")
+@router.delete("/{task_id}", response_model=MessageResponse)
 def delete_task_endpoint(
     task_id: int,
     session: Session = Depends(get_session),
@@ -162,7 +164,7 @@ def get_task_documents_endpoint(
     )
 
 
-@router.delete("/documents/{document_id}")
+@router.delete("/documents/{document_id}", response_model=MessageResponse)
 def delete_document_endpoint(
     document_id: int,
     session: Session = Depends(get_session),

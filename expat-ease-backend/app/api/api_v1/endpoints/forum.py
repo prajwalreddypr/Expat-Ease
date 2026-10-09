@@ -1,12 +1,21 @@
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Field, Session, SQLModel, func, select
+from sqlmodel import Session, func, select
 
 from app.core.deps import get_current_user
 from app.db.session import get_session
 from app.models.forum import Answer, AnswerVote, Question, QuestionCategory, QuestionVote
 from app.models.user import User
+from app.schemas.common import MessageResponse
+from app.schemas.forum import (
+    AnswerCreate,
+    AnswerCreated,
+    QuestionCreate,
+    QuestionCreated,
+    QuestionDetail,
+    QuestionSummary,
+)
 
 router = APIRouter()
 
@@ -25,7 +34,7 @@ def _user_summary(session: Session, user_id: int) -> dict:
 
 
 # Question endpoints
-@router.get("/questions", response_model=List[dict])
+@router.get("/questions", response_model=List[QuestionSummary])
 def get_questions(
     category: Optional[QuestionCategory] = None,
     limit: int = 20,
@@ -81,13 +90,7 @@ def get_questions(
     return result
 
 
-class QuestionCreate(SQLModel):
-    title: str = Field(max_length=200)
-    content: str = Field(max_length=2000)
-    category: QuestionCategory = Field(default=QuestionCategory.GENERAL)
-
-
-@router.post("/questions", response_model=dict)
+@router.post("/questions", response_model=QuestionCreated)
 def create_question(
     question_data: QuestionCreate,
     session: Session = Depends(get_session),
@@ -120,7 +123,7 @@ def create_question(
     }
 
 
-@router.get("/questions/{question_id}", response_model=dict)
+@router.get("/questions/{question_id}", response_model=QuestionDetail)
 def get_question(
     question_id: int,
     session: Session = Depends(get_session),
@@ -198,11 +201,7 @@ def get_question(
 
 
 # Answer endpoints
-class AnswerCreate(SQLModel):
-    content: str = Field(max_length=2000)
-
-
-@router.post("/questions/{question_id}/answers", response_model=dict)
+@router.post("/questions/{question_id}/answers", response_model=AnswerCreated)
 def create_answer(
     question_id: int,
     answer_data: AnswerCreate,
@@ -232,7 +231,7 @@ def create_answer(
     }
 
 
-@router.post("/questions/{question_id}/vote")
+@router.post("/questions/{question_id}/vote", response_model=MessageResponse)
 def vote_question(
     question_id: int,
     is_upvote: bool,
@@ -265,7 +264,7 @@ def vote_question(
     return {"message": "Vote recorded successfully"}
 
 
-@router.post("/answers/{answer_id}/vote")
+@router.post("/answers/{answer_id}/vote", response_model=MessageResponse)
 def vote_answer(
     answer_id: int,
     is_upvote: bool,
@@ -298,7 +297,7 @@ def vote_answer(
     return {"message": "Vote recorded successfully"}
 
 
-@router.post("/answers/{answer_id}/accept")
+@router.post("/answers/{answer_id}/accept", response_model=MessageResponse)
 def accept_answer(
     answer_id: int,
     session: Session = Depends(get_session),
