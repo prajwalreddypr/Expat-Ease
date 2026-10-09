@@ -7,6 +7,7 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.api.api_v1.api import api_router
 from app.core.config import cors_origins, settings
@@ -56,6 +57,8 @@ allowed_origins = cors_origins(settings)
 # Add request logging middleware first so we capture preflight requests in logs
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
+if settings.ALLOWED_HOSTS:
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.ALLOWED_HOSTS)
 
 # Then add CORS middleware
 app.add_middleware(
@@ -91,53 +94,3 @@ def health_check() -> dict:
         dict: Health status
     """
     return {"status": "healthy", "message": "Expat Ease API is running"}
-
-
-@app.get("/test-cors")
-def test_cors() -> dict:
-    """
-    Test CORS endpoint.
-
-    Returns:
-        dict: CORS test response
-    """
-    return {"message": "CORS is working", "origin": "test"}
-
-
-@app.options("/debug-echo")
-def debug_echo_options(request: Request):
-    """
-    Minimal debug endpoint that echoes a few request headers back.
-    Designed for quick preflight inspection from deployed environment.
-    """
-    # Note: FastAPI normally handles OPTIONS via CORSMiddleware, but
-    # having an explicit route can help in situations where proxies
-    # alter the preflight and cause a 400 before middleware runs.
-    headers = {
-        k: v
-        for k, v in request.headers.items()
-        if k.lower()
-        in (
-            "origin",
-            "access-control-request-method",
-            "access-control-request-headers",
-        )
-    }
-    return {"method": "OPTIONS", "headers": headers}
-
-
-@app.get("/debug-cors")
-def debug_cors() -> dict:
-    """
-    Recompute and return the resolved allowed_origins based on current settings.
-    Useful for debugging what the application thinks should be allowed.
-    """
-    return {"allowed_origins": allowed_origins}
-
-
-# TODO: Add more endpoints and functionality
-# - Authentication endpoints
-# - User management
-# - City information
-# - Task tracking
-# - Document management

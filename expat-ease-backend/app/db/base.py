@@ -11,6 +11,3 @@ from app.models.password_reset_token import PasswordResetToken  # noqa: F401
 from app.models.settlement_step import SettlementStep  # noqa: F401
 from app.models.task import Task  # noqa: F401
 from app.models.user import User  # noqa: F401
-
-# TODO: Import additional models here as you create them
-# from app.models.city import City  # noqa: F401

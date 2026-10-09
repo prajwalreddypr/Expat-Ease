@@ -23,7 +23,6 @@ expat-ease-backend/
 │   │       ├── api.py       # Main router aggregator
 │   │       └── endpoints/   # Individual endpoint modules
 │   ├── core/                # Core utilities & configuration
-│   ├── crud/                # Database operations layer
 │   ├── db/                  # Database configuration
 │   ├── models/              # SQLModel data models
 │   └── services/            # Business logic services
@@ -41,7 +40,8 @@ expat-ease-backend/
   - Lifespan context manager for startup/shutdown events
   - CORS middleware configuration
   - Request logging middleware
-  - Health check endpoints (`/health`, `/test-cors`)
+  - Health check endpoint (`/health`)
+  - Security headers middleware
   - API router inclusion at `/api/v1` prefix
 
 **FastAPI Features Used**:
@@ -115,12 +115,14 @@ expat-ease-backend/
 - Settings class with defaults and validation
 - Database URL, JWT secret, CORS origins, Cloudinary config, SMTP settings
 
-#### **`security.py`** - Security Utilities
+#### **Security Utilities**
 
-- **Password Hashing**: `hash_password()` using bcrypt (Passlib)
+- **`passwords.py`**: Password hashing and validation using bcrypt (Passlib)
 - **Password Verification**: `verify_password()`
+- **`tokens.py`**: JWT creation and verification using python-jose
 - **JWT Token Creation**: `create_access_token()` with expiration
 - **JWT Token Verification**: `verify_token()` using python-jose
+- **`security_middleware.py`**: Security headers on HTTP responses
 
 #### **`deps.py`** - Dependency Injection
 
@@ -200,9 +202,9 @@ SQLModel models (combines SQLAlchemy ORM + Pydantic validation):
 
 ---
 
-### 6. **CRUD Layer (`app/crud/`)**
+### 6. **Service Layer (`app/services/`)**
 
-Database operation modules:
+Business workflow and persistence modules:
 
 - **`services/users.py`**: User profiles, registration, and profile-photo workflows
   - `get_user()`, `get_user_by_email()`, `create_user()`, `update_user()`
@@ -210,7 +212,10 @@ Database operation modules:
 - **`services/tasks.py`**: Task workflows, ownership checks, and sequential unlocking
   - `get_tasks_for_user()`, `create_task()`, `update_task()`, `delete_task()`
 
-- **`crud_password_reset.py`**: Password reset token management
+- **`services/authentication.py`**: Login and password-reset token management
+- **`services/documents.py`**: Document validation, storage, and persistence
+- **`services/forum.py`**: Questions, answers, votes, and acceptance
+- **`services/settlement_steps.py`**: Checklist progression and reset workflows
 
 **Pattern**: Separates database logic from API logic (separation of concerns)
 
@@ -354,15 +359,14 @@ raise HTTPException(
 
 ### **4. File Storage Strategy**
 
-- **Development**: Local file system (`uploads/` directory)
-- **Production**: Cloudinary cloud storage
+- **All environments**: Cloudinary through the storage adapter
 - Async file handling for better performance
 
 ### **5. CORS Configuration**
 
 - Dynamic origin resolution from environment
 - Supports multiple frontend URLs
-- Production origins hardcoded as fallback
+- Production and localhost origins included as safe defaults
 - Credentials enabled for authenticated requests
 
 ### **6. API Versioning**
@@ -408,7 +412,7 @@ raise HTTPException(
 
 - **Layered Architecture**: Separation of concerns
   - `api/` - HTTP layer (routes, request/response handling)
-  - `crud/` - Database operations (business logic)
+  - `services/` - Business workflows and persistence boundaries
   - `models/` - Data models (SQLModel + Pydantic)
   - `core/` - Shared utilities (config, security, dependencies)
   - `db/` - Database configuration
@@ -425,7 +429,7 @@ raise HTTPException(
 - **FastAPI's `UploadFile`** for multipart form data
 - **Async file handling** with `aiofiles` for non-blocking I/O
 - **File validation**: Extension check, size limit (10MB)
-- **Storage**: Cloudinary for production (cloud storage), local filesystem for dev
+- **Storage**: Cloudinary behind `CloudinaryStorage`
 - **Security**: Unique filenames (UUID), user-scoped storage, content type validation
 
 ### **Q5: How does dependency injection work in your project?**

@@ -1,11 +1,11 @@
-from datetime import datetime
+import secrets
+from datetime import datetime, timedelta
 from typing import Optional
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.core.passwords import hash_password, password_validation_error, verify_password
 from app.core.tokens import create_access_token
-from app.crud.crud_password_reset import create_token, get_by_token
 from app.models.password_reset_token import PasswordResetToken
 from app.models.user import User
 from app.services.users import get_user, get_user_by_email
@@ -39,6 +39,24 @@ class InvalidPasswordError(AuthenticationError):
     pass
 
 
+def create_reset_token(
+    session: Session, user_id: int, expires_in_minutes: int = 60
+) -> PasswordResetToken:
+    reset_token = PasswordResetToken(
+        user_id=user_id,
+        token=secrets.token_urlsafe(48),
+        expires_at=datetime.utcnow() + timedelta(minutes=expires_in_minutes),
+    )
+    session.add(reset_token)
+    session.commit()
+    session.refresh(reset_token)
+    return reset_token
+
+
+def get_reset_token(session: Session, token: str) -> Optional[PasswordResetToken]:
+    return session.exec(select(PasswordResetToken).where(PasswordResetToken.token == token)).first()
+
+
 def login(session: Session, email: str, password: str) -> str:
     user = get_user_by_email(session, email)
     if not user:
@@ -54,11 +72,11 @@ def request_password_reset(session: Session, email: str) -> Optional[PasswordRes
     user = get_user_by_email(session, email)
     if not user:
         return None
-    return create_token(session, user.id)
+    return create_reset_token(session, user.id)
 
 
 def reset_password(session: Session, token: str, new_password: str) -> None:
-    reset_token = get_by_token(session, token)
+    reset_token = get_reset_token(session, token)
     if not reset_token:
         raise InvalidResetTokenError
     if reset_token.expires_at < datetime.utcnow():

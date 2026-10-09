@@ -49,11 +49,7 @@ class Settings(BaseSettings):
     # WARNING: set to False in production
     DEV_RETURN_RESET_TOKEN: bool = False
 
-    # Security/Audit defaults to avoid AttributeError in optional modules
-    LOG_LEVEL: str = "INFO"
-    RATE_LIMIT_PER_MINUTE: int = 60
     ENABLE_HTTPS: bool = False
-    AUDIT_LOG_ENABLED: bool = False
     # In production set this to a list of allowed hostnames/origins. Empty means no wildcard.
     ALLOWED_HOSTS: list[str] = Field(default_factory=list)
 
