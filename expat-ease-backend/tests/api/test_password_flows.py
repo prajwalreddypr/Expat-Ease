@@ -1,4 +1,4 @@
-from app.crud.crud_password_reset import create_token, get_by_token
+from app.services.authentication import create_reset_token, get_reset_token
 
 
 def test_inactive_user_cannot_log_in(client, user_factory):
@@ -15,7 +15,7 @@ def test_inactive_user_cannot_log_in(client, user_factory):
 
 def test_expired_reset_token_is_rejected_and_deleted(client, session, user_factory):
     user = user_factory(email="expired@example.com")
-    reset_token = create_token(session, user.id, expires_in_minutes=-1)
+    reset_token = create_reset_token(session, user.id, expires_in_minutes=-1)
 
     response = client.post(
         "/api/v1/auth/reset-password",
@@ -24,12 +24,12 @@ def test_expired_reset_token_is_rejected_and_deleted(client, session, user_facto
 
     assert response.status_code == 400
     assert response.json() == {"detail": "Invalid or expired token"}
-    assert get_by_token(session, reset_token.token) is None
+    assert get_reset_token(session, reset_token.token) is None
 
 
 def test_reset_token_is_single_use_and_new_password_works(client, session, user_factory):
     user = user_factory(email="reset@example.com", password="OldValidPass123!")
-    reset_token = create_token(session, user.id)
+    reset_token = create_reset_token(session, user.id)
     payload = {"token": reset_token.token, "new_password": "NewValidPass123!"}
 
     first_reset = client.post("/api/v1/auth/reset-password", json=payload)

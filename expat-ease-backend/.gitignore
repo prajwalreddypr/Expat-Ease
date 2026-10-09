@@ -12,4 +12,7 @@ pip-delete-this-directory.txt
 .coverage
 .pytest_cache/
 .mypy_cache/
+audit.log
+*_results.json
+*_report.json
 .DS_Store

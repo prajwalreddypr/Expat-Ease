@@ -17,3 +17,11 @@ def test_routes_publish_explicit_transport_schemas():
     assert task_schema["$ref"].endswith("/TaskRead")
     assert forum_list_schema["items"]["$ref"].endswith("/QuestionSummary")
     assert forgot_password_schema["$ref"].endswith("/PasswordResetRequestResponse")
+
+
+def test_debug_only_routes_are_not_published():
+    paths = app.openapi()["paths"]
+
+    assert "/test-cors" not in paths
+    assert "/debug-cors" not in paths
+    assert "/debug-echo" not in paths

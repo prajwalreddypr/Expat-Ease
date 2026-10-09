@@ -125,24 +125,3 @@ class CloudinaryStorage:
 
 
 cloudinary_storage = CloudinaryStorage()
-
-
-async def save_upload_file(user_id: int, upload_file: UploadFileLike):
-    """Compatibility wrapper for the disabled task-document workflow."""
-    stored = await cloudinary_storage.upload(user_id, upload_file, 10 * 1024 * 1024)
-    return stored.url, stored.filename, stored.size, stored.content_type
-
-
-def is_valid_file_type(content_type: str) -> bool:
-    return content_type in {
-        "application/pdf",
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-    }
-
-
-def get_max_file_size() -> int:
-    return 5 * 1024 * 1024

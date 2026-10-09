@@ -26,6 +26,3 @@ api_router.include_router(
     settlement_steps.router, prefix="/settlement-steps", tags=["settlement-steps"]
 )
 api_router.include_router(forum.router, prefix="/forum", tags=["forum"])
-
-# TODO: Add more routers here as you create them
-# api_router.include_router(cities.router, prefix="/cities", tags=["cities"])

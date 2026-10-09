@@ -126,14 +126,13 @@ DELETE /api/v1/documents/{doc_id} # Delete document
 
 ```
 GET    /api/v1/users/me          # Get user profile
-PUT    /api/v1/users/me          # Update user profile
+PATCH  /api/v1/users/me          # Update user profile
 ```
 
 ### System
 
 ```
 GET    /health                   # Health check
-GET    /test-cors               # CORS test endpoint
 ```
 
 ## 🗄️ Database Models
@@ -281,9 +280,13 @@ expat-ease-backend/
 │   ├── core/                   # Core functionality
 │   │   ├── config.py           # Configuration settings
 │   │   ├── deps.py             # Dependency injection
-│   │   ├── security.py         # Security utilities
+│   │   ├── security_middleware.py # Response security headers
 │   │   └── storage.py          # File storage handling
 │   ├── services/
+│   │   ├── authentication.py   # Authentication and password workflows
+│   │   ├── documents.py        # Document storage workflows
+│   │   ├── forum.py            # Discussion and voting workflows
+│   │   ├── settlement_steps.py # Settlement checklist workflows
 │   │   ├── tasks.py            # Task workflows and ownership rules
 │   │   └── users.py            # User registration and profile workflows
 │   ├── db/                     # Database configuration
@@ -296,9 +299,7 @@ expat-ease-backend/
 │   │   ├── document.py         # Document model and schemas
 │   │   └── auth.py             # Authentication models
 │   └── main.py                 # FastAPI application entry point
-├── uploads/                    # File upload directory
 ├── requirements.txt            # Python dependencies
-├── check_db.py                # Database health check script
 └── README.md                  # This file
 ```
 
@@ -311,17 +312,18 @@ python -m uvicorn app.main:app --reload
 # Run with specific host and port
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 
-# Check database status
-python check_db.py
+# Apply database migrations
+python -m alembic upgrade head
 
 # Install development dependencies
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
-# Format code (if using black)
-black app/
+# Format code
+python -m ruff format app tests
 
-# Lint code (if using flake8)
-flake8 app/
+# Lint and test
+python -m ruff check app tests
+python -m pytest -q
 ```
 
 ### Adding New Features
@@ -335,11 +337,11 @@ flake8 app/
        # ... other fields
    ```
 
-2. **Create CRUD Operations**:
+2. **Create a Service**:
 
    ```python
-   # app/crud/crud_new_feature.py
-   def create_new_feature(db: Session, new_feature: NewFeatureCreate):
+   # app/services/new_features.py
+   def create_new_feature(session: Session, values: dict):
        # ... implementation
    ```
 
