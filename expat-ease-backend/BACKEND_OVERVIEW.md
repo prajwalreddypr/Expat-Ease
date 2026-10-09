@@ -204,7 +204,7 @@ SQLModel models (combines SQLAlchemy ORM + Pydantic validation):
 
 Database operation modules:
 
-- **`crud_user.py`**: User CRUD operations
+- **`services/users.py`**: User profiles, registration, and profile-photo workflows
   - `get_user()`, `get_user_by_email()`, `create_user()`, `update_user()`
 
 - **`services/tasks.py`**: Task workflows, ownership checks, and sequential unlocking

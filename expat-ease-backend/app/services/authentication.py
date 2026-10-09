@@ -6,9 +6,9 @@ from sqlmodel import Session
 from app.core.passwords import hash_password, password_validation_error, verify_password
 from app.core.tokens import create_access_token
 from app.crud.crud_password_reset import create_token, get_by_token
-from app.crud.crud_user import get_user, get_user_by_email
 from app.models.password_reset_token import PasswordResetToken
 from app.models.user import User
+from app.services.users import get_user, get_user_by_email
 
 
 class AuthenticationError(Exception):

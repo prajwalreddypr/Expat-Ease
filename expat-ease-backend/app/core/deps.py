@@ -7,9 +7,9 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlmodel import Session
 
 from app.core.tokens import verify_token
-from app.crud.crud_user import get_user
 from app.db.session import get_session
 from app.models.user import User
+from app.services.users import get_user
 
 # HTTP Bearer token security scheme
 security = HTTPBearer()
