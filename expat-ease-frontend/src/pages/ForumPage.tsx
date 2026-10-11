@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../contexts/auth-context';
 import { getApiUrl } from '../utils/api';
 import NewQuestionForm from '../components/forum/NewQuestionForm';
 
@@ -60,7 +60,34 @@ const ForumPage: React.FC = () => {
         { value: 'general', label: 'General', icon: '💭' }
     ];
 
-    const fetchQuestions = async () => {
+    const fetchQuestionAnswers = useCallback(async (questionId: number) => {
+        try {
+            console.log('Fetching answers for question:', questionId);
+            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}`), {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Answers response status:', response.status);
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Answers data received:', data.answers);
+                setQuestionAnswers(prev => ({
+                    ...prev,
+                    [questionId]: data.answers || []
+                }));
+            } else {
+                const errorText = await response.text();
+                console.error('Failed to fetch answers:', response.status, errorText);
+            }
+        } catch (error) {
+            console.error('Error fetching answers:', error);
+        }
+    }, [token]);
+
+    const fetchQuestions = useCallback(async () => {
         try {
             setLoading(true);
             const url = selectedCategory === 'all'
@@ -89,40 +116,13 @@ const ForumPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
-
-    const fetchQuestionAnswers = async (questionId: number) => {
-        try {
-            console.log('Fetching answers for question:', questionId);
-            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}`), {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Answers response status:', response.status);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Answers data received:', data.answers);
-                setQuestionAnswers(prev => ({
-                    ...prev,
-                    [questionId]: data.answers || []
-                }));
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to fetch answers:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error fetching answers:', error);
-        }
-    };
+    }, [fetchQuestionAnswers, selectedCategory, token]);
 
     useEffect(() => {
         if (token) {
             fetchQuestions();
         }
-    }, [token, selectedCategory]);
+    }, [fetchQuestions, token]);
 
     const handleNewQuestion = async (data: { title: string; content: string; category: string }) => {
         try {

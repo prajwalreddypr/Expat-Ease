@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { getApiUrl } from '../utils/api';
 import AnswerCard from '../components/forum/AnswerCard';
 import NewAnswerForm from '../components/forum/NewAnswerForm';
@@ -48,7 +48,7 @@ const QuestionDetailPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showAnswerForm, setShowAnswerForm] = useState(false);
 
-    const fetchQuestionDetails = async () => {
+    const fetchQuestionDetails = useCallback(async () => {
         try {
             setLoading(true);
             const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}`), {
@@ -70,13 +70,13 @@ const QuestionDetailPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [questionId, token]);
 
     useEffect(() => {
         if (questionId && token) {
             fetchQuestionDetails();
         }
-    }, [questionId, token]);
+    }, [fetchQuestionDetails, questionId, token]);
 
     const handleNewAnswer = async (content: string) => {
         try {

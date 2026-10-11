@@ -46,7 +46,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose, onOpenLogin }) => 
                 const errorData = await response.json();
                 setError(errorData.detail || 'Registration failed');
             }
-        } catch (err) {
+        } catch {
             setError('Network error. Please try again.');
         } finally {
             setIsLoading(false);

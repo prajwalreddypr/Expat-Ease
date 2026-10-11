@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { getApiUrl } from '../utils/api';
 import AnswerCard from '../components/forum/AnswerCard';
 
@@ -47,7 +47,7 @@ const ForumThreadPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [answerContent, setAnswerContent] = useState('');
 
-    const fetchQuestionDetails = async () => {
+    const fetchQuestionDetails = useCallback(async () => {
         try {
             setLoading(true);
             console.log('Fetching question details for ID:', questionId);
@@ -73,13 +73,13 @@ const ForumThreadPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [questionId, token]);
 
     useEffect(() => {
         if (questionId && token) {
             fetchQuestionDetails();
         }
-    }, [questionId, token]);
+    }, [fetchQuestionDetails, questionId, token]);
 
     const handlePostAnswer = async (e: React.FormEvent) => {
         e.preventDefault();
