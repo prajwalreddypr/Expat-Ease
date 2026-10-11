@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/auth-context';
 import { getApiUrl } from '../../utils/api';
-import { useToast } from '../Toast';
+import { useToast } from '../toast-context';
 import { sanitizeText } from '../../utils/sanitize';
 
 interface ReportButtonProps {

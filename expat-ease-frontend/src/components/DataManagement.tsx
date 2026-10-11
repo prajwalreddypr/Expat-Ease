@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { getApiUrl } from '../utils/api';
 
 interface DataManagementProps {
@@ -49,7 +49,7 @@ const DataManagement: React.FC<DataManagementProps> = ({ onClose }) => {
             } else {
                 throw new Error('Failed to request data export');
             }
-        } catch (error) {
+        } catch {
             setMessage({ type: 'error', text: 'Failed to request data export. Please try again.' });
         } finally {
             setIsLoading(false);
@@ -82,7 +82,7 @@ const DataManagement: React.FC<DataManagementProps> = ({ onClose }) => {
             } else {
                 throw new Error('Failed to delete account');
             }
-        } catch (error) {
+        } catch {
             setMessage({ type: 'error', text: 'Failed to delete account. Please try again.' });
         } finally {
             setIsLoading(false);

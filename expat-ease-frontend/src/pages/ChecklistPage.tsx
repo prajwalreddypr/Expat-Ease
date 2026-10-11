@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../components/Toast';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../contexts/auth-context';
+import { useToast } from '../components/toast-context';
 import { getApiUrl } from '../utils/api';
 
 // ---------------------------------------------------------------------------
@@ -796,8 +796,6 @@ const ChecklistPage: React.FC = () => {
   const [hasShownCompletionCelebration, setHasShownCompletionCelebration] = useState(false);
   const [previousCompletionCount, setPreviousCompletionCount] = useState(0);
 
-  useEffect(() => { if (token && user) fetchSteps(); }, [token, user]);
-
   useEffect(() => {
     const handleScroll = () => setShowScrollToTop(window.scrollY > 300);
     window.addEventListener('scroll', handleScroll);
@@ -815,7 +813,7 @@ const ChecklistPage: React.FC = () => {
     setPreviousCompletionCount(completedCount);
   }, [steps, hasShownCompletionCelebration, isResetting, previousCompletionCount]);
 
-  const fetchSteps = async () => {
+  const fetchSteps = useCallback(async () => {
     try {
       setLoading(true); setError(null);
       const res = await fetch(getApiUrl('/api/v1/settlement-steps/'), { headers: { Authorization: `Bearer ${token}` } });
@@ -828,7 +826,9 @@ const ChecklistPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
+
+  useEffect(() => { if (token && user) fetchSteps(); }, [fetchSteps, token, user]);
 
   const updateStepCompletion = async (stepId: number, isCompleted: boolean) => {
     try {

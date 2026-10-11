@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getApiUrl } from '../utils/api';
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/toast-context';
 
 const ResetPasswordPage: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -17,7 +17,7 @@ const ResetPasswordPage: React.FC = () => {
             addToast({ type: 'error', message: 'Missing reset token' });
             navigate('/');
         }
-    }, [token]);
+    }, [token, addToast, navigate]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,7 +39,7 @@ const ResetPasswordPage: React.FC = () => {
                 const data = await res.json().catch(() => null);
                 addToast({ type: 'error', message: data?.detail || 'Reset failed' });
             }
-        } catch (err) {
+        } catch {
             addToast({ type: 'error', message: 'Network error' });
         } finally {
             setLoading(false);
