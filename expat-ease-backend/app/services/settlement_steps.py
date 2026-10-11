@@ -1,11 +1,11 @@
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from sqlmodel import Session, select
 
 from app.core.storage import CloudinaryStorage, StorageError, cloudinary_storage
+from app.core.time import utc_now
 from app.models.document import Document
 from app.models.settlement_step import SettlementStep
 
@@ -86,13 +86,13 @@ def update_step(
         ).first()
         if next_step:
             next_step.is_unlocked = True
-            next_step.updated_at = datetime.now(timezone.utc)
+            next_step.updated_at = utc_now()
             session.add(next_step)
 
     if notes is not None:
         step.notes = notes
     if status_changed:
-        step.updated_at = datetime.now(timezone.utc)
+        step.updated_at = utc_now()
 
     session.add(step)
     session.commit()

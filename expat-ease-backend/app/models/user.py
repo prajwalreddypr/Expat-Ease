@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.core.time import utc_now
+
 if TYPE_CHECKING:
     from app.models.forum import Answer, Question
     from app.models.settlement_step import SettlementStep
@@ -26,7 +28,7 @@ class User(SQLModel, table=True):
     full_name: Optional[str] = Field(default=None, max_length=255)
     hashed_password: str = Field(max_length=255)
     is_active: bool = Field(default=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
     country: Optional[str] = Field(
         default=None, max_length=100
     )  # Country of Origin (from registration)

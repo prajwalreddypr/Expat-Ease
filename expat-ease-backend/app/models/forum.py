@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.core.time import utc_now
+
 if TYPE_CHECKING:
     from app.models.user import User
 
@@ -26,7 +28,7 @@ class Question(SQLModel, table=True):
     content: str = Field(max_length=2000)
     category: QuestionCategory = Field(default=QuestionCategory.GENERAL)
     user_id: int = Field(foreign_key="users.id")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
     updated_at: Optional[datetime] = Field(default=None)
     is_resolved: bool = Field(default=False)
     view_count: int = Field(default=0)
@@ -42,7 +44,7 @@ class Answer(SQLModel, table=True):
     content: str = Field(max_length=2000)
     question_id: int = Field(foreign_key="question.id")
     user_id: int = Field(foreign_key="users.id")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
     updated_at: Optional[datetime] = Field(default=None)
     is_accepted: bool = Field(default=False)
 
@@ -57,7 +59,7 @@ class QuestionVote(SQLModel, table=True):
     question_id: int = Field(foreign_key="question.id")
     user_id: int = Field(foreign_key="users.id")
     is_upvote: bool = Field(default=True)  # True for upvote, False for downvote
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
     # Relationships
     question: Optional["Question"] = Relationship(back_populates="votes")
@@ -69,7 +71,7 @@ class AnswerVote(SQLModel, table=True):
     answer_id: int = Field(foreign_key="answer.id")
     user_id: int = Field(foreign_key="users.id")
     is_upvote: bool = Field(default=True)  # True for upvote, False for downvote
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
     # Relationships
     answer: Optional["Answer"] = Relationship(back_populates="votes")

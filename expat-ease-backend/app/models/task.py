@@ -4,6 +4,8 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
+from app.core.time import utc_now
+
 
 class TaskStatus(str, Enum):
     PENDING = "pending"
@@ -29,5 +31,5 @@ class Task(SQLModel, table=True):
     order_index: int = Field(default=0)
     is_required: bool = Field(default=True)
     estimated_days: Optional[int] = Field(default=None)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
+    updated_at: datetime = Field(default_factory=utc_now)

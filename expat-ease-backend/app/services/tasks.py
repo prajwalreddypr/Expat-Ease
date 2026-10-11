@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from datetime import datetime
 from typing import List, Optional
 
 from sqlmodel import Session, select
 
+from app.core.time import utc_now
 from app.models.task import Task, TaskStatus
 
 DEFAULT_TASKS = [
@@ -90,7 +90,7 @@ def update_task(session: Session, task_id: int, user_id: int, values: dict) -> T
     for field, value in values.items():
         setattr(task, field, value)
     if values:
-        task.updated_at = datetime.utcnow()
+        task.updated_at = utc_now()
     session.add(task)
     session.commit()
     session.refresh(task)

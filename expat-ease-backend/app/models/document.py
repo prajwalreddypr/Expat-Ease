@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.core.time import utc_now
+
 if TYPE_CHECKING:
     from app.models.settlement_step import SettlementStep
 
@@ -16,7 +18,7 @@ class Document(SQLModel, table=True):
     content_type: str = Field(max_length=100)
     settlement_step_id: Optional[int] = Field(default=None, foreign_key="settlementstep.id")
     user_id: int = Field(foreign_key="users.id")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
     # Relationships
     settlement_step: Optional["SettlementStep"] = Relationship()
