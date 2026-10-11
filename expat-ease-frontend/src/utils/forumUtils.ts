@@ -76,12 +76,12 @@ export const validateCategory = (category: string): string => {
  * @param delay - Delay in milliseconds
  * @returns Debounced function
  */
-export const debounce = <T extends (...args: any[]) => any>(
-    func: T,
+export const debounce = <Args extends unknown[]>(
+    func: (...args: Args) => void,
     delay: number
-): ((...args: Parameters<T>) => void) => {
+): ((...args: Args) => void) => {
     let timeoutId: number;
-    return (...args: Parameters<T>) => {
+    return (...args: Args) => {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => func(...args), delay);
     };

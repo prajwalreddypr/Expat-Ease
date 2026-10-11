@@ -12,7 +12,8 @@ import ForumThreadPage from './pages/ForumThreadPage';
 import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { useAuth } from './contexts/auth-context';
 
 const AppContent: React.FC = () => {
   const { user, isLoading, selectedCountry, selectCountry } = useAuth();

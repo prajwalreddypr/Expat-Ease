@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../contexts/auth-context';
 import { getApiUrl } from '../utils/api';
 
 interface Document {
@@ -26,13 +26,7 @@ const DocumentsSection: React.FC = () => {
     const [customName, setCustomName] = useState('');
     const [uploadError, setUploadError] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (token && user) {
-            fetchDocuments();
-        }
-    }, [token, user]);
-
-    const fetchDocuments = async () => {
+    const fetchDocuments = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -56,7 +50,13 @@ const DocumentsSection: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [token]);
+
+    useEffect(() => {
+        if (token && user) {
+            fetchDocuments();
+        }
+    }, [fetchDocuments, token, user]);
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];

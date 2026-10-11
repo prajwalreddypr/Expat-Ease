@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { getApiUrl } from '../utils/api';
-import { useToast } from './Toast';
-import { useAuth } from '../contexts/AuthContext';
+import { useToast } from './toast-context';
+import { useAuth } from '../contexts/auth-context';
 
 interface Props {
     onClose: () => void;
@@ -43,7 +43,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                 // use newPassword as current-password input in this UI arrangement until the user moves forward
                 // For clarity we will use a separate local state 'currentPassword' — but to minimize edits re-use 'token' to track mode
             }
-        } catch (err) {
+        } catch {
             addToast({ type: 'error', message: 'Network error while requesting reset' });
         } finally {
             setLoading(false);
@@ -107,7 +107,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                             const d = await r.json().catch(() => null);
                                             addToast({ type: 'error', message: d?.detail || 'Reset failed' });
                                         }
-                                    } catch (err) {
+                                    } catch {
                                         addToast({ type: 'error', message: 'Network error' });
                                     } finally {
                                         setLoading(false);
@@ -189,7 +189,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                             const d = await r.json().catch(() => null);
                                             addToast({ type: 'error', message: d?.detail || 'Change failed' });
                                         }
-                                    } catch (err) {
+                                    } catch {
                                         addToast({ type: 'error', message: 'Network error' });
                                     } finally {
                                         setLoading(false);
@@ -236,7 +236,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                             const d = await r.json().catch(() => null);
                                             addToast({ type: 'error', message: d?.detail || 'Change failed' });
                                         }
-                                    } catch (err) {
+                                    } catch {
                                         addToast({ type: 'error', message: 'Network error' });
                                     } finally {
                                         setLoading(false);

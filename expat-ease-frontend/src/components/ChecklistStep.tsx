@@ -120,7 +120,7 @@ const ChecklistStep: React.FC<ChecklistStepProps> = ({
             setIsUploading(true);
             setUploadError(null);
             await onDocumentUpload(task.id, file);
-        } catch (error) {
+        } catch {
             setUploadError('Failed to upload file. Please try again.');
         } finally {
             setIsUploading(false);

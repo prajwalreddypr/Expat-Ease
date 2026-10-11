@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import Container from './Container';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';

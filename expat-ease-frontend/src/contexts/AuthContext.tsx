@@ -1,44 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { useState, useEffect, type ReactNode } from 'react';
 import { getApiUrl } from '../utils/api';
-
-interface User {
-    id: number;
-    email: string;
-    full_name: string | null;
-    is_active: boolean;
-    created_at: string;
-    country: string | null;  // Country of Origin
-    settlement_country: string | null;  // Settlement Country
-    country_selected: boolean;
-
-    // Profile fields
-    profile_photo: string | null;  // Cloudinary URL for profile photo
-    street_address: string | null;
-    city: string | null;
-    postal_code: string | null;
-    phone_number: string | null;
-}
-
-interface AuthContextType {
-    user: User | null;
-    token: string | null;
-    selectedCountry: string | null;
-    login: (email: string, password: string) => Promise<void>;
-    logout: () => void;
-    selectCountry: (country: string) => void;
-    refreshUser: () => Promise<void>;
-    isLoading: boolean;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
-};
+import { AuthContext, type AuthContextValue, type User } from './auth-context';
 
 interface AuthProviderProps {
     children: ReactNode;
@@ -188,7 +150,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
-    const value: AuthContextType = {
+    const value: AuthContextValue = {
         user,
         token,
         selectedCountry,
