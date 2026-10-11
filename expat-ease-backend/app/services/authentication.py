@@ -1,10 +1,11 @@
 import secrets
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Optional
 
 from sqlmodel import Session, select
 
 from app.core.passwords import hash_password, password_validation_error, verify_password
+from app.core.time import as_utc, utc_now
 from app.core.tokens import create_access_token
 from app.models.password_reset_token import PasswordResetToken
 from app.models.user import User
@@ -45,7 +46,7 @@ def create_reset_token(
     reset_token = PasswordResetToken(
         user_id=user_id,
         token=secrets.token_urlsafe(48),
-        expires_at=datetime.utcnow() + timedelta(minutes=expires_in_minutes),
+        expires_at=utc_now() + timedelta(minutes=expires_in_minutes),
     )
     session.add(reset_token)
     session.commit()
@@ -79,7 +80,7 @@ def reset_password(session: Session, token: str, new_password: str) -> None:
     reset_token = get_reset_token(session, token)
     if not reset_token:
         raise InvalidResetTokenError
-    if reset_token.expires_at < datetime.utcnow():
+    if as_utc(reset_token.expires_at) < utc_now():
         session.delete(reset_token)
         session.commit()
         raise InvalidResetTokenError
