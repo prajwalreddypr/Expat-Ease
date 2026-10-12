@@ -1,5 +1,5 @@
 import React, { useState, useEffect, type ReactNode } from 'react';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 import { AuthContext, type AuthContextValue, type User } from './auth-context';
 
 interface AuthProviderProps {
@@ -32,7 +32,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const fetchUserProfile = async (authToken: string) => {
         try {
-            const response = await fetch(getApiUrl('/api/v1/users/me'), {
+            const response = await apiFetch('/api/v1/users/me', {
                 headers: {
                     'Authorization': `Bearer ${authToken}`,
                 },
@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await fetch(getApiUrl('/api/v1/auth/login'), {
+            const response = await apiFetch('/api/v1/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (user && token) {
             try {
                 console.log('Updating user country in database...');
-                const response = await fetch(getApiUrl('/api/v1/users/me'), {
+                const response = await apiFetch('/api/v1/users/me', {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${token}`,

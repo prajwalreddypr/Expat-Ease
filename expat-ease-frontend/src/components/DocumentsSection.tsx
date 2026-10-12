@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/auth-context';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 interface Document {
     id: number;
@@ -31,7 +31,7 @@ const DocumentsSection: React.FC = () => {
             setLoading(true);
             setError(null);
 
-            const response = await fetch(getApiUrl('/api/v1/documents/'), {
+            const response = await apiFetch('/api/v1/documents/', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const DocumentsSection: React.FC = () => {
                 formData.append('custom_name', customName.trim());
             }
 
-            const response = await fetch(getApiUrl('/api/v1/documents/upload'), {
+            const response = await apiFetch('/api/v1/documents/upload', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -120,7 +120,7 @@ const DocumentsSection: React.FC = () => {
         }
 
         try {
-            const response = await fetch(getApiUrl(`/api/v1/documents/${documentId}`), {
+            const response = await apiFetch(`/api/v1/documents/${documentId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

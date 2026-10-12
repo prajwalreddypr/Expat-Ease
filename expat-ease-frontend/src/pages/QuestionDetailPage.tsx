@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/auth-context';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 import AnswerCard from '../components/forum/AnswerCard';
 import NewAnswerForm from '../components/forum/NewAnswerForm';
 
@@ -51,7 +51,7 @@ const QuestionDetailPage: React.FC = () => {
     const fetchQuestionDetails = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}`), {
+            const response = await apiFetch(`/api/v1/forum/questions/${questionId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -81,7 +81,7 @@ const QuestionDetailPage: React.FC = () => {
     const handleNewAnswer = async (content: string) => {
         try {
             console.log('Submitting answer:', content);
-            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}/answers`), {
+            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/answers`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -107,7 +107,7 @@ const QuestionDetailPage: React.FC = () => {
     const handleVoteQuestion = async (questionId: number, isUpvote: boolean) => {
         try {
             console.log('Voting on question:', questionId, 'isUpvote:', isUpvote);
-            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}/vote?is_upvote=${isUpvote}`), {
+            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/vote?is_upvote=${isUpvote}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -131,7 +131,7 @@ const QuestionDetailPage: React.FC = () => {
     const handleVoteAnswer = async (answerId: number, isUpvote: boolean) => {
         try {
             console.log('Voting on answer:', answerId, 'isUpvote:', isUpvote);
-            const response = await fetch(getApiUrl(`/api/v1/forum/answers/${answerId}/vote?is_upvote=${isUpvote}`), {
+            const response = await apiFetch(`/api/v1/forum/answers/${answerId}/vote?is_upvote=${isUpvote}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -155,7 +155,7 @@ const QuestionDetailPage: React.FC = () => {
     const handleAcceptAnswer = async (answerId: number) => {
         try {
             console.log('Accepting answer:', answerId);
-            const response = await fetch(getApiUrl(`/api/v1/forum/answers/${answerId}/accept`), {
+            const response = await apiFetch(`/api/v1/forum/answers/${answerId}/accept`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

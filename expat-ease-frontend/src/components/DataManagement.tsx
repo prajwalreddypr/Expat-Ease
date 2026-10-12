@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/auth-context';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 interface DataManagementProps {
     onClose: () => void;
@@ -34,7 +34,7 @@ const DataManagement: React.FC<DataManagementProps> = ({ onClose }) => {
         setMessage(null);
 
         try {
-            const response = await fetch(getApiUrl('/api/v1/users/data-export'), {
+            const response = await apiFetch('/api/v1/users/data-export', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -65,7 +65,7 @@ const DataManagement: React.FC<DataManagementProps> = ({ onClose }) => {
         setMessage(null);
 
         try {
-            const response = await fetch(getApiUrl('/api/v1/users/delete-account'), {
+            const response = await apiFetch('/api/v1/users/delete-account', {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

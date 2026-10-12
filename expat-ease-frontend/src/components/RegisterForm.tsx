@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 interface RegisterFormProps {
     onClose: () => void;
@@ -23,7 +23,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose, onOpenLogin }) => 
         setIsLoading(true);
 
         try {
-            const response = await fetch(getApiUrl('/api/v1/users/'), {
+            const response = await apiFetch('/api/v1/users/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

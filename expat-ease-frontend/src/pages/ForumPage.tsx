@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/auth-context';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 import NewQuestionForm from '../components/forum/NewQuestionForm';
 
 interface Question {
@@ -63,7 +63,7 @@ const ForumPage: React.FC = () => {
     const fetchQuestionAnswers = useCallback(async (questionId: number) => {
         try {
             console.log('Fetching answers for question:', questionId);
-            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}`), {
+            const response = await apiFetch(`/api/v1/forum/questions/${questionId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -90,11 +90,11 @@ const ForumPage: React.FC = () => {
     const fetchQuestions = useCallback(async () => {
         try {
             setLoading(true);
-            const url = selectedCategory === 'all'
-                ? getApiUrl('/api/v1/forum/questions')
-                : getApiUrl(`/api/v1/forum/questions?category=${selectedCategory}`);
+            const endpoint = selectedCategory === 'all'
+                ? '/api/v1/forum/questions'
+                : `/api/v1/forum/questions?category=${selectedCategory}`;
 
-            const response = await fetch(url, {
+            const response = await apiFetch(endpoint, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -127,7 +127,7 @@ const ForumPage: React.FC = () => {
     const handleNewQuestion = async (data: { title: string; content: string; category: string }) => {
         try {
             console.log('Submitting question:', data);
-            const response = await fetch(getApiUrl('/api/v1/forum/questions'), {
+            const response = await apiFetch('/api/v1/forum/questions', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -156,7 +156,7 @@ const ForumPage: React.FC = () => {
 
         try {
             console.log('Posting answer for question:', questionId, 'Content:', content);
-            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}/answers`), {
+            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/answers`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -182,7 +182,7 @@ const ForumPage: React.FC = () => {
     const handleVoteQuestion = async (questionId: number, isUpvote: boolean) => {
         try {
             console.log('Voting on question:', questionId, 'isUpvote:', isUpvote);
-            const response = await fetch(getApiUrl(`/api/v1/forum/questions/${questionId}/vote?is_upvote=${isUpvote}`), {
+            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/vote?is_upvote=${isUpvote}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
