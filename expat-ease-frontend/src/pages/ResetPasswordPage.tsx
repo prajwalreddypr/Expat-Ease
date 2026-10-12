@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 import { useToast } from '../components/toast-context';
 
 const ResetPasswordPage: React.FC = () => {
@@ -27,7 +27,7 @@ const ResetPasswordPage: React.FC = () => {
         }
         setLoading(true);
         try {
-            const res = await fetch(getApiUrl('/api/v1/auth/reset-password'), {
+            const res = await apiFetch('/api/v1/auth/reset-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, new_password: password }),

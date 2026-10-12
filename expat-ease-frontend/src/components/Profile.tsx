@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/auth-context';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 interface ProfileProps {
     onClose?: () => void;
@@ -96,7 +96,7 @@ const Profile: React.FC<ProfileProps> = () => {
         formData.append('file', profilePhoto);
 
         try {
-            const response = await fetch(getApiUrl('/api/v1/users/me/profile-photo'), {
+            const response = await apiFetch('/api/v1/users/me/profile-photo', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -130,7 +130,7 @@ const Profile: React.FC<ProfileProps> = () => {
             }
 
             // Update user profile
-            const response = await fetch(getApiUrl('/api/v1/users/me'), {
+            const response = await apiFetch('/api/v1/users/me', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

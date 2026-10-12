@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/auth-context';
 import { useToast } from '../components/toast-context';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -816,7 +816,7 @@ const ChecklistPage: React.FC = () => {
   const fetchSteps = useCallback(async () => {
     try {
       setLoading(true); setError(null);
-      const res = await fetch(getApiUrl('/api/v1/settlement-steps/'), { headers: { Authorization: `Bearer ${token}` } });
+      const res = await apiFetch('/api/v1/settlement-steps/', { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error(`Failed to fetch settlement steps: ${res.status}`);
       const data: SettlementStep[] = await res.json();
       setSteps(data);
@@ -832,7 +832,7 @@ const ChecklistPage: React.FC = () => {
 
   const updateStepCompletion = async (stepId: number, isCompleted: boolean) => {
     try {
-      const res = await fetch(getApiUrl(`/api/v1/settlement-steps/${stepId}`), {
+      const res = await apiFetch(`/api/v1/settlement-steps/${stepId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_completed: isCompleted }),
@@ -851,7 +851,7 @@ const ChecklistPage: React.FC = () => {
 
   const handleSkip = async (stepId: number, reason: string) => {
     try {
-      const res = await fetch(getApiUrl(`/api/v1/settlement-steps/${stepId}`), {
+      const res = await apiFetch(`/api/v1/settlement-steps/${stepId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_skipped: true, skip_reason: reason || null }),
@@ -871,7 +871,7 @@ const ChecklistPage: React.FC = () => {
 
   const handleUnskip = async (stepId: number) => {
     try {
-      const res = await fetch(getApiUrl(`/api/v1/settlement-steps/${stepId}`), {
+      const res = await apiFetch(`/api/v1/settlement-steps/${stepId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_skipped: false }),
@@ -887,7 +887,7 @@ const ChecklistPage: React.FC = () => {
 
   const handleSaveNotes = async (stepId: number, notes: string) => {
     try {
-      const res = await fetch(getApiUrl(`/api/v1/settlement-steps/${stepId}`), {
+      const res = await apiFetch(`/api/v1/settlement-steps/${stepId}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ notes }),
@@ -907,7 +907,7 @@ const ChecklistPage: React.FC = () => {
       const formData = new FormData();
       formData.append('file', file);
       if (label) formData.append('custom_name', label);
-      const res = await fetch(getApiUrl(`/api/v1/documents/upload?settlement_step_id=${stepId}`), {
+      const res = await apiFetch(`/api/v1/documents/upload?settlement_step_id=${stepId}`, {
         method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData,
       });
       if (!res.ok) throw new Error('Upload failed');
@@ -928,7 +928,7 @@ const ChecklistPage: React.FC = () => {
     setShowResetConfirm(false);
     try {
       setIsResetting(true); setError(null);
-      const res = await fetch(getApiUrl('/api/v1/settlement-steps/reset'), {
+      const res = await apiFetch('/api/v1/settlement-steps/reset', {
         method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       });
       if (!res.ok) {

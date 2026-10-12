@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/auth-context';
-import { getApiUrl } from '../../utils/api';
+import { apiFetch } from '../../utils/api';
 import { useToast } from '../toast-context';
 import { sanitizeText } from '../../utils/sanitize';
 
@@ -61,7 +61,7 @@ const ReportButton: React.FC<ReportButtonProps> = ({
                 description: sanitizeText(description)
             };
 
-            const response = await fetch(getApiUrl('/api/v1/forum/reports'), {
+            const response = await apiFetch('/api/v1/forum/reports', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

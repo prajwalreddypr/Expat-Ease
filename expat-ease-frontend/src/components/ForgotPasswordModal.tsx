@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { getApiUrl } from '../utils/api';
+import { apiFetch } from '../utils/api';
 import { useToast } from './toast-context';
 import { useAuth } from '../contexts/auth-context';
 
@@ -95,7 +95,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                     }
                                     setLoading(true);
                                     try {
-                                        const r = await fetch(getApiUrl('/api/v1/auth/reset-password'), {
+                                        const r = await apiFetch('/api/v1/auth/reset-password', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ token, new_password: newPassword }),
@@ -137,7 +137,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                     try {
                                         if (auth.token && auth.user) {
                                             // Authenticated flow: verify current then show change UI (existing behavior)
-                                            const res = await fetch(getApiUrl('/api/v1/auth/verify-password'), {
+                                            const res = await apiFetch('/api/v1/auth/verify-password', {
                                                 method: 'POST',
                                                 headers: {
                                                     'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                             return;
                                         }
 
-                                        const r = await fetch(getApiUrl('/api/v1/auth/change-password-by-email'), {
+                                        const r = await apiFetch('/api/v1/auth/change-password-by-email', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ email, current_password: newPassword, new_password: confirmPassword }),
@@ -224,7 +224,7 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                     }
                                     setLoading(true);
                                     try {
-                                        const r = await fetch(getApiUrl('/api/v1/auth/change-password'), {
+                                        const r = await apiFetch('/api/v1/auth/change-password', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
                                             body: JSON.stringify({ new_password: newPassword }),
