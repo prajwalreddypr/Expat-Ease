@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { apiFetch } from '../utils/api';
+import { apiFetch, getApiErrorDetail } from '../utils/api';
 
 interface RegisterFormProps {
     onClose: () => void;
@@ -43,8 +43,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onClose, onOpenLogin }) => 
                     setSuccess(false);
                 }, 2000);
             } else {
-                const errorData = await response.json();
-                setError(errorData.detail || 'Registration failed');
+                const errorDetail = await getApiErrorDetail(response);
+                setError(errorDetail || 'Registration failed');
             }
         } catch {
             setError('Network error. Please try again.');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/auth-context';
-import { apiFetch } from '../utils/api';
+import { apiFetch, getApiErrorDetail } from '../utils/api';
 
 interface Document {
     id: number;
@@ -92,8 +92,8 @@ const DocumentsSection: React.FC = () => {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Upload failed');
+                const errorDetail = await getApiErrorDetail(response);
+                throw new Error(errorDetail || 'Upload failed');
             }
 
             const uploadedDocument = await response.json();
