@@ -1,15 +1,53 @@
+<div align="center">
+
 # Expat Ease
 
-Expat Ease is a full-stack settlement platform for immigrants and expats. It combines country-specific checklists, document management, profiles, and a community forum.
+### Your digital companion for settling into a new country
 
-## Stack
+Country-specific guidance, documents, local services, and community support—all in one place.
 
-- Frontend: React 19, TypeScript 5.8, Vite 7, React Router 7, Tailwind CSS 3
-- Backend: Python, FastAPI, SQLModel, Alembic
-- Authentication: JWT and bcrypt
-- Storage: Cloudinary
-- Database: SQLite by default; `DATABASE_URL` can target PostgreSQL
-- Deployment: Vercel frontend and Render backend
+[![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript_5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Vite](https://img.shields.io/badge/Vite_7-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+
+![Flat world map with international flight routes, a passport, and travel documents](docs/assets/expat-ease-hero.png)
+
+[Explore the app](https://expat-ease.vercel.app) · [API documentation](https://expat-ease.onrender.com/docs) · [Report an issue](https://github.com/prajwalreddypr/Expat-Ease/issues)
+
+</div>
+
+## Why Expat Ease?
+
+Moving countries means navigating unfamiliar systems all at once. Expat Ease turns that process into a clear journey:
+
+| Plan your move | Keep documents together | Find local help | Learn from others |
+|---|---|---|---|
+| Follow country-specific settlement steps and track progress. | Upload and organize documents linked to each step. | Discover essential services for daily life and administration. | Ask questions, share answers, vote, and connect through the forum. |
+
+## How it fits together
+
+```mermaid
+flowchart LR
+    U[Expat user] --> F[React + TypeScript]
+    F -->|JWT + JSON API| B[FastAPI]
+    B --> D[(SQL database)]
+    B --> C[Cloudinary]
+    F -. deployed on .-> V[Vercel]
+    B -. deployed on .-> R[Render]
+```
+
+## Technology
+
+| Layer | Technologies |
+|---|---|
+| Frontend | React 19, TypeScript 5.8, Vite 7, React Router 7, Tailwind CSS 3 |
+| Backend | Python, FastAPI, SQLModel, Alembic |
+| Security | JWT authentication and bcrypt password hashing |
+| Data | SQLite by default; `DATABASE_URL` supports PostgreSQL |
+| Files | Cloudinary |
+| Quality | Ruff, Pytest, ESLint, Vitest, React Testing Library |
+| Hosting | Vercel frontend and Render backend |
 
 ## Repository layout
 
