@@ -248,7 +248,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <footer className="bg-white border-t border-gray-200 mt-auto">
                     <Container>
                         <div className="py-8 text-center text-gray-600">
-                            <p>&copy; 2025 Expat Ease. Helping immigrants and expats settle in a new country.</p>
+                            <p>&copy; 2026 Expat Ease. Helping immigrants and expats settle in a new country.</p>
                         </div>
                     </Container>
                 </footer>
