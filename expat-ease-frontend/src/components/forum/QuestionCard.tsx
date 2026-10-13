@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ForumQuestion } from '../../types/forum';
+import { formatDate } from '../../utils/forumUtils';
 
 interface QuestionCardProps {
     question: ForumQuestion;
@@ -13,17 +14,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onVote }) => {
     const handleClick = () => {
         console.log('Question clicked, navigating to:', `/forum/question/${question.id}`);
         navigate(`/forum/question/${question.id}`);
-    };
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-        if (diffInHours < 1) return 'Just now';
-        if (diffInHours < 24) return `${diffInHours}h ago`;
-        if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
-        return date.toLocaleDateString();
     };
 
     const getCategoryColor = (category: string) => {
