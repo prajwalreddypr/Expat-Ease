@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/auth-context';
 import { apiFetch } from '../utils/api';
 import AnswerCard from '../components/forum/AnswerCard';
 import type { ForumAnswer, ForumQuestion } from '../types/forum';
+import { formatDate } from '../utils/forumUtils';
 
 const ForumThreadPage: React.FC = () => {
     const { questionId } = useParams<{ questionId: string }>();
@@ -147,17 +148,6 @@ const ForumThreadPage: React.FC = () => {
         } catch (error) {
             console.error('Error accepting answer:', error);
         }
-    };
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-        if (diffInHours < 1) return 'Just now';
-        if (diffInHours < 24) return `${diffInHours}h ago`;
-        if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
-        return date.toLocaleDateString();
     };
 
     const getCategoryColor = (category: string) => {
