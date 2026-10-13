@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ForumQuestion } from '../../types/forum';
+import { getCategoryColor } from '../../utils/forumUtils';
 
 interface QuestionCardProps {
     question: ForumQuestion;
@@ -24,21 +25,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onVote }) => {
         if (diffInHours < 24) return `${diffInHours}h ago`;
         if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
         return date.toLocaleDateString();
-    };
-
-    const getCategoryColor = (category: string) => {
-        const colors: { [key: string]: string } = {
-            housing: 'bg-blue-100 text-blue-800',
-            banking: 'bg-green-100 text-green-800',
-            legal: 'bg-purple-100 text-purple-800',
-            work: 'bg-orange-100 text-orange-800',
-            education: 'bg-indigo-100 text-indigo-800',
-            healthcare: 'bg-red-100 text-red-800',
-            transportation: 'bg-yellow-100 text-yellow-800',
-            social: 'bg-pink-100 text-pink-800',
-            general: 'bg-gray-100 text-gray-800'
-        };
-        return colors[category] || colors.general;
     };
 
     return (
