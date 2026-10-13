@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/auth-context';
-import { apiFetch } from '../../utils/api';
+import { apiFetch, getApiErrorDetail } from '../../utils/api';
 import { useToast } from '../toast-context';
 import { sanitizeText } from '../../utils/sanitize';
 
@@ -71,8 +71,8 @@ const ReportButton: React.FC<ReportButtonProps> = ({
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ detail: 'Failed to submit report' }));
-                throw new Error(errorData.detail || `HTTP ${response.status}`);
+                const errorDetail = await getApiErrorDetail(response).catch(() => 'Failed to submit report');
+                throw new Error(errorDetail || `HTTP ${response.status}`);
             }
 
             addToast({

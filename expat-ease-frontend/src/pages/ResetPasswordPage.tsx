@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { apiFetch } from '../utils/api';
+import { apiFetch, getApiErrorDetail } from '../utils/api';
 import { useToast } from '../components/toast-context';
 
 const ResetPasswordPage: React.FC = () => {
@@ -36,8 +36,8 @@ const ResetPasswordPage: React.FC = () => {
                 addToast({ type: 'success', message: 'Password reset successful. Please log in.' });
                 navigate('/');
             } else {
-                const data = await res.json().catch(() => null);
-                addToast({ type: 'error', message: data?.detail || 'Reset failed' });
+                const errorDetail = await getApiErrorDetail(res).catch(() => undefined);
+                addToast({ type: 'error', message: errorDetail || 'Reset failed' });
             }
         } catch {
             addToast({ type: 'error', message: 'Network error' });

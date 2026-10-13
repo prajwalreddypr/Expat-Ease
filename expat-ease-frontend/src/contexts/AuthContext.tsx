@@ -1,5 +1,5 @@
 import React, { useState, useEffect, type ReactNode } from 'react';
-import { apiFetch } from '../utils/api';
+import { apiFetch, getApiErrorDetail } from '../utils/api';
 import { AuthContext, type AuthContextValue, type User } from './auth-context';
 
 interface AuthProviderProps {
@@ -86,8 +86,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
                 // User logged in successfully
             } else {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Login failed');
+                const errorDetail = await getApiErrorDetail(response);
+                throw new Error(errorDetail || 'Login failed');
             }
         } catch (error) {
             console.error('Login error:', error);

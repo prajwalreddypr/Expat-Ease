@@ -2,48 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/auth-context';
 import { apiFetch } from '../utils/api';
 import NewQuestionForm from '../components/forum/NewQuestionForm';
-
-interface Question {
-    id: number;
-    title: string;
-    content: string;
-    category: string;
-    created_at: string;
-    is_resolved: boolean;
-    view_count: number;
-    answer_count: number;
-    upvotes: number;
-    downvotes: number;
-    user: {
-        id: number;
-        full_name: string;
-        profile_photo?: string;
-        country?: string;
-    };
-}
-
-interface Answer {
-    id: number;
-    content: string;
-    created_at: string;
-    is_accepted: boolean;
-    upvotes: number;
-    downvotes: number;
-    user: {
-        id: number;
-        full_name: string;
-        profile_photo?: string;
-        country?: string;
-    };
-}
+import type { ForumAnswer, ForumQuestion } from '../types/forum';
 
 const ForumPage: React.FC = () => {
     const { token, user } = useAuth();
-    const [questions, setQuestions] = useState<Question[]>([]);
+    const [questions, setQuestions] = useState<ForumQuestion[]>([]);
     const [loading, setLoading] = useState(true);
     const [showNewQuestionForm, setShowNewQuestionForm] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
-    const [questionAnswers, setQuestionAnswers] = useState<{ [key: number]: Answer[] }>({});
+    const [questionAnswers, setQuestionAnswers] = useState<{ [key: number]: ForumAnswer[] }>({});
     const [answerContent, setAnswerContent] = useState<{ [key: number]: string }>({});
 
 
@@ -105,7 +72,7 @@ const ForumPage: React.FC = () => {
                 const data = await response.json();
                 setQuestions(data);
                 // Fetch answers for all questions
-                data.forEach((question: Question) => {
+                data.forEach((question: ForumQuestion) => {
                     fetchQuestionAnswers(question.id);
                 });
             } else {

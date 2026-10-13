@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { apiFetch } from '../utils/api';
+import { apiFetch, getApiErrorDetail } from '../utils/api';
 import { useToast } from './toast-context';
 import { useAuth } from '../contexts/auth-context';
 
@@ -104,8 +104,8 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                             addToast({ type: 'success', message: 'Password reset successful' });
                                             onClose();
                                         } else {
-                                            const d = await r.json().catch(() => null);
-                                            addToast({ type: 'error', message: d?.detail || 'Reset failed' });
+                                            const errorDetail = await getApiErrorDetail(r).catch(() => undefined);
+                                            addToast({ type: 'error', message: errorDetail || 'Reset failed' });
                                         }
                                     } catch {
                                         addToast({ type: 'error', message: 'Network error' });
@@ -153,8 +153,8 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                                 setConfirmPassword('');
                                                 return;
                                             } else {
-                                                const d = await res.json().catch(() => null);
-                                                addToast({ type: 'error', message: d?.detail || 'Incorrect password' });
+                                                const errorDetail = await getApiErrorDetail(res).catch(() => undefined);
+                                                addToast({ type: 'error', message: errorDetail || 'Incorrect password' });
                                                 return;
                                             }
                                         }
@@ -186,8 +186,8 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                             addToast({ type: 'success', message: 'Password changed successfully' });
                                             onClose();
                                         } else {
-                                            const d = await r.json().catch(() => null);
-                                            addToast({ type: 'error', message: d?.detail || 'Change failed' });
+                                            const errorDetail = await getApiErrorDetail(r).catch(() => undefined);
+                                            addToast({ type: 'error', message: errorDetail || 'Change failed' });
                                         }
                                     } catch {
                                         addToast({ type: 'error', message: 'Network error' });
@@ -233,8 +233,8 @@ const ForgotPasswordModal: React.FC<Props> = ({ onClose }) => {
                                             addToast({ type: 'success', message: 'Password changed successfully' });
                                             onClose();
                                         } else {
-                                            const d = await r.json().catch(() => null);
-                                            addToast({ type: 'error', message: d?.detail || 'Change failed' });
+                                            const errorDetail = await getApiErrorDetail(r).catch(() => undefined);
+                                            addToast({ type: 'error', message: errorDetail || 'Change failed' });
                                         }
                                     } catch {
                                         addToast({ type: 'error', message: 'Network error' });

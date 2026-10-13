@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { apiFetch, getApiUrl } from './api'
+import { apiFetch, getApiErrorDetail, getApiUrl } from './api'
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -25,5 +25,17 @@ describe('getApiUrl', () => {
       'http://localhost:8000/api/v1/users/me',
       options,
     )
+  })
+
+  it('reads a string detail from an API error response', async () => {
+    const response = Response.json({ detail: 'Email already registered' }, { status: 400 })
+
+    await expect(getApiErrorDetail(response)).resolves.toBe('Email already registered')
+  })
+
+  it('returns undefined when an API response has no string detail', async () => {
+    const response = Response.json({ message: 'Bad request' }, { status: 400 })
+
+    await expect(getApiErrorDetail(response)).resolves.toBeUndefined()
   })
 })

@@ -4,47 +4,14 @@ import { useAuth } from '../contexts/auth-context';
 import { apiFetch } from '../utils/api';
 import AnswerCard from '../components/forum/AnswerCard';
 import NewAnswerForm from '../components/forum/NewAnswerForm';
-
-interface Question {
-    id: number;
-    title: string;
-    content: string;
-    category: string;
-    created_at: string;
-    is_resolved: boolean;
-    view_count: number;
-    answer_count: number;
-    upvotes: number;
-    downvotes: number;
-    user: {
-        id: number;
-        full_name: string;
-        profile_photo?: string;
-        country?: string;
-    };
-}
-
-interface Answer {
-    id: number;
-    content: string;
-    created_at: string;
-    is_accepted: boolean;
-    upvotes: number;
-    downvotes: number;
-    user: {
-        id: number;
-        full_name: string;
-        profile_photo?: string;
-        country?: string;
-    };
-}
+import type { ForumAnswer, ForumQuestion } from '../types/forum';
 
 const QuestionDetailPage: React.FC = () => {
     const { questionId } = useParams<{ questionId: string }>();
     const navigate = useNavigate();
     const { token, user } = useAuth();
-    const [question, setQuestion] = useState<Question | null>(null);
-    const [answers, setAnswers] = useState<Answer[]>([]);
+    const [question, setQuestion] = useState<ForumQuestion | null>(null);
+    const [answers, setAnswers] = useState<ForumAnswer[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAnswerForm, setShowAnswerForm] = useState(false);
 
