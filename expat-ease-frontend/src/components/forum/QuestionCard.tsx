@@ -1,27 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface Question {
-    id: number;
-    title: string;
-    content: string;
-    category: string;
-    created_at: string;
-    is_resolved: boolean;
-    view_count: number;
-    answer_count: number;
-    upvotes: number;
-    downvotes: number;
-    user: {
-        id: number;
-        full_name: string;
-        profile_photo?: string;
-        country?: string;
-    };
-}
+import type { ForumQuestion } from '../../types/forum';
 
 interface QuestionCardProps {
-    question: Question;
+    question: ForumQuestion;
     onVote?: (questionId: number, isUpvote: boolean) => void;
 }
 

@@ -1,23 +1,8 @@
 import React from 'react';
-
-interface Answer {
-    id: number;
-    content: string;
-    created_at: string;
-    updated_at?: string;
-    is_accepted: boolean;
-    upvotes: number;
-    downvotes: number;
-    user: {
-        id: number;
-        full_name: string;
-        profile_photo?: string;
-        country?: string;
-    };
-}
+import type { ForumAnswer } from '../../types/forum';
 
 interface AnswerCardProps {
-    answer: Answer;
+    answer: ForumAnswer;
     onVote?: (answerId: number, isUpvote: boolean) => void;
     onAccept?: (answerId: number) => void;
     canAccept?: boolean;
