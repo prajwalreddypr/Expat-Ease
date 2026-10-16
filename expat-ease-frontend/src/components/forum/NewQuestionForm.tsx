@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import type { NewForumQuestion } from '../../types/forum';
 
 interface NewQuestionFormProps {
-    onSubmit: (data: { title: string; content: string; category: string }) => void;
+    onSubmit: (data: NewForumQuestion) => void;
     onCancel: () => void;
 }
 
@@ -24,11 +25,8 @@ const NewQuestionForm: React.FC<NewQuestionFormProps> = ({ onSubmit, onCancel })
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form submitted with:', { title: title.trim(), content: content.trim(), category });
         if (title.trim()) {
             onSubmit({ title: title.trim(), content: content.trim(), category });
-        } else {
-            console.log('Form validation failed - missing title');
         }
     };
 
