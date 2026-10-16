@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ForumQuestion } from '../../types/forum';
-import { formatDate } from '../../utils/forumUtils';
+import { formatDate, getCategoryColor } from '../../utils/forumUtils';
 
 interface QuestionCardProps {
     question: ForumQuestion;
@@ -12,23 +12,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onVote }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        console.log('Question clicked, navigating to:', `/forum/question/${question.id}`);
         navigate(`/forum/question/${question.id}`);
-    };
-
-    const getCategoryColor = (category: string) => {
-        const colors: { [key: string]: string } = {
-            housing: 'bg-blue-100 text-blue-800',
-            banking: 'bg-green-100 text-green-800',
-            legal: 'bg-purple-100 text-purple-800',
-            work: 'bg-orange-100 text-orange-800',
-            education: 'bg-indigo-100 text-indigo-800',
-            healthcare: 'bg-red-100 text-red-800',
-            transportation: 'bg-yellow-100 text-yellow-800',
-            social: 'bg-pink-100 text-pink-800',
-            general: 'bg-gray-100 text-gray-800'
-        };
-        return colors[category] || colors.general;
     };
 
     return (
@@ -97,7 +81,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onVote }) => {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('Upvote button clicked for question:', question.id);
                                 onVote?.(question.id, true);
                             }}
                             className="flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 transition-colors"
@@ -110,7 +93,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onVote }) => {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                console.log('Downvote button clicked for question:', question.id);
                                 onVote?.(question.id, false);
                             }}
                             className="flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100 transition-colors"
