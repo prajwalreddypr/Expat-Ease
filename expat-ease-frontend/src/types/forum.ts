@@ -29,3 +29,13 @@ export interface ForumAnswer {
     downvotes: number;
     user: ForumUser;
 }
+
+export interface ForumQuestionDetail extends ForumQuestion {
+    answers: ForumAnswer[];
+}
+
+export interface NewForumQuestion {
+    title: string;
+    content: string;
+    category: string;
+}

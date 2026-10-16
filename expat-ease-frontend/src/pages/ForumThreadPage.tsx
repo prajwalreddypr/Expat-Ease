@@ -1,168 +1,42 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/auth-context';
-import { apiFetch } from '../utils/api';
 import AnswerCard from '../components/forum/AnswerCard';
-import type { ForumAnswer, ForumQuestion } from '../types/forum';
-import { formatDate } from '../utils/forumUtils';
+import { useForumThread } from '../hooks/useForumThread';
+import { formatDate, getCategoryColor } from '../utils/forumUtils';
 
 const ForumThreadPage: React.FC = () => {
     const { questionId } = useParams<{ questionId: string }>();
     const navigate = useNavigate();
     const { token, user } = useAuth();
-    const [question, setQuestion] = useState<ForumQuestion | null>(null);
-    const [answers, setAnswers] = useState<ForumAnswer[]>([]);
-    const [loading, setLoading] = useState(true);
     const [answerContent, setAnswerContent] = useState('');
-
-    const fetchQuestionDetails = useCallback(async () => {
-        try {
-            setLoading(true);
-            console.log('Fetching question details for ID:', questionId);
-            const response = await apiFetch(`/api/v1/forum/questions/${questionId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Question details response status:', response.status);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Question data received:', data);
-                setQuestion(data);
-                setAnswers(data.answers || []);
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to fetch question details:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error fetching question details:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [questionId, token]);
-
-    useEffect(() => {
-        if (questionId && token) {
-            fetchQuestionDetails();
-        }
-    }, [fetchQuestionDetails, questionId, token]);
+    const {
+        question,
+        answers,
+        loading,
+        addAnswer,
+        voteQuestion,
+        voteAnswer,
+        acceptAnswer,
+    } = useForumThread(questionId, token);
 
     const handlePostAnswer = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!answerContent.trim()) return;
 
-        try {
-            console.log('Posting answer:', answerContent);
-            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/answers`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ content: answerContent.trim() })
-            });
-
-            console.log('Answer post response status:', response.status);
-            if (response.ok) {
-                console.log('Answer posted successfully');
-                setAnswerContent('');
-                fetchQuestionDetails(); // Refresh to get updated answers
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to post answer:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error posting answer:', error);
-        }
+        if (await addAnswer(answerContent.trim())) setAnswerContent('');
     };
 
     const handleVoteQuestion = async (questionId: number, isUpvote: boolean) => {
-        try {
-            console.log('Voting on question:', questionId, 'isUpvote:', isUpvote);
-            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/vote?is_upvote=${isUpvote}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Vote response status:', response.status);
-            if (response.ok) {
-                console.log('Vote successful, refreshing question...');
-                fetchQuestionDetails();
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to vote on question:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error voting on question:', error);
-        }
+        await voteQuestion(questionId, isUpvote);
     };
 
     const handleVoteAnswer = async (answerId: number, isUpvote: boolean) => {
-        try {
-            console.log('Voting on answer:', answerId, 'isUpvote:', isUpvote);
-            const response = await apiFetch(`/api/v1/forum/answers/${answerId}/vote?is_upvote=${isUpvote}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Answer vote response status:', response.status);
-            if (response.ok) {
-                console.log('Answer vote successful, refreshing...');
-                fetchQuestionDetails();
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to vote on answer:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error voting on answer:', error);
-        }
+        await voteAnswer(answerId, isUpvote);
     };
 
     const handleAcceptAnswer = async (answerId: number) => {
-        try {
-            console.log('Accepting answer:', answerId);
-            const response = await apiFetch(`/api/v1/forum/answers/${answerId}/accept`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Accept answer response status:', response.status);
-            if (response.ok) {
-                console.log('Answer accepted successfully');
-                fetchQuestionDetails();
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to accept answer:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error accepting answer:', error);
-        }
-    };
-
-    const getCategoryColor = (category: string) => {
-        const colors: { [key: string]: string } = {
-            housing: 'bg-blue-100 text-blue-800',
-            banking: 'bg-green-100 text-green-800',
-            legal: 'bg-purple-100 text-purple-800',
-            work: 'bg-orange-100 text-orange-800',
-            education: 'bg-indigo-100 text-indigo-800',
-            healthcare: 'bg-red-100 text-red-800',
-            transportation: 'bg-yellow-100 text-yellow-800',
-            social: 'bg-pink-100 text-pink-800',
-            general: 'bg-gray-100 text-gray-800'
-        };
-        return colors[category] || colors.general;
+        await acceptAnswer(answerId);
     };
 
     if (loading) {

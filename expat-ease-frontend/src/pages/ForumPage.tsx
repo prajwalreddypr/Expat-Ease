@@ -1,19 +1,23 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/auth-context';
-import { apiFetch } from '../utils/api';
 import NewQuestionForm from '../components/forum/NewQuestionForm';
-import type { ForumAnswer, ForumQuestion } from '../types/forum';
-import { formatDate } from '../utils/forumUtils';
+import { useForumQuestions } from '../hooks/useForumQuestions';
+import type { NewForumQuestion } from '../types/forum';
+import { formatDate, getCategoryColor } from '../utils/forumUtils';
 
 const ForumPage: React.FC = () => {
     const { token, user } = useAuth();
-    const [questions, setQuestions] = useState<ForumQuestion[]>([]);
-    const [loading, setLoading] = useState(true);
     const [showNewQuestionForm, setShowNewQuestionForm] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
-    const [questionAnswers, setQuestionAnswers] = useState<{ [key: number]: ForumAnswer[] }>({});
     const [answerContent, setAnswerContent] = useState<{ [key: number]: string }>({});
-
+    const {
+        questions,
+        questionAnswers,
+        loading,
+        addQuestion,
+        addAnswer,
+        voteQuestion,
+    } = useForumQuestions(token, selectedCategory);
 
     const categories = [
         { value: 'all', label: 'All Questions', icon: '💬' },
@@ -28,164 +32,21 @@ const ForumPage: React.FC = () => {
         { value: 'general', label: 'General', icon: '💭' }
     ];
 
-    const fetchQuestionAnswers = useCallback(async (questionId: number) => {
-        try {
-            console.log('Fetching answers for question:', questionId);
-            const response = await apiFetch(`/api/v1/forum/questions/${questionId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Answers response status:', response.status);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Answers data received:', data.answers);
-                setQuestionAnswers(prev => ({
-                    ...prev,
-                    [questionId]: data.answers || []
-                }));
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to fetch answers:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error fetching answers:', error);
-        }
-    }, [token]);
-
-    const fetchQuestions = useCallback(async () => {
-        try {
-            setLoading(true);
-            const endpoint = selectedCategory === 'all'
-                ? '/api/v1/forum/questions'
-                : `/api/v1/forum/questions?category=${selectedCategory}`;
-
-            const response = await apiFetch(endpoint, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setQuestions(data);
-                // Fetch answers for all questions
-                data.forEach((question: ForumQuestion) => {
-                    fetchQuestionAnswers(question.id);
-                });
-            } else {
-                console.error('Failed to fetch questions');
-            }
-        } catch (error) {
-            console.error('Error fetching questions:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [fetchQuestionAnswers, selectedCategory, token]);
-
-    useEffect(() => {
-        if (token) {
-            fetchQuestions();
-        }
-    }, [fetchQuestions, token]);
-
-    const handleNewQuestion = async (data: { title: string; content: string; category: string }) => {
-        try {
-            console.log('Submitting question:', data);
-            const response = await apiFetch('/api/v1/forum/questions', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            console.log('Question response status:', response.status);
-            if (response.ok) {
-                console.log('Question created successfully');
-                setShowNewQuestionForm(false);
-                fetchQuestions();
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to create question:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error creating question:', error);
-        }
+    const handleNewQuestion = async (data: NewForumQuestion) => {
+        if (await addQuestion(data)) setShowNewQuestionForm(false);
     };
 
     const handlePostAnswer = async (questionId: number) => {
         const content = answerContent[questionId];
         if (!content?.trim()) return;
 
-        try {
-            console.log('Posting answer for question:', questionId, 'Content:', content);
-            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/answers`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ content: content.trim() })
-            });
-
-            console.log('Answer post response status:', response.status);
-            if (response.ok) {
-                console.log('Answer posted successfully');
-                setAnswerContent(prev => ({ ...prev, [questionId]: '' }));
-                fetchQuestionAnswers(questionId); // Refresh answers
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to post answer:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error posting answer:', error);
+        if (await addAnswer(questionId, content.trim())) {
+            setAnswerContent(prev => ({ ...prev, [questionId]: '' }));
         }
     };
 
     const handleVoteQuestion = async (questionId: number, isUpvote: boolean) => {
-        try {
-            console.log('Voting on question:', questionId, 'isUpvote:', isUpvote);
-            const response = await apiFetch(`/api/v1/forum/questions/${questionId}/vote?is_upvote=${isUpvote}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Vote response status:', response.status);
-            if (response.ok) {
-                console.log('Vote successful, refreshing questions...');
-                fetchQuestions();
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to vote on question:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error voting on question:', error);
-        }
-    };
-
-
-
-    const getCategoryColor = (category: string) => {
-        const colors: { [key: string]: string } = {
-            housing: 'bg-blue-100 text-blue-800',
-            banking: 'bg-green-100 text-green-800',
-            legal: 'bg-purple-100 text-purple-800',
-            work: 'bg-orange-100 text-orange-800',
-            education: 'bg-indigo-100 text-indigo-800',
-            healthcare: 'bg-red-100 text-red-800',
-            transportation: 'bg-yellow-100 text-yellow-800',
-            social: 'bg-pink-100 text-pink-800',
-            general: 'bg-gray-100 text-gray-800'
-        };
-        return colors[category] || colors.general;
+        await voteQuestion(questionId, isUpvote);
     };
 
     if (showNewQuestionForm) {
