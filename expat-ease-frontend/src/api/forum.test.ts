@@ -64,7 +64,9 @@ describe('forum API', () => {
     });
 
     it('creates questions and answers with JSON payloads', async () => {
-        apiFetchMock.mockResolvedValue(successfulResponse({ id: 1 }));
+        apiFetchMock
+            .mockResolvedValueOnce(successfulResponse({ id: 1 }))
+            .mockResolvedValueOnce(successfulResponse({ id: 2 }));
         const question = { title: 'Title', content: 'Content', category: 'general' };
 
         await createForumQuestion('test-token', question);
