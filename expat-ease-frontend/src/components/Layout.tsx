@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/auth-context';
 import Container from './Container';
-import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
 import Sidebar from './Sidebar';
 
 interface LayoutProps {
@@ -14,8 +12,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { user, logout, selectedCountry } = useAuth();
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [showLoginForm, setShowLoginForm] = useState(false);
-    const [showRegisterForm, setShowRegisterForm] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const handleLogout = () => {
@@ -36,9 +32,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             navigate('/dashboard');
         }
 
-        // Close any open modals
-        setShowLoginForm(false);
-        setShowRegisterForm(false);
         setIsMobileMenuOpen(false);
     };
 
@@ -83,7 +76,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                         {/* Right Section - User Actions */}
                         <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6">
-                            {user ? (
+                            {!user && (
+                                <p className="hidden text-sm font-medium tracking-wide text-slate-500 sm:block lg:mr-8">
+                                    Guidance for life abroad.
+                                </p>
+                            )}
+
+                            {user && (
                                 <div className="hidden lg:flex items-center space-x-4 lg:space-x-6">
                                     {/* User Info - Hidden on smaller screens */}
                                     <div className="hidden xl:flex items-center space-x-4">
@@ -132,36 +131,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                         <span className="hidden lg:inline">Logout</span>
                                     </button>
                                 </div>
-                            ) : (
-                                <div className="hidden lg:flex items-center space-x-3">
-                                    <button
-                                        onClick={() => setShowLoginForm(true)}
-                                        className="px-4 py-2 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200"
-                                    >
-                                        Log in
-                                    </button>
-                                </div>
                             )}
 
-                            {/* Mobile menu button - Always visible on mobile */}
-                            <button
-                                className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200"
-                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                aria-label="Toggle mobile menu"
-                            >
-                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </button>
+                            {/* Mobile account menu is only needed for signed-in users */}
+                            {user && (
+                                <button
+                                    className="lg:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-all duration-200"
+                                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                    aria-label="Toggle mobile menu"
+                                >
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            )}
                         </div>
                     </div>
 
                     {/* Mobile Navigation Menu */}
-                    {isMobileMenuOpen && (
+                    {isMobileMenuOpen && user && (
                         <div className="lg:hidden border-t border-white/20 py-4 bg-white/50 backdrop-blur-sm">
                             <div className="space-y-4">
-                                {user ? (
-                                    <div className="px-4 py-3">
+                                <div className="px-4 py-3">
                                         {/* Mobile User Info */}
                                         <div className="flex items-center space-x-3 mb-4">
                                             <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md overflow-hidden">
@@ -210,20 +201,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                             </svg>
                                             Logout
                                         </button>
-                                    </div>
-                                ) : (
-                                    <div className="px-4 py-4">
-                                        <button
-                                            onClick={() => {
-                                                setShowLoginForm(true);
-                                                setIsMobileMenuOpen(false);
-                                            }}
-                                            className="w-full px-4 py-3 text-sm font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors duration-200"
-                                        >
-                                            Log in
-                                        </button>
-                                    </div>
-                                )}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -252,27 +230,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         </div>
                     </Container>
                 </footer>
-            )}
-
-            {/* Authentication Modals */}
-            {showLoginForm && (
-                <LoginForm
-                    onClose={() => setShowLoginForm(false)}
-                    onOpenRegister={() => {
-                        setShowLoginForm(false);
-                        setShowRegisterForm(true);
-                    }}
-                />
-            )}
-
-            {showRegisterForm && (
-                <RegisterForm
-                    onClose={() => setShowRegisterForm(false)}
-                    onOpenLogin={() => {
-                        setShowRegisterForm(false);
-                        setShowLoginForm(true);
-                    }}
-                />
             )}
 
         </div>

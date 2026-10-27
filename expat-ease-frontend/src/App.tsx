@@ -19,7 +19,6 @@ const AppContent: React.FC = () => {
   const { user, isLoading, selectedCountry, selectCountry } = useAuth();
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
-  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -44,17 +43,6 @@ const AppContent: React.FC = () => {
     }
   }, [user, isLoading, location.pathname, navigate]);
 
-  // Handle scroll to top button visibility
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      setShowScrollToTop(scrollTop > 300); // Show button after scrolling 300px
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Add history entry when opening modals
   const openLoginForm = () => {
     setShowLoginForm(true);
@@ -71,10 +59,6 @@ const AppContent: React.FC = () => {
     setShowRegisterForm(false);
     // Go back in history to remove the modal state
     window.history.back();
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (isLoading) {
@@ -126,139 +110,67 @@ const AppContent: React.FC = () => {
   return (
     <Layout>
       {/* Modern Landing Page */}
-      <div className="min-h-screen px-4 py-8">
-        <div className="w-full max-w-6xl mx-auto">
+      <div className="px-4 pb-4 lg:h-[calc(100vh-5.5rem)] lg:overflow-hidden">
+        <div className="mx-auto h-full w-full max-w-7xl">
 
-          {/* Hero Section */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-gradient mb-4 leading-tight py-2">
-              Welcome to Expat Ease
-            </h1>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Your comprehensive guide to settling in a new city. <br />Documents to community,
-              we've got everything you need for a smooth transition.
-            </p>
-          </div>
+          {/* Split hero and authentication actions */}
+          <section className="grid h-full grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+            <div className="flex w-full items-center justify-center">
+              <img
+                src="/images/expat-ease-hero.png"
+                alt="World map showing international journeys with airplanes, a passport, and a boarding pass"
+                className="h-auto w-full object-contain"
+              />
+            </div>
 
-          {/* Main CTA Section */}
-          <div className="text-center mb-16">
-            <div className="max-w-md mx-auto">
-              <div className="card bg-white/90 backdrop-blur-sm p-8 rounded-2xl border border-white/30 shadow-xl">
-                <h2 className="text-2xl font-bold text-slate-800 mb-6">Get Started Today</h2>
-                <div className="space-y-4">
-                  <button
-                    onClick={openLoginForm}
-                    className="btn btn-primary w-full py-4 text-lg"
-                  >
-                    Log in
-                  </button>
-                  <button
-                    onClick={openRegisterForm}
-                    className="btn btn-secondary w-full py-4 text-lg"
-                  >
-                    Create Account
-                  </button>
-                </div>
-                <p className="text-center text-slate-500 mt-6 text-sm">
-                  Join thousands of expats who've made their transition easier
+            <div className="relative flex items-center justify-center py-4 lg:justify-end lg:py-0 lg:pr-8">
+              <div
+                aria-hidden="true"
+                className="absolute right-8 top-1/4 h-40 w-40 rounded-full bg-cyan-200/40 blur-3xl"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute bottom-1/4 left-8 h-32 w-32 rounded-full bg-emerald-200/50 blur-3xl"
+              />
+
+              <div className="relative z-10 w-full max-w-md text-left">
+                <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                  Welcome to Expat Ease
                 </p>
-              </div>
-            </div>
-          </div>
 
-          {/* Feature Section */}
-          <div className="mb-12">
-            <h2 className="text-3xl font-bold text-center text-slate-800 mb-8">
-              Everything You Need to Settle In
-            </h2>
+                <h1 className="mb-8 text-4xl font-bold leading-[1.05] tracking-tight text-slate-950 sm:text-5xl">
+                  Settle in with{' '}
+                  <span className="bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent">
+                    confidence.
+                  </span>
+                </h1>
 
-            {/* Feature Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="card-hover bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-6 rounded-xl border border-violet-100 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4">
-                  <span className="text-white text-2xl">📋</span>
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">Settlement Checklist</h3>
-                <p className="text-slate-600 leading-relaxed">Track your progress with our comprehensive step-by-step guide</p>
-              </div>
+                <div className="w-full sm:max-w-sm">
+                    <button
+                      onClick={openRegisterForm}
+                      className="group flex w-full items-center justify-between rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-3.5 text-lg font-semibold text-white shadow-lg shadow-emerald-800/15 transition-all duration-200 hover:-translate-y-0.5 hover:from-emerald-500 hover:to-teal-500 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                    >
+                      <span>Create free account</span>
+                      <svg className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
 
-              <div className="card-hover bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 p-6 rounded-xl border border-rose-100 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4">
-                  <span className="text-white text-2xl">🤝</span>
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">Community Support</h3>
-                <p className="text-slate-600 leading-relaxed">Connect with local organizations and fellow expats</p>
-              </div>
-
-              <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-xl border border-emerald-100 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4">
-                  <span className="text-white text-2xl">🏛️</span>
-                </div>
-                <h3 className="text-xl font-bold text-slate-800 mb-3">Local Services</h3>
-                <p className="text-slate-600 leading-relaxed">Find government offices and essential services</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Visual Story Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
-            <div className="space-y-6">
-              <div className="relative">
-                <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=500&h=300&fit=crop&crop=center"
-                    alt="Airplane landing"
-                    className="w-full h-48 object-cover rounded-xl shadow-lg"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full">
-                      <span className="text-emerald-600 font-semibold">✈️ New Journey</span>
-                    </div>
-                  </div>
+                    <p className="mt-5 text-sm text-slate-600">
+                      Already have an account?{' '}
+                      <button
+                        onClick={openLoginForm}
+                        className="font-semibold text-emerald-700 underline decoration-emerald-300 underline-offset-4 transition-colors hover:text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                      >
+                        Log in
+                      </button>
+                    </p>
                 </div>
               </div>
             </div>
+          </section>
 
-            <div className="space-y-6">
-              <div className="relative">
-                <div className="card-hover bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-2xl border border-emerald-100">
-                  <img
-                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&h=300&fit=crop&crop=center"
-                    alt="Person holding passport"
-                    className="w-full h-48 object-cover rounded-xl shadow-lg"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <div className="bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full">
-                      <span className="text-emerald-600 font-semibold">📄 Documents Ready</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center">
-            <div className="card-hover bg-gradient-to-r from-teal-50 to-cyan-50 p-4 rounded-xl border border-teal-100 inline-block">
-              <p className="text-slate-600 font-medium">
-                Built by <span className="text-gradient font-bold">Prajwal</span> with ❤️ for the expat community
-              </p>
-            </div>
-          </div>
         </div>
-
-        {/* Scroll to Top Button */}
-        {showScrollToTop && (
-          <button
-            onClick={scrollToTop}
-            className="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center"
-            aria-label="Scroll to top"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-            </svg>
-          </button>
-        )}
       </div>
 
       {/* Register Form Modal */}
