@@ -7,9 +7,14 @@ describe('App', () => {
     render(<App />)
 
     expect(
-      await screen.findByRole('heading', { name: 'Welcome to Expat Ease' }),
+      await screen.findByRole('heading', { name: 'Settle in with confidence.' }),
     ).toBeInTheDocument()
-    expect(screen.getAllByRole('button', { name: 'Log in' })).toHaveLength(2)
-    expect(screen.getByRole('button', { name: 'Create Account' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('img', {
+        name: /world map showing international journeys/i,
+      }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Create free account' })).toBeInTheDocument()
   })
 })
