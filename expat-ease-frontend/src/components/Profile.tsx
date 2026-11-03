@@ -64,6 +64,7 @@ const Profile: FC = () => {
           <form onSubmit={handleProfileSubmit} className="space-y-6">
             <ProfilePhotoSection
               user={user}
+              disabled={Boolean(user?.is_demo)}
               previewUrl={previewUrl}
               fileInputRef={fileInputRef}
               onPhotoChange={handlePhotoChange}

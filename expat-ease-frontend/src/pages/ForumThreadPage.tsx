@@ -73,6 +73,12 @@ const ForumThreadPage: React.FC = () => {
     return (
         <div className="min-h-screen pt-16">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                {user?.is_demo && (
+                    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                        This discussion is read-only in demo mode.
+                    </div>
+                )}
+
                 {/* Back Button */}
                 <div className="mb-6">
                     <button
@@ -151,7 +157,8 @@ const ForumThreadPage: React.FC = () => {
                             <div className="flex items-center space-x-2">
                                 <button
                                     onClick={() => handleVoteQuestion(question.id, true)}
-                                    className="flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
+                                    disabled={user?.is_demo}
+                                    className="flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
@@ -160,7 +167,8 @@ const ForumThreadPage: React.FC = () => {
                                 </button>
                                 <button
                                     onClick={() => handleVoteQuestion(question.id, false)}
-                                    className="flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
+                                    disabled={user?.is_demo}
+                                    className="flex items-center space-x-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
@@ -173,7 +181,7 @@ const ForumThreadPage: React.FC = () => {
                 </div>
 
                 {/* Inline Answer Form */}
-                <div className="card mb-6">
+                {!user?.is_demo && <div className="card mb-6">
                     <div className="p-6">
                         <h3 className="text-lg font-bold text-slate-800 mb-4">Your Answer</h3>
                         <form onSubmit={handlePostAnswer} className="space-y-4">
@@ -204,7 +212,7 @@ const ForumThreadPage: React.FC = () => {
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>}
 
                 {/* Answers */}
                 <div className="space-y-4">
@@ -232,8 +240,9 @@ const ForumThreadPage: React.FC = () => {
                                 key={answer.id}
                                 answer={answer}
                                 onVote={handleVoteAnswer}
-                                onAccept={user?.id === question.user.id ? handleAcceptAnswer : undefined}
-                                canAccept={user?.id === question.user.id}
+                                canVote={!user?.is_demo}
+                                onAccept={!user?.is_demo && user?.id === question.user.id ? handleAcceptAnswer : undefined}
+                                canAccept={!user?.is_demo && user?.id === question.user.id}
                             />
                         ))
                     )}

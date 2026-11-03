@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getCurrentUser, loginUser, updateSettlementCountry } from './auth';
+import { createDemoSession, getCurrentUser, loginUser, updateSettlementCountry } from './auth';
 import { apiFetch, getApiErrorDetail } from '../utils/api';
 
 vi.mock('../utils/api', () => ({
@@ -38,6 +38,16 @@ describe('auth API', () => {
     expect(apiFetchMock).toHaveBeenCalledWith('/api/v1/users/me', {
       headers: { Authorization: 'Bearer test-token' },
     });
+  });
+
+  it('starts a demo session without credentials', async () => {
+    apiFetchMock.mockResolvedValue(Response.json({ access_token: 'demo-token', token_type: 'bearer' }));
+
+    await expect(createDemoSession()).resolves.toEqual({
+      access_token: 'demo-token',
+      token_type: 'bearer',
+    });
+    expect(apiFetchMock).toHaveBeenCalledWith('/api/v1/auth/demo', { method: 'POST' });
   });
 
   it('updates settlement country and selection state together', async () => {

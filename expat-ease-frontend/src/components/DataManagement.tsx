@@ -100,7 +100,11 @@ const DataManagement: React.FC<DataManagementProps> = ({ onClose }) => {
                             <div className="bg-blue-50 p-4 rounded-lg">
                                 <h4 className="font-semibold text-blue-900 mb-2">Account Information</h4>
                                 <div className="text-sm text-blue-800 space-y-1">
-                                    <p><strong>Email:</strong> {user?.email}</p>
+                                    {user?.is_demo ? (
+                                        <p><strong>Account:</strong> Temporary demo account</p>
+                                    ) : (
+                                        <p><strong>Email:</strong> {user?.email}</p>
+                                    )}
                                     <p><strong>Name:</strong> {user?.full_name || 'Not provided'}</p>
                                     <p><strong>Country:</strong> {user?.country || 'Not selected'}</p>
                                     <p><strong>Member since:</strong> {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown'}</p>
