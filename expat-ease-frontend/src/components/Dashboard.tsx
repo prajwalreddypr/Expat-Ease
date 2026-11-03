@@ -19,9 +19,6 @@ const Dashboard: React.FC = () => {
                     <h1 className="text-4xl font-bold text-gradient mb-3 leading-tight py-2">
                         Welcome back, {user?.full_name || user?.email}!
                     </h1>
-                    <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-                        Here's your personalized dashboard to help you settle in {user?.settlement_country}.
-                    </p>
                 </div>
 
                 {/* Main Content Grid */}
