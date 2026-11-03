@@ -21,6 +21,7 @@ const DocumentsSection: FC = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [customName, setCustomName] = useState('');
+  const canManageDocuments = !user?.is_demo;
 
   const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -73,7 +74,13 @@ const DocumentsSection: FC = () => {
           </p>
         </div>
 
-        {documents.length > 0 && (
+        {!canManageDocuments && (
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+            You can explore document management in demo mode, but uploads are disabled because they create permanent external files.
+          </div>
+        )}
+
+        {canManageDocuments && documents.length > 0 && (
           <div className="mb-8">
             <button onClick={() => setShowUploadModal(true)} className="btn btn-primary inline-flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,12 +94,13 @@ const DocumentsSection: FC = () => {
         <div className="space-y-4">
           <DocumentList
             documents={documents}
+            canManage={canManageDocuments}
             onUpload={() => setShowUploadModal(true)}
             onDelete={removeDocument}
           />
         </div>
 
-        {showUploadModal && (
+        {canManageDocuments && showUploadModal && (
           <DocumentUploadModal
             customName={customName}
             uploading={uploading}

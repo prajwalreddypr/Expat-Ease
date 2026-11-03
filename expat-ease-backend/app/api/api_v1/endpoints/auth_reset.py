@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
 from app.core.config import settings
-from app.core.deps import get_current_active_user
+from app.core.deps import get_current_permanent_user
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.auth import (
@@ -58,7 +58,7 @@ def reset_password(request: ResetPasswordRequest, session: Session = Depends(get
 )
 def verify_current_password(
     request: VerifyPasswordRequest,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_permanent_user),
 ) -> Any:
     try:
         authentication.verify_current_password(current_user, request.current_password)
@@ -75,7 +75,7 @@ def verify_current_password(
 def change_password(
     request: ChangePasswordRequest,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_permanent_user),
 ) -> Any:
     try:
         authentication.change_password(session, current_user, request.new_password)

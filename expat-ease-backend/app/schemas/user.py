@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
+
+from app.core.time import as_utc
 
 
 class UserCreate(BaseModel):
@@ -18,6 +20,8 @@ class UserRead(BaseModel):
     email: str
     full_name: Optional[str]
     is_active: bool
+    is_demo: bool
+    demo_expires_at: Optional[datetime]
     created_at: datetime
     country: Optional[str]
     settlement_country: Optional[str]
@@ -27,6 +31,13 @@ class UserRead(BaseModel):
     city: Optional[str]
     postal_code: Optional[str]
     phone_number: Optional[str]
+
+    @field_serializer("demo_expires_at")
+    def serialize_demo_expiry(self, value: Optional[datetime]) -> Optional[str]:
+        """Always identify demo expiry timestamps as UTC for browser clients."""
+        if value is None:
+            return None
+        return as_utc(value).isoformat().replace("+00:00", "Z")
 
 
 class UserUpdate(BaseModel):

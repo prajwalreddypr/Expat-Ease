@@ -16,5 +16,6 @@ describe('App', () => {
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Log in' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Create free account' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Explore demo' })).toBeInTheDocument()
   })
 })

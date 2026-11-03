@@ -2,17 +2,48 @@
 Authentication endpoints.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlmodel import Session
 
+from app.api.api_v1.endpoints.settlement_steps import FRANCE_DEFAULT_STEPS
+from app.core.config import settings
 from app.core.deps import get_current_user
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.auth import LoginRequest, Token
 from app.schemas.user import UserRead
-from app.services import authentication
+from app.services import authentication, demo_access
 
 router = APIRouter()
+
+
+@router.post("/demo", response_model=Token, status_code=status.HTTP_201_CREATED)
+def create_demo_session(
+    request: Request,
+    session: Session = Depends(get_session),
+) -> Token:
+    """Create an isolated, short-lived authenticated product demo session."""
+    if not settings.DEMO_ACCESS_ENABLED:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Demo access is currently unavailable.",
+        )
+
+    client_key = request.client.host if request.client else "unknown"
+    try:
+        demo_access.enforce_rate_limit(client_key, settings.DEMO_MAX_SESSIONS_PER_HOUR)
+        access_token = demo_access.create_demo_session(
+            session,
+            FRANCE_DEFAULT_STEPS,
+            session_minutes=settings.DEMO_SESSION_MINUTES,
+        )
+    except demo_access.DemoRateLimitError:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many demo sessions. Please try again later.",
+        ) from None
+
+    return Token(access_token=access_token, token_type="bearer")
 
 
 @router.post("/login", response_model=Token)

@@ -28,6 +28,8 @@ class User(SQLModel, table=True):
     full_name: Optional[str] = Field(default=None, max_length=255)
     hashed_password: str = Field(max_length=255)
     is_active: bool = Field(default=True)
+    is_demo: bool = Field(default=False, index=True)
+    demo_expires_at: Optional[datetime] = Field(default=None, index=True)
     created_at: datetime = Field(default_factory=utc_now)
     country: Optional[str] = Field(
         default=None, max_length=100

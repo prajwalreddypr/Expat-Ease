@@ -16,9 +16,11 @@ import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/auth-context';
 
 const AppContent: React.FC = () => {
-  const { user, isLoading, selectedCountry, selectCountry } = useAuth();
+  const { user, isLoading, selectedCountry, selectCountry, startDemo } = useAuth();
   const [showRegisterForm, setShowRegisterForm] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
+  const [isStartingDemo, setIsStartingDemo] = useState(false);
+  const [demoError, setDemoError] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -82,6 +84,19 @@ const AppContent: React.FC = () => {
     }
 
     scrollToTop();
+  };
+
+  const handleStartDemo = async () => {
+    setDemoError(null);
+    setIsStartingDemo(true);
+    try {
+      await startDemo();
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    } catch (error) {
+      setDemoError(error instanceof Error ? error.message : 'Demo access is unavailable');
+    } finally {
+      setIsStartingDemo(false);
+    }
   };
 
   if (isLoading) {
@@ -178,6 +193,24 @@ const AppContent: React.FC = () => {
                         <path d="m9 18 6-6-6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </button>
+
+                    <button
+                      onClick={handleStartDemo}
+                      disabled={isStartingDemo}
+                      className="mt-3 flex w-full items-center justify-center rounded-xl border border-emerald-300 bg-white/80 px-5 py-3 text-base font-semibold text-emerald-800 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+                    >
+                      {isStartingDemo ? 'Preparing demo...' : 'Explore demo'}
+                    </button>
+
+                    <p className="mt-2 text-xs text-slate-500">
+                      No account required · Includes sample progress
+                    </p>
+
+                    {demoError && (
+                      <p className="mt-3 text-sm text-red-600" role="alert">
+                        {demoError}
+                      </p>
+                    )}
 
                     <p className="mt-5 text-sm text-slate-600">
                       Already have an account?{' '}

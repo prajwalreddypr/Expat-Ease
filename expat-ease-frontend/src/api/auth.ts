@@ -30,6 +30,11 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
   return parseResponse<LoginResponse>(response, 'Login failed');
 };
 
+export const createDemoSession = async (): Promise<LoginResponse> => {
+  const response = await apiFetch('/api/v1/auth/demo', { method: 'POST' });
+  return parseResponse<LoginResponse>(response, 'Demo access is currently unavailable');
+};
+
 export const getCurrentUser = async (token: string): Promise<User> => {
   const response = await apiFetch('/api/v1/users/me', {
     headers: authorizationHeaders(token),
