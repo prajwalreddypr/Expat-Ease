@@ -61,6 +61,29 @@ const AppContent: React.FC = () => {
     window.history.back();
   };
 
+  const completeLogin = () => {
+    setShowLoginForm(false);
+    setShowRegisterForm(false);
+
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    };
+
+    if (window.history.state?.modal) {
+      // Browser history restores its saved scroll position after popstate.
+      // Wait until that restoration finishes, then place the dashboard at the top.
+      window.addEventListener(
+        'popstate',
+        () => window.setTimeout(scrollToTop, 0),
+        { once: true },
+      );
+      window.history.back();
+      return;
+    }
+
+    scrollToTop();
+  };
+
   if (isLoading) {
     return (
       <Layout>
@@ -188,6 +211,7 @@ const AppContent: React.FC = () => {
       {showLoginForm && (
         <LoginForm
           onClose={closeModals}
+          onLoginSuccess={completeLogin}
           onOpenRegister={() => {
             setShowLoginForm(false);
             openRegisterForm();

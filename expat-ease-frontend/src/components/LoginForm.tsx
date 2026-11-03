@@ -4,10 +4,11 @@ import ForgotPasswordModal from './ForgotPasswordModal';
 
 interface LoginFormProps {
   onClose: () => void;
+  onLoginSuccess: () => void;
   onOpenRegister?: () => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onClose, onOpenRegister }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onClose, onLoginSuccess, onOpenRegister }) => {
   const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
@@ -24,7 +25,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose, onOpenRegister }) => {
 
     try {
       await login(formData.email, formData.password);
-      onClose(); // Close the form on successful login
+      onLoginSuccess();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
