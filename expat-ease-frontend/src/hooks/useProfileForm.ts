@@ -70,7 +70,7 @@ export const useProfileForm = ({ user, token, refreshUser }: UseProfileFormOptio
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!token) return;
+    if (!token) return false;
 
     setIsLoading(true);
     setMessage(null);
@@ -81,16 +81,13 @@ export const useProfileForm = ({ user, token, refreshUser }: UseProfileFormOptio
         profilePhotoUrl = updatedUser.profile_photo;
       }
       await updateProfile(token, formData, profilePhotoUrl);
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
       await refreshUser();
       setProfilePhoto(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
-      document.getElementById('profile-modal-container')?.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
+      return true;
     } catch {
       setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
+      return false;
     } finally {
       setIsLoading(false);
     }

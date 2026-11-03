@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { FC } from 'react';
+import type { FC, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from './toast-context';
 import { useAuth } from '../contexts/auth-context';
 import { useProfileForm } from '../hooks/useProfileForm';
 import AccountInformation from './profile/AccountInformation';
@@ -9,6 +10,7 @@ import ProfilePhotoSection from './profile/ProfilePhotoSection';
 
 const Profile: FC = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const { user, token, refreshUser } = useAuth();
   const [showScrollButton, setShowScrollButton] = useState(false);
   const {
@@ -32,6 +34,21 @@ const Profile: FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleProfileSubmit = async (event: FormEvent) => {
+    const wasUpdated = await handleSubmit(event);
+
+    if (!wasUpdated) {
+      addToast({ type: 'error', message: 'Failed to update profile. Please try again.' });
+      return;
+    }
+
+    addToast({ type: 'success', message: 'Profile updated successfully!' });
+    navigate('/dashboard');
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
+  };
 
   return (
     <div className="min-h-screen py-6">
@@ -61,7 +78,7 @@ const Profile: FC = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleProfileSubmit} className="space-y-6">
             <ProfilePhotoSection
               user={user}
               previewUrl={previewUrl}
