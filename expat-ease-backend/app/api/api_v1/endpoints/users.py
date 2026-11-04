@@ -5,7 +5,7 @@ User endpoints.
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlmodel import Session
 
-from app.core.deps import get_current_active_user
+from app.core.deps import get_current_active_user, get_current_permanent_user
 from app.db.session import get_session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserRead, UserUpdate
@@ -85,7 +85,7 @@ def update_current_user(
 @router.post("/me/profile-photo", response_model=UserRead)
 async def upload_profile_photo(
     file: UploadFile = File(...),
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_permanent_user),
     session: Session = Depends(get_session),
 ) -> User:
     """

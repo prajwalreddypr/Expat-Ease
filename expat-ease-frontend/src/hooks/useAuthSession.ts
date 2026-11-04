@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getCurrentUser, loginUser, updateSettlementCountry } from '../api/auth';
+import { createDemoSession, getCurrentUser, loginUser, updateSettlementCountry } from '../api/auth';
 import type { AuthContextValue, User } from '../contexts/auth-context';
 import {
   clearAuthToken,
@@ -45,11 +45,33 @@ export const useAuthSession = (): AuthContextValue => {
     }
   }, [loadUserProfile]);
 
+  useEffect(() => {
+    if (!user?.is_demo || !user.demo_expires_at) return;
+
+    const expiresIn = new Date(user.demo_expires_at).getTime() - Date.now();
+    const timeout = window.setTimeout(() => {
+      setUser(null);
+      setToken(null);
+      setSelectedCountry(null);
+      clearStoredAuthSession();
+      window.location.href = '/';
+    }, Math.max(0, expiresIn));
+
+    return () => window.clearTimeout(timeout);
+  }, [user]);
+
   const login = async (email: string, password: string) => {
     const loginResponse = await loginUser(email, password);
     setToken(loginResponse.access_token);
     storeAuthToken(loginResponse.access_token);
     await loadUserProfile(loginResponse.access_token);
+  };
+
+  const startDemo = async () => {
+    const demoResponse = await createDemoSession();
+    setToken(demoResponse.access_token);
+    storeAuthToken(demoResponse.access_token);
+    await loadUserProfile(demoResponse.access_token);
   };
 
   const logout = () => {
@@ -83,6 +105,7 @@ export const useAuthSession = (): AuthContextValue => {
     token,
     selectedCountry,
     login,
+    startDemo,
     logout,
     selectCountry,
     refreshUser,

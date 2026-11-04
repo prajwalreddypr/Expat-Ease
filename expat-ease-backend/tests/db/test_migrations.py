@@ -57,7 +57,7 @@ def test_migrate_adopts_compatible_existing_database(monkeypatch, tmp_path):
         user_count = connection.execute(text("SELECT COUNT(*) FROM users")).scalar_one()
         version = connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
     assert user_count == 1
-    assert version == "7e41027f0980"
+    assert version == "c0f3d8a12b4e"
     assert "legacy_table" in inspect(migrate.engine).get_table_names()
 
 

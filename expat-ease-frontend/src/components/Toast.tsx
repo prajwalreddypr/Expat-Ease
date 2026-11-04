@@ -55,6 +55,8 @@ interface ToastItemProps {
 }
 
 const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
+    const duration = toast.duration || 5000;
+
     const getToastStyles = (type: Toast['type']) => {
         const baseStyles = 'max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden';
 
@@ -69,6 +71,19 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
                 return `${baseStyles} border-l-4 border-blue-400`;
             default:
                 return baseStyles;
+        }
+    };
+
+    const getProgressStyles = (type: Toast['type']) => {
+        switch (type) {
+            case 'success':
+                return 'bg-green-400';
+            case 'error':
+                return 'bg-red-400';
+            case 'warning':
+                return 'bg-yellow-400';
+            case 'info':
+                return 'bg-blue-400';
         }
     };
 
@@ -124,6 +139,11 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
                     </div>
                 </div>
             </div>
+            <div
+                aria-hidden="true"
+                className={`h-1 w-full origin-left toast-progress ${getProgressStyles(toast.type)}`}
+                style={{ animationDuration: `${duration}ms` }}
+            />
         </div>
     );
 };

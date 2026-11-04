@@ -250,6 +250,9 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 | `ENVIRONMENT` | Environment (dev/prod) | `development` | ❌ |
 | `CORS_ORIGINS` | Allowed CORS origins | `http://localhost:5173` | ❌ |
 | `UPLOAD_DIR` | File upload directory | `uploads` | ❌ |
+| `DEMO_ACCESS_ENABLED` | Enable temporary guest demo sessions | `true` | ❌ |
+| `DEMO_SESSION_MINUTES` | Guest demo session lifetime | `60` | ❌ |
+| `DEMO_MAX_SESSIONS_PER_HOUR` | Per-client demo session limit | `30` | ❌ |
 
 ### Database Configuration
 

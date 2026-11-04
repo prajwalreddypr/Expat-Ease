@@ -4,18 +4,25 @@ import { formatDocumentDate, formatFileSize, getFileIcon } from '../../utils/doc
 
 interface DocumentListProps {
   documents: UserDocument[];
+  canManage: boolean;
   onUpload: () => void;
   onDelete: (documentId: number) => void;
 }
 
-const DocumentList: FC<DocumentListProps> = ({ documents, onUpload, onDelete }) => {
+const DocumentList: FC<DocumentListProps> = ({ documents, canManage, onUpload, onDelete }) => {
   if (documents.length === 0) {
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📁</div>
         <h3 className="text-xl font-semibold text-gray-900 mb-2">No documents yet</h3>
-        <p className="text-gray-600 mb-6">Upload your first document to get started</p>
-        <button onClick={onUpload} className="btn btn-primary">Upload Document</button>
+        <p className="text-gray-600 mb-6">
+          {canManage
+            ? 'Upload your first document to get started'
+            : 'File uploads are disabled in demo mode to prevent permanent storage.'}
+        </p>
+        {canManage && (
+          <button onClick={onUpload} className="btn btn-primary">Upload Document</button>
+        )}
       </div>
     );
   }
@@ -53,15 +60,17 @@ const DocumentList: FC<DocumentListProps> = ({ documents, onUpload, onDelete }) 
             </svg>
             View
           </button>
-          <button
-            onClick={() => onDelete(document.id)}
-            className="px-3 py-2 text-sm font-medium text-red-600 hover:text-red-800 border border-red-300 rounded-lg hover:bg-red-50 transition-all duration-200"
-          >
-            <svg className="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            Delete
-          </button>
+          {canManage && (
+            <button
+              onClick={() => onDelete(document.id)}
+              className="px-3 py-2 text-sm font-medium text-red-600 hover:text-red-800 border border-red-300 rounded-lg hover:bg-red-50 transition-all duration-200"
+            >
+              <svg className="w-4 h-4 mr-1 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Delete
+            </button>
+          )}
         </div>
       </div>
     </div>

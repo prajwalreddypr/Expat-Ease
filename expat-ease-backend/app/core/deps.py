@@ -6,6 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlmodel import Session
 
+from app.core.time import as_utc, utc_now
 from app.core.tokens import verify_token
 from app.db.session import get_session
 from app.models.user import User
@@ -50,6 +51,8 @@ def get_current_user(
     user = get_user(session=session, user_id=user_id)
     if user is None:
         raise credentials_exception
+    if user.is_demo and (user.demo_expires_at is None or as_utc(user.demo_expires_at) <= utc_now()):
+        raise credentials_exception
 
     return user
 
@@ -69,4 +72,16 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
     """
     if not current_user.is_active:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
+    return current_user
+
+
+def get_current_permanent_user(
+    current_user: User = Depends(get_current_active_user),
+) -> User:
+    """Reject demo sessions for actions that create permanent or shared data."""
+    if current_user.is_demo:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This action is unavailable in demo mode.",
+        )
     return current_user

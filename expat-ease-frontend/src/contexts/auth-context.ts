@@ -5,6 +5,8 @@ export interface User {
   email: string
   full_name: string | null
   is_active: boolean
+  is_demo: boolean
+  demo_expires_at: string | null
   created_at: string
   country: string | null
   settlement_country: string | null
@@ -21,6 +23,7 @@ export interface AuthContextValue {
   token: string | null
   selectedCountry: string | null
   login: (email: string, password: string) => Promise<void>
+  startDemo: () => Promise<void>
   logout: () => void
   selectCountry: (country: string) => void
   refreshUser: () => Promise<void>

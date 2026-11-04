@@ -5,7 +5,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from sqlmodel import Session
 
-from app.core.deps import get_current_active_user
+from app.core.deps import get_current_active_user, get_current_permanent_user
 from app.db.session import get_session
 from app.models.document import Document
 from app.models.user import User
@@ -36,7 +36,7 @@ async def upload_document(
     file: UploadFile = File(...),
     custom_name: Optional[str] = Form(None),
     settlement_step_id: Optional[int] = Query(None),
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_permanent_user),
     session: Session = Depends(get_session),
 ) -> DocumentResponse:
     try:
@@ -81,7 +81,7 @@ def get_document(
 @router.delete("/{document_id}", response_model=MessageResponse)
 def delete_document(
     document_id: int,
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_permanent_user),
     session: Session = Depends(get_session),
 ) -> dict:
     try:

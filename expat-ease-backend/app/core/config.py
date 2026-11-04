@@ -49,6 +49,11 @@ class Settings(BaseSettings):
     # WARNING: set to False in production
     DEV_RETURN_RESET_TOKEN: bool = False
 
+    # Temporary authenticated sessions used by the public product demo.
+    DEMO_ACCESS_ENABLED: bool = True
+    DEMO_SESSION_MINUTES: int = 60
+    DEMO_MAX_SESSIONS_PER_HOUR: int = 30
+
     ENABLE_HTTPS: bool = False
     # In production set this to a list of allowed hostnames/origins. Empty means no wildcard.
     ALLOWED_HOSTS: list[str] = Field(default_factory=list)

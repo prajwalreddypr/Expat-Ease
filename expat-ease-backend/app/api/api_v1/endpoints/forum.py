@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
-from app.core.deps import get_current_user
+from app.core.deps import get_current_permanent_user, get_current_user
 from app.db.session import get_session
 from app.models.forum import QuestionCategory
 from app.models.user import User
@@ -36,7 +36,7 @@ def get_questions(
 def create_question(
     question_data: QuestionCreate,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_permanent_user),
 ):
     return forum_service.create_question(
         session,
@@ -64,7 +64,7 @@ def create_answer(
     question_id: int,
     answer_data: AnswerCreate,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_permanent_user),
 ):
     try:
         return forum_service.create_answer(
@@ -79,7 +79,7 @@ def vote_question(
     question_id: int,
     is_upvote: bool,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_permanent_user),
 ):
     try:
         forum_service.vote_question(session, question_id, current_user.id, is_upvote)
@@ -93,7 +93,7 @@ def vote_answer(
     answer_id: int,
     is_upvote: bool,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_permanent_user),
 ):
     try:
         forum_service.vote_answer(session, answer_id, current_user.id, is_upvote)
@@ -106,7 +106,7 @@ def vote_answer(
 def accept_answer(
     answer_id: int,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_permanent_user),
 ):
     try:
         forum_service.accept_answer(session, answer_id, current_user.id)

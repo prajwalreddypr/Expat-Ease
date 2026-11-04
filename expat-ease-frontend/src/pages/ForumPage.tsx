@@ -76,16 +76,24 @@ const ForumPage: React.FC = () => {
                                 Connect with other expats, ask questions, and share your experiences.
                             </p>
                         </div>
-                        <button
-                            onClick={() => setShowNewQuestionForm(true)}
-                            className="btn bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl flex items-center justify-center"
-                        >
-                            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Ask Question
-                        </button>
+                        {!user?.is_demo && (
+                            <button
+                                onClick={() => setShowNewQuestionForm(true)}
+                                className="btn bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl flex items-center justify-center"
+                            >
+                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Ask Question
+                            </button>
+                        )}
                     </div>
+
+                    {user?.is_demo && (
+                        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                            Community content is available to browse in demo mode. Posting, answering, and voting are disabled to protect the public forum.
+                        </div>
+                    )}
 
                     {/* Category Filter */}
                     <div className="flex flex-wrap gap-2">
@@ -122,14 +130,18 @@ const ForumPage: React.FC = () => {
                                 No Questions Yet
                             </h2>
                             <p className="text-slate-600 mb-6 max-w-md mx-auto">
-                                Be the first to ask a question and help build our community!
+                                {user?.is_demo
+                                    ? 'There are no public questions to display yet.'
+                                    : 'Be the first to ask a question and help build our community!'}
                             </p>
-                            <button
-                                onClick={() => setShowNewQuestionForm(true)}
-                                className="btn bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl flex items-center justify-center"
-                            >
-                                Ask the First Question
-                            </button>
+                            {!user?.is_demo && (
+                                <button
+                                    onClick={() => setShowNewQuestionForm(true)}
+                                    className="btn bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-xl flex items-center justify-center"
+                                >
+                                    Ask the First Question
+                                </button>
+                            )}
                         </div>
                     ) : (
                         questions.map((question) => (
@@ -189,7 +201,8 @@ const ForumPage: React.FC = () => {
                                         <div className="flex items-center space-x-1">
                                             <button
                                                 onClick={() => handleVoteQuestion(question.id, true)}
-                                                className="flex items-center space-x-1 px-1 py-1 rounded hover:bg-slate-100 transition-colors"
+                                                disabled={user?.is_demo}
+                                                className="flex items-center space-x-1 px-1 py-1 rounded hover:bg-slate-100 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                                             >
                                                 <svg className="w-3 h-3 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
@@ -198,7 +211,8 @@ const ForumPage: React.FC = () => {
                                             </button>
                                             <button
                                                 onClick={() => handleVoteQuestion(question.id, false)}
-                                                className="flex items-center space-x-1 px-1 py-1 rounded hover:bg-slate-100 transition-colors"
+                                                disabled={user?.is_demo}
+                                                className="flex items-center space-x-1 px-1 py-1 rounded hover:bg-slate-100 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                                             >
                                                 <svg className="w-3 h-3 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
@@ -254,7 +268,7 @@ const ForumPage: React.FC = () => {
                                         </div>
 
                                         {/* Answer Form - Only if user is not the question author */}
-                                        {user?.id !== question.user.id && (
+                                        {!user?.is_demo && user?.id !== question.user.id && (
                                             <div className="mt-3 pt-2 border-t border-slate-200">
                                                 <h3 className="text-xs font-bold text-slate-800 mb-2">Add Answer</h3>
                                                 <div className="space-y-2">
