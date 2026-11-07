@@ -13,6 +13,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const navigate = useNavigate();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const userDisplayName = user ? user.full_name || user.email.split('@')[0] : '';
+    const userAvatarInitial = user ? (user.full_name || user.email).charAt(0).toUpperCase() : '';
+    const userCountry = user?.country || 'Not specified';
 
     const handleLogout = () => {
         logout();
@@ -95,16 +98,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                                 />
                                             ) : (
                                                 <span className="text-white text-sm font-semibold">
-                                                    {(user.full_name || user.email).charAt(0).toUpperCase()}
+                                                    {userAvatarInitial}
                                                 </span>
                                             )}
                                         </div>
                                         <div className="flex flex-col justify-center">
                                             <span className="text-sm font-semibold text-slate-700 leading-tight">
-                                                {user.full_name || user.email.split('@')[0]}
+                                                {userDisplayName}
                                             </span>
                                             <span className="text-xs text-slate-500 leading-tight mt-0.5">
-                                                {user.country || 'Not specified'}
+                                                {userCountry}
                                             </span>
                                         </div>
                                     </div>
@@ -164,16 +167,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                                     />
                                                 ) : (
                                                     <span className="text-white text-sm font-semibold">
-                                                        {(user.full_name || user.email).charAt(0).toUpperCase()}
+                                                        {userAvatarInitial}
                                                     </span>
                                                 )}
                                             </div>
                                             <div className="flex flex-col justify-center min-w-0 flex-1">
                                                 <span className="text-sm font-semibold text-slate-700 leading-tight truncate">
-                                                    {user.full_name || user.email.split('@')[0]}
+                                                    {userDisplayName}
                                                 </span>
                                                 <span className="text-xs text-slate-500 leading-tight mt-0.5 truncate">
-                                                    {user.country || 'Not specified'}
+                                                    {userCountry}
                                                 </span>
                                             </div>
                                         </div>
