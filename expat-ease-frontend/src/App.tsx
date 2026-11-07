@@ -15,6 +15,9 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './contexts/auth-context';
 
+const PUBLIC_PATHS = new Set(['/', '/reset-password']);
+const isPublicPath = (pathname: string) => PUBLIC_PATHS.has(pathname);
+
 const AppContent: React.FC = () => {
   const { user, isLoading, selectedCountry, selectCountry, startDemo } = useAuth();
   const [showRegisterForm, setShowRegisterForm] = useState(false);
@@ -38,9 +41,7 @@ const AppContent: React.FC = () => {
 
   // Redirect logged-out users from protected routes to homepage
   useEffect(() => {
-    // Allow unauthenticated access to public routes like /reset-password
-    const publicPaths = ['/', '/reset-password'];
-    if (!isLoading && !user && !publicPaths.includes(location.pathname)) {
+    if (!isLoading && !user && !isPublicPath(location.pathname)) {
       navigate('/', { replace: true });
     }
   }, [user, isLoading, location.pathname, navigate]);
