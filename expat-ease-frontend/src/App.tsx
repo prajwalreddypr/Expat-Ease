@@ -17,6 +17,7 @@ import { useAuth } from './contexts/auth-context';
 
 const PUBLIC_PATHS = new Set(['/', '/reset-password']);
 const isPublicPath = (pathname: string) => PUBLIC_PATHS.has(pathname);
+const scrollToTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
 const AppContent: React.FC = () => {
   const { user, isLoading, selectedCountry, selectCountry, startDemo } = useAuth();
@@ -68,10 +69,6 @@ const AppContent: React.FC = () => {
     setShowLoginForm(false);
     setShowRegisterForm(false);
 
-    const scrollToTop = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    };
-
     if (window.history.state?.modal) {
       // Browser history restores its saved scroll position after popstate.
       // Wait until that restoration finishes, then place the dashboard at the top.
@@ -92,7 +89,7 @@ const AppContent: React.FC = () => {
     setIsStartingDemo(true);
     try {
       await startDemo();
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      scrollToTop();
     } catch (error) {
       setDemoError(error instanceof Error ? error.message : 'Demo access is unavailable');
     } finally {
