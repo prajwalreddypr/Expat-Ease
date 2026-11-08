@@ -23,18 +23,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
 
     const handleLogoClick = () => {
-        // Smart navigation based on user state
-        if (!user) {
-            // Not logged in - stay on landing page (no action needed)
-            return;
-        } else if (user && (!selectedCountry || user.country_selected === false)) {
-            // Logged in but hasn't completed country selection - stay on country selection
-            return;
-        } else {
-            // Logged in with country selected - navigate to dashboard
-            navigate('/dashboard');
-        }
+        if (!user || !selectedCountry || user.country_selected === false) return;
 
+        navigate('/dashboard');
         setIsMobileMenuOpen(false);
     };
 
