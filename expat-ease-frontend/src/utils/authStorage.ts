@@ -24,6 +24,6 @@ export const storeSelectedCountry = (country: string) => {
 };
 
 export const clearStoredAuthSession = () => {
-  localStorage.removeItem(TOKEN_KEY);
+  clearAuthToken();
   localStorage.removeItem(SELECTED_COUNTRY_KEY);
 };
